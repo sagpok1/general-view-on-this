@@ -305,7 +305,343 @@ function seedData() {
       }
     ];
 
-    for (const survey of surveySeeds) {
+    // Additional US-themed surveys
+    const usSurveySeeds = [
+      {
+        title: 'Best US National Parks You Have Visited',
+        description: 'Share your experiences exploring America\'s natural wonders.',
+        category: 'travel',
+        questions: [
+          { text: 'Which national park is your favorite?', type: 'multiple_choice', options: JSON.stringify(['Yellowstone', 'Grand Canyon', 'Yosemite', 'Zion', 'Great Smoky Mountains']) },
+          { text: 'How many national parks have you visited?', type: 'multiple_choice', options: JSON.stringify(['None', '1-3', '4-7', '8-15', '16+']) },
+          { text: 'Rate the accessibility of US national parks.', type: 'rating', options: null },
+          { text: 'What park would you recommend to a first-time visitor?', type: 'text', options: null }
+        ]
+      },
+      {
+        title: 'Your Favorite American Comfort Foods',
+        description: 'Celebrate the diverse food culture across the United States.',
+        category: 'food',
+        questions: [
+          { text: 'Which comfort food is your go-to?', type: 'multiple_choice', options: JSON.stringify(['Mac and cheese', 'Fried chicken', 'Burgers', 'Pizza', 'BBQ ribs']) },
+          { text: 'Which regional cuisine do you enjoy most?', type: 'multiple_choice', options: JSON.stringify(['Southern/Soul food', 'Tex-Mex', 'New England seafood', 'Midwest comfort', 'California fresh']) },
+          { text: 'Rate how important food traditions are to you.', type: 'rating', options: null },
+          { text: 'What is your favorite homemade comfort food recipe?', type: 'text', options: null }
+        ]
+      },
+      {
+        title: 'How Do You Feel About the US Healthcare System?',
+        description: 'Share your perspectives on healthcare access and quality.',
+        category: 'general',
+        questions: [
+          { text: 'Do you currently have health insurance?', type: 'multiple_choice', options: JSON.stringify(['Yes, employer-provided', 'Yes, marketplace/ACA', 'Yes, Medicare/Medicaid', 'No insurance', 'Other']) },
+          { text: 'Rate your overall satisfaction with your healthcare.', type: 'rating', options: null },
+          { text: 'What is the biggest barrier to healthcare for you?', type: 'multiple_choice', options: JSON.stringify(['Cost', 'Availability of doctors', 'Wait times', 'Insurance complexity', 'No barriers']) },
+          { text: 'What one change would improve US healthcare most?', type: 'text', options: null }
+        ]
+      },
+      {
+        title: 'US Sports Fandom Survey',
+        description: 'How passionate are Americans about their sports teams?',
+        category: 'general',
+        questions: [
+          { text: 'Which sport do you follow most closely?', type: 'multiple_choice', options: JSON.stringify(['NFL Football', 'NBA Basketball', 'MLB Baseball', 'NHL Hockey', 'MLS Soccer', 'None']) },
+          { text: 'How often do you attend live sporting events?', type: 'multiple_choice', options: JSON.stringify(['Weekly', 'Monthly', 'A few times a year', 'Once a year', 'Never']) },
+          { text: 'Rate how important sports are to your social life.', type: 'rating', options: null },
+          { text: 'Who is your all-time favorite athlete and why?', type: 'text', options: null }
+        ]
+      },
+      {
+        title: 'The American Road Trip Experience',
+        description: 'Share your love for the open road across America.',
+        category: 'travel',
+        questions: [
+          { text: 'How often do you take road trips?', type: 'multiple_choice', options: JSON.stringify(['Multiple times a year', 'Once a year', 'Every few years', 'Rarely', 'Never']) },
+          { text: 'What is your ideal road trip length?', type: 'multiple_choice', options: JSON.stringify(['Weekend (2-3 days)', 'One week', 'Two weeks', 'A month+', 'Day trip']) },
+          { text: 'Rate the quality of US highways and rest stops.', type: 'rating', options: null },
+          { text: 'What was the most memorable US road trip you have taken?', type: 'text', options: null }
+        ]
+      },
+      {
+        title: 'Your Thoughts on US Public Education',
+        description: 'How do Americans view their education system?',
+        category: 'general',
+        questions: [
+          { text: 'How would you rate the quality of public schools in your area?', type: 'rating', options: null },
+          { text: 'What grade level concerns you most?', type: 'multiple_choice', options: JSON.stringify(['Elementary', 'Middle school', 'High school', 'College', 'All equally']) },
+          { text: 'What should schools focus more on?', type: 'multiple_choice', options: JSON.stringify(['STEM subjects', 'Arts and creativity', 'Life skills', 'Trades and vocational', 'Social-emotional learning']) },
+          { text: 'What would you change about US education?', type: 'text', options: null }
+        ]
+      },
+      {
+        title: 'Coffee Culture in America',
+        description: 'How does America fuel its caffeine habit?',
+        category: 'food',
+        questions: [
+          { text: 'How many cups of coffee do you drink daily?', type: 'multiple_choice', options: JSON.stringify(['None', '1 cup', '2-3 cups', '4-5 cups', '6+']) },
+          { text: 'Where do you usually get your coffee?', type: 'multiple_choice', options: JSON.stringify(['Home brewed', 'Starbucks', 'Local coffee shop', 'Dunkin', 'Gas station/convenience store']) },
+          { text: 'Rate the quality of local coffee shops in your area.', type: 'rating', options: null },
+          { text: 'What makes the perfect cup of coffee for you?', type: 'text', options: null }
+        ]
+      },
+      {
+        title: 'Living Costs Across the US',
+        description: 'Share your perspective on cost of living in America.',
+        category: 'general',
+        questions: [
+          { text: 'How would you rate the affordability of your area?', type: 'rating', options: null },
+          { text: 'What is your biggest monthly expense?', type: 'multiple_choice', options: JSON.stringify(['Housing/Rent', 'Transportation', 'Food/Groceries', 'Healthcare', 'Childcare']) },
+          { text: 'Have you considered relocating for lower costs?', type: 'multiple_choice', options: JSON.stringify(['Yes, actively planning', 'Considering it', 'Thought about it', 'No, I am happy here', 'Already relocated']) },
+          { text: 'What would make your area more affordable to live in?', type: 'text', options: null }
+        ]
+      },
+      {
+        title: 'Streaming and Entertainment Habits',
+        description: 'How Americans consume entertainment in the digital age.',
+        category: 'general',
+        questions: [
+          { text: 'Which streaming service do you use most?', type: 'multiple_choice', options: JSON.stringify(['Netflix', 'Disney+', 'HBO Max', 'Hulu', 'Amazon Prime', 'YouTube']) },
+          { text: 'How many hours of streaming do you watch per day?', type: 'multiple_choice', options: JSON.stringify(['Less than 1', '1-2 hours', '2-4 hours', '4-6 hours', '6+']) },
+          { text: 'Rate your satisfaction with streaming content quality.', type: 'rating', options: null },
+          { text: 'What type of content do you wish there was more of?', type: 'text', options: null }
+        ]
+      },
+      {
+        title: 'US Housing Market Opinions',
+        description: 'Perspectives on buying, renting, and the American dream of homeownership.',
+        category: 'general',
+        questions: [
+          { text: 'Do you currently own or rent your home?', type: 'multiple_choice', options: JSON.stringify(['Own', 'Rent', 'Live with family', 'Other arrangement']) },
+          { text: 'Rate how achievable homeownership feels for you.', type: 'rating', options: null },
+          { text: 'What is the biggest obstacle to buying a home?', type: 'multiple_choice', options: JSON.stringify(['Down payment', 'High prices', 'Interest rates', 'Student debt', 'Low inventory']) },
+          { text: 'Where in the US would you most like to own a home?', type: 'text', options: null }
+        ]
+      },
+      {
+        title: 'American Holidays and Traditions',
+        description: 'Celebrate what makes American holidays special.',
+        category: 'general',
+        questions: [
+          { text: 'Which holiday is your favorite?', type: 'multiple_choice', options: JSON.stringify(['Thanksgiving', 'Fourth of July', 'Christmas', 'Halloween', 'Memorial Day/Labor Day']) },
+          { text: 'How important are holiday traditions to your family?', type: 'rating', options: null },
+          { text: 'How do you typically spend Thanksgiving?', type: 'multiple_choice', options: JSON.stringify(['Big family dinner', 'Friendsgiving', 'Travel', 'Quiet day at home', 'Volunteering']) },
+          { text: 'What is your favorite holiday tradition?', type: 'text', options: null }
+        ]
+      },
+      {
+        title: 'Fitness and Wellness in America',
+        description: 'How do Americans stay healthy and active?',
+        category: 'general',
+        questions: [
+          { text: 'How often do you exercise per week?', type: 'multiple_choice', options: JSON.stringify(['Never', '1-2 times', '3-4 times', '5-6 times', 'Daily']) },
+          { text: 'Where do you prefer to work out?', type: 'multiple_choice', options: JSON.stringify(['Gym', 'Home', 'Outdoors', 'Group classes', 'Sports leagues']) },
+          { text: 'Rate the availability of fitness facilities in your area.', type: 'rating', options: null },
+          { text: 'What motivates you most to stay healthy?', type: 'text', options: null }
+        ]
+      },
+      {
+        title: 'Social Media Use in America',
+        description: 'Understanding how Americans interact with social platforms.',
+        category: 'general',
+        questions: [
+          { text: 'Which social media platform do you use most?', type: 'multiple_choice', options: JSON.stringify(['Instagram', 'TikTok', 'Facebook', 'X/Twitter', 'Reddit', 'LinkedIn']) },
+          { text: 'How many hours per day do you spend on social media?', type: 'multiple_choice', options: JSON.stringify(['Less than 1', '1-2 hours', '2-4 hours', '4+ hours', 'I do not use social media']) },
+          { text: 'Rate social media\'s impact on your daily life.', type: 'rating', options: null },
+          { text: 'What would you change about social media?', type: 'text', options: null }
+        ]
+      },
+      {
+        title: 'The US Job Market Experience',
+        description: 'Share your thoughts on working in America today.',
+        category: 'general',
+        questions: [
+          { text: 'What is your current work arrangement?', type: 'multiple_choice', options: JSON.stringify(['Full-time office', 'Full-time remote', 'Hybrid', 'Part-time', 'Freelance/Self-employed', 'Not working']) },
+          { text: 'Rate your overall job satisfaction.', type: 'rating', options: null },
+          { text: 'What benefit matters most to you?', type: 'multiple_choice', options: JSON.stringify(['Health insurance', 'Flexible schedule', 'Remote work', 'Retirement/401k', 'Paid time off']) },
+          { text: 'What is the biggest challenge in your career right now?', type: 'text', options: null }
+        ]
+      },
+      {
+        title: 'American Pet Ownership',
+        description: 'The US loves its pets — tell us about yours!',
+        category: 'general',
+        questions: [
+          { text: 'Do you currently own a pet?', type: 'multiple_choice', options: JSON.stringify(['Dog', 'Cat', 'Both', 'Other pet', 'No pets']) },
+          { text: 'How much do you spend monthly on your pet?', type: 'multiple_choice', options: JSON.stringify(['No pet', 'Under $50', '$50-$100', '$100-$200', '$200+']) },
+          { text: 'Rate the pet-friendliness of your neighborhood.', type: 'rating', options: null },
+          { text: 'What is the best thing about having a pet?', type: 'text', options: null }
+        ]
+      },
+      {
+        title: 'Climate and Weather Preferences',
+        description: 'What climate do Americans prefer to live in?',
+        category: 'general',
+        questions: [
+          { text: 'Which climate do you prefer?', type: 'multiple_choice', options: JSON.stringify(['Warm and sunny (Florida, Arizona)', 'Four seasons (Northeast)', 'Mild and rainy (Pacific NW)', 'Dry and hot (Southwest)', 'Tropical (Hawaii)']) },
+          { text: 'Has weather influenced where you choose to live?', type: 'multiple_choice', options: JSON.stringify(['Yes, it was the main factor', 'Somewhat', 'Not really', 'No, other factors matter more']) },
+          { text: 'Rate your satisfaction with your current climate.', type: 'rating', options: null },
+          { text: 'If weather was the only factor, where in the US would you live?', type: 'text', options: null }
+        ]
+      },
+      {
+        title: 'US Grocery Shopping Habits',
+        description: 'How do Americans shop for groceries?',
+        category: 'food',
+        questions: [
+          { text: 'Where do you primarily buy groceries?', type: 'multiple_choice', options: JSON.stringify(['Walmart', 'Costco/Sam\'s Club', 'Kroger/Safeway', 'Whole Foods/Trader Joe\'s', 'Local grocery store', 'Online delivery']) },
+          { text: 'How much do you spend weekly on groceries?', type: 'multiple_choice', options: JSON.stringify(['Under $50', '$50-$100', '$100-$150', '$150-$200', '$200+']) },
+          { text: 'Rate the quality of fresh produce in your area.', type: 'rating', options: null },
+          { text: 'What would improve your grocery shopping experience?', type: 'text', options: null }
+        ]
+      },
+      {
+        title: 'Tipping Culture in America',
+        description: 'Share your views on the American tipping system.',
+        category: 'general',
+        questions: [
+          { text: 'How much do you typically tip at restaurants?', type: 'multiple_choice', options: JSON.stringify(['Under 15%', '15%', '18-20%', '20-25%', '25%+']) },
+          { text: 'Do you think tipping should be replaced by higher wages?', type: 'multiple_choice', options: JSON.stringify(['Yes, eliminate tipping', 'Mostly yes', 'Not sure', 'Mostly no', 'No, keep tipping']) },
+          { text: 'Rate how comfortable you are with tipping expectations.', type: 'rating', options: null },
+          { text: 'What is your opinion on tip screens at counter-service places?', type: 'text', options: null }
+        ]
+      },
+      {
+        title: 'US Travel Destinations Bucket List',
+        description: 'Which American destinations are on your must-visit list?',
+        category: 'travel',
+        questions: [
+          { text: 'Which US city would you most like to visit?', type: 'multiple_choice', options: JSON.stringify(['New York City', 'Los Angeles', 'Nashville', 'New Orleans', 'San Francisco', 'Miami']) },
+          { text: 'How many US states have you visited?', type: 'multiple_choice', options: JSON.stringify(['1-5', '6-15', '16-25', '26-40', '40+', 'All 50!']) },
+          { text: 'Rate how much you enjoy traveling within the US.', type: 'rating', options: null },
+          { text: 'What US destination surprised you the most?', type: 'text', options: null }
+        ]
+      },
+      {
+        title: 'Electric Vehicles in America',
+        description: 'Are Americans ready for the EV revolution?',
+        category: 'general',
+        questions: [
+          { text: 'Do you own or plan to buy an electric vehicle?', type: 'multiple_choice', options: JSON.stringify(['Already own one', 'Planning to buy', 'Considering it', 'Not interested', 'Cannot afford one']) },
+          { text: 'What is the biggest barrier to EV adoption for you?', type: 'multiple_choice', options: JSON.stringify(['Price', 'Charging infrastructure', 'Range anxiety', 'Prefer gas vehicles', 'Apartment living/no charger']) },
+          { text: 'Rate the EV charging infrastructure in your area.', type: 'rating', options: null },
+          { text: 'What would make you switch to an electric vehicle?', type: 'text', options: null }
+        ]
+      },
+      {
+        title: 'Small Town vs Big City Living',
+        description: 'Which lifestyle do Americans prefer?',
+        category: 'community',
+        questions: [
+          { text: 'Where do you currently live?', type: 'multiple_choice', options: JSON.stringify(['Large city (500k+)', 'Mid-size city (100-500k)', 'Small city (25-100k)', 'Small town (<25k)', 'Rural area']) },
+          { text: 'Where would you prefer to live?', type: 'multiple_choice', options: JSON.stringify(['Downtown big city', 'Suburb of big city', 'Mid-size city', 'Small town', 'Rural/countryside']) },
+          { text: 'Rate your satisfaction with your current community size.', type: 'rating', options: null },
+          { text: 'What do you love most about where you live?', type: 'text', options: null }
+        ]
+      },
+      {
+        title: 'The American Music Scene',
+        description: 'What sounds define America today?',
+        category: 'general',
+        questions: [
+          { text: 'What genre of music do you listen to most?', type: 'multiple_choice', options: JSON.stringify(['Pop', 'Hip-hop/Rap', 'Country', 'Rock', 'R&B', 'Electronic/EDM']) },
+          { text: 'How do you primarily listen to music?', type: 'multiple_choice', options: JSON.stringify(['Spotify', 'Apple Music', 'YouTube', 'Radio', 'Vinyl/CDs', 'SoundCloud']) },
+          { text: 'Rate the live music scene in your area.', type: 'rating', options: null },
+          { text: 'Who is your favorite current American artist?', type: 'text', options: null }
+        ]
+      },
+      {
+        title: 'US Internet and Broadband Access',
+        description: 'Is the digital divide still a problem in America?',
+        category: 'general',
+        questions: [
+          { text: 'How would you rate your internet speed?', type: 'rating', options: null },
+          { text: 'Who is your internet provider?', type: 'multiple_choice', options: JSON.stringify(['Comcast/Xfinity', 'AT&T', 'Spectrum', 'Verizon', 'T-Mobile/Starlink', 'Other']) },
+          { text: 'How much do you pay monthly for internet?', type: 'multiple_choice', options: JSON.stringify(['Under $30', '$30-$50', '$50-$75', '$75-$100', '$100+']) },
+          { text: 'What frustrates you most about internet service in the US?', type: 'text', options: null }
+        ]
+      },
+      {
+        title: 'American Fast Food Favorites',
+        description: 'Which fast food chains do Americans love most?',
+        category: 'food',
+        questions: [
+          { text: 'What is your favorite fast food chain?', type: 'multiple_choice', options: JSON.stringify(['Chick-fil-A', 'McDonald\'s', 'In-N-Out', 'Wendy\'s', 'Taco Bell', 'Five Guys']) },
+          { text: 'How often do you eat fast food?', type: 'multiple_choice', options: JSON.stringify(['Never', '1-2 times/month', 'Weekly', '2-3 times/week', 'Daily']) },
+          { text: 'Rate the overall quality of American fast food.', type: 'rating', options: null },
+          { text: 'What fast food item could you eat every day?', type: 'text', options: null }
+        ]
+      },
+      {
+        title: 'Volunteering and Giving Back',
+        description: 'How do Americans contribute to their communities?',
+        category: 'community',
+        questions: [
+          { text: 'How often do you volunteer?', type: 'multiple_choice', options: JSON.stringify(['Weekly', 'Monthly', 'A few times a year', 'Once a year', 'Never']) },
+          { text: 'What cause matters most to you?', type: 'multiple_choice', options: JSON.stringify(['Hunger/Food banks', 'Education', 'Environment', 'Animal welfare', 'Homelessness', 'Healthcare']) },
+          { text: 'Rate how easy it is to find volunteer opportunities in your area.', type: 'rating', options: null },
+          { text: 'What motivates you to volunteer or give back?', type: 'text', options: null }
+        ]
+      },
+      {
+        title: 'The American College Experience',
+        description: 'Perspectives on higher education in the US.',
+        category: 'general',
+        questions: [
+          { text: 'What is your highest level of education?', type: 'multiple_choice', options: JSON.stringify(['High school', 'Some college', 'Associate degree', 'Bachelor\'s degree', 'Master\'s or higher']) },
+          { text: 'Do you have student loan debt?', type: 'multiple_choice', options: JSON.stringify(['No debt', 'Under $25k', '$25k-$50k', '$50k-$100k', '$100k+']) },
+          { text: 'Rate the value of a college degree in today\'s economy.', type: 'rating', options: null },
+          { text: 'What advice would you give to someone considering college?', type: 'text', options: null }
+        ]
+      },
+      {
+        title: 'Neighborhood Safety in America',
+        description: 'How safe do Americans feel in their neighborhoods?',
+        category: 'community',
+        questions: [
+          { text: 'How safe do you feel walking in your neighborhood at night?', type: 'rating', options: null },
+          { text: 'What concerns you most about safety?', type: 'multiple_choice', options: JSON.stringify(['Property crime', 'Violent crime', 'Traffic safety', 'Poor lighting', 'Nothing, I feel safe']) },
+          { text: 'Do you know your neighbors?', type: 'multiple_choice', options: JSON.stringify(['Yes, many of them', 'A few', 'Just one or two', 'None at all']) },
+          { text: 'What would make your neighborhood feel safer?', type: 'text', options: null }
+        ]
+      },
+      {
+        title: 'American BBQ Showdown',
+        description: 'Settle the great American BBQ debate once and for all.',
+        category: 'food',
+        questions: [
+          { text: 'Which BBQ style is the best?', type: 'multiple_choice', options: JSON.stringify(['Texas brisket', 'Carolina pulled pork', 'Kansas City ribs', 'Memphis dry rub', 'Alabama white sauce']) },
+          { text: 'How often do you grill or BBQ at home?', type: 'multiple_choice', options: JSON.stringify(['Weekly', 'A few times a month', 'Monthly', 'A few times a year', 'Never']) },
+          { text: 'Rate your area\'s BBQ restaurant scene.', type: 'rating', options: null },
+          { text: 'What is your secret grilling tip?', type: 'text', options: null }
+        ]
+      },
+      {
+        title: 'Work-Life Balance in America',
+        description: 'Are Americans finding balance between work and life?',
+        category: 'general',
+        questions: [
+          { text: 'How many hours per week do you work?', type: 'multiple_choice', options: JSON.stringify(['Under 30', '30-40', '40-50', '50-60', '60+']) },
+          { text: 'How many vacation days do you take per year?', type: 'multiple_choice', options: JSON.stringify(['None', '1-5 days', '6-10 days', '11-15 days', '15+ days']) },
+          { text: 'Rate your current work-life balance.', type: 'rating', options: null },
+          { text: 'What would most improve your work-life balance?', type: 'text', options: null }
+        ]
+      },
+      {
+        title: 'The Future of American Cities',
+        description: 'What should US cities look like in 10 years?',
+        category: 'community',
+        questions: [
+          { text: 'What should cities prioritize most?', type: 'multiple_choice', options: JSON.stringify(['Affordable housing', 'Public transit', 'Green spaces', 'Walkability', 'Tech infrastructure']) },
+          { text: 'Would you support more bike lanes over car lanes?', type: 'multiple_choice', options: JSON.stringify(['Strongly yes', 'Somewhat yes', 'Neutral', 'Somewhat no', 'Strongly no']) },
+          { text: 'Rate your city\'s planning for the future.', type: 'rating', options: null },
+          { text: 'What is one thing that would transform your city?', type: 'text', options: null }
+        ]
+      }
+    ];
+
+    const allSurveys = [...surveySeeds, ...usSurveySeeds];
+
+    for (const survey of allSurveys) {
       const surveyResult = insertSurvey.run(
         survey.title, survey.description, survey.category
       );
@@ -316,7 +652,7 @@ function seedData() {
         insertQuestion.run(surveyId, q.text, q.type, q.options, i + 1);
       }
     }
-    console.log('Seeded 8 surveys with questions.');
+    console.log('Seeded 38 surveys with questions.');
   });
 
   seedTransaction();
