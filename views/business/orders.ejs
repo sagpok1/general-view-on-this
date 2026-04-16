@@ -1,8 +1,34 @@
-<%- include('../layout/header', { title: 'Manage Orders', extraCss: ['/css/pages/orders.css'] }) %>
+<%- include('../layout/header', { title: 'Manage Orders', extraCss: ['/css/pages/orders.css', '/css/pages/dashboard.css'] }) %>
 
 <section class="page-section">
-  <div class="page-header">
-    <h1 class="page-title">Manage Orders</h1>
+
+  <!-- ═══ ANIMATED GRADIENT HEADER ═══ -->
+  <div class="dash-header">
+    <div class="dash-header-content">
+      <h1 class="dash-header-title">Manage Orders</h1>
+      <p class="dash-header-sub">View and process customer orders</p>
+    </div>
+    <div class="ticker-strip">
+      <div class="ticker-track">
+        <span class="ticker-item"><%= orders ? orders.length : 0 %> order<%= (orders ? orders.length : 0) !== 1 ? 's' : '' %> shown</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">Pending &rarr; Accepted &rarr; Ready &rarr; Completed</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">Process orders promptly for happy customers</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">Great service earns great reviews</span>
+        <span class="ticker-dot"></span>
+        <!-- Duplicate for seamless loop -->
+        <span class="ticker-item"><%= orders ? orders.length : 0 %> order<%= (orders ? orders.length : 0) !== 1 ? 's' : '' %> shown</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">Pending &rarr; Accepted &rarr; Ready &rarr; Completed</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">Process orders promptly for happy customers</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">Great service earns great reviews</span>
+        <span class="ticker-dot"></span>
+      </div>
+    </div>
   </div>
 
   <nav class="filter-tabs" aria-label="Order status filters">

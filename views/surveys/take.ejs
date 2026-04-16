@@ -1,9 +1,34 @@
-<%- include('../layout/header', { title: survey.title, extraCss: ['/css/pages/surveys.css'] }) %>
+<%- include('../layout/header', { title: survey.title, extraCss: ['/css/pages/surveys.css', '/css/pages/dashboard.css'] }) %>
 
 <section class="page-section">
-  <div class="survey-header">
-    <h1 class="page-title"><%= survey.title %></h1>
-    <p class="page-subtitle"><%= survey.description %></p>
+
+  <!-- ═══ ANIMATED GRADIENT HEADER ═══ -->
+  <div class="dash-header">
+    <div class="dash-header-content">
+      <h1 class="dash-header-title"><%= survey.title %></h1>
+      <p class="dash-header-sub"><%= survey.description %></p>
+    </div>
+    <div class="ticker-strip">
+      <div class="ticker-track">
+        <span class="ticker-item"><%= questions.length %> question<%= questions.length !== 1 ? 's' : '' %> in this survey</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">Earn 1 credit on completion</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">Your answers help local businesses</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">All responses are anonymous</span>
+        <span class="ticker-dot"></span>
+        <!-- Duplicate for seamless loop -->
+        <span class="ticker-item"><%= questions.length %> question<%= questions.length !== 1 ? 's' : '' %> in this survey</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">Earn 1 credit on completion</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">Your answers help local businesses</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">All responses are anonymous</span>
+        <span class="ticker-dot"></span>
+      </div>
+    </div>
   </div>
 
   <div class="survey-progress">

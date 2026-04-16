@@ -1,8 +1,34 @@
-<%- include('../layout/header', { title: 'Pending Reviews', extraCss: ['/css/pages/reviews.css'] }) %>
+<%- include('../layout/header', { title: 'Pending Reviews', extraCss: ['/css/pages/reviews.css', '/css/pages/dashboard.css'] }) %>
 
 <section class="page-section">
-  <div class="page-header">
-    <h1 class="page-title">Admin: Pending Reviews</h1>
+
+  <!-- ═══ ANIMATED GRADIENT HEADER ═══ -->
+  <div class="dash-header">
+    <div class="dash-header-content">
+      <h1 class="dash-header-title">Admin Panel</h1>
+      <p class="dash-header-sub">Review moderation</p>
+    </div>
+    <div class="ticker-strip">
+      <div class="ticker-track">
+        <span class="ticker-item"><%= reviews ? reviews.length : 0 %> review<%= (reviews ? reviews.length : 0) !== 1 ? 's' : '' %> pending verification</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">Approve or reject customer reviews</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">Reviews can never be deleted &mdash; radical transparency</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">Ensure community standards are met</span>
+        <span class="ticker-dot"></span>
+        <!-- Duplicate for seamless loop -->
+        <span class="ticker-item"><%= reviews ? reviews.length : 0 %> review<%= (reviews ? reviews.length : 0) !== 1 ? 's' : '' %> pending verification</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">Approve or reject customer reviews</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">Reviews can never be deleted &mdash; radical transparency</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">Ensure community standards are met</span>
+        <span class="ticker-dot"></span>
+      </div>
+    </div>
   </div>
 
   <% if (reviews && reviews.length > 0) { %>

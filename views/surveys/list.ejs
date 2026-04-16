@@ -1,14 +1,45 @@
-<%- include('../layout/header', { title: 'Surveys', extraCss: ['/css/pages/surveys.css'] }) %>
+<%- include('../layout/header', { title: 'Surveys', extraCss: ['/css/pages/surveys.css', '/css/pages/dashboard.css'] }) %>
 
 <section class="page-section">
-  <div class="page-header">
-    <div class="page-header-content">
-      <h1 class="page-title">Surveys</h1>
-      <p class="page-subtitle">Complete surveys to earn credits</p>
+
+  <!-- ═══ ANIMATED GRADIENT HEADER ═══ -->
+  <div class="dash-header">
+    <div class="dash-header-content">
+      <h1 class="dash-header-title">Surveys</h1>
+      <p class="dash-header-sub">Complete surveys to earn credits</p>
     </div>
-    <div class="credit-balance-display">
-      <span class="credit-balance-label">Your Balance</span>
-      <span class="credit-balance-amount"><%= currentUser.credits %> Credits</span>
+    <div class="ticker-strip">
+      <div class="ticker-track">
+        <span class="ticker-item">Each survey = 1 credit</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item"><%= availableSurveys ? availableSurveys.length : 0 %> surveys available</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">Share your opinions</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">Credits can be used to order from local businesses</span>
+        <span class="ticker-dot"></span>
+        <!-- Duplicate for seamless loop -->
+        <span class="ticker-item">Each survey = 1 credit</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item"><%= availableSurveys ? availableSurveys.length : 0 %> surveys available</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">Share your opinions</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">Credits can be used to order from local businesses</span>
+        <span class="ticker-dot"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ CREDIT BALANCE COIN CARD ═══ -->
+  <div class="dashboard-stats" style="justify-content: center; margin-bottom: 1.5rem;">
+    <div class="coin-card">
+      <div class="coin-outer">
+        <div class="coin-inner">
+          <div class="coin-value"><%= currentUser.credits %></div>
+          <div class="coin-label">Credits</div>
+        </div>
+      </div>
     </div>
   </div>
 

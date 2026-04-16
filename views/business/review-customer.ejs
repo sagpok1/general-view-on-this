@@ -1,8 +1,34 @@
-<%- include('../layout/header', { title: 'Review Customer', extraCss: ['/css/pages/reviews.css'] }) %>
+<%- include('../layout/header', { title: 'Review Customer', extraCss: ['/css/pages/reviews.css', '/css/pages/dashboard.css'] }) %>
 
 <section class="page-section">
-  <div class="page-header">
-    <h1 class="page-title">Review Customer: <%= customer.name %></h1>
+
+  <!-- ═══ ANIMATED GRADIENT HEADER ═══ -->
+  <div class="dash-header">
+    <div class="dash-header-content">
+      <h1 class="dash-header-title">Review Customer</h1>
+      <p class="dash-header-sub"><%= customer.name %></p>
+    </div>
+    <div class="ticker-strip">
+      <div class="ticker-track">
+        <span class="ticker-item">Reviewing <%= customer.name %></span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">Reviews require admin verification</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">Be honest and constructive</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">Reviews can never be deleted &mdash; radical transparency</span>
+        <span class="ticker-dot"></span>
+        <!-- Duplicate for seamless loop -->
+        <span class="ticker-item">Reviewing <%= customer.name %></span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">Reviews require admin verification</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">Be honest and constructive</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">Reviews can never be deleted &mdash; radical transparency</span>
+        <span class="ticker-dot"></span>
+      </div>
+    </div>
   </div>
 
   <div class="notice notice-info">

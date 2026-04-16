@@ -1,8 +1,34 @@
-<%- include('../layout/header', { title: 'Find Local Businesses', extraCss: ['/css/pages/reviews.css'] }) %>
+<%- include('../layout/header', { title: 'Find Local Businesses', extraCss: ['/css/pages/reviews.css', '/css/pages/dashboard.css'] }) %>
 
 <section class="page-section">
-  <div class="page-header">
-    <h1 class="page-title">Find Local Businesses</h1>
+
+  <!-- ═══ ANIMATED GRADIENT HEADER ═══ -->
+  <div class="dash-header">
+    <div class="dash-header-content">
+      <h1 class="dash-header-title">Find Businesses</h1>
+      <p class="dash-header-sub">Search and discover local businesses</p>
+    </div>
+    <div class="ticker-strip">
+      <div class="ticker-track">
+        <span class="ticker-item">Discover local businesses</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">Read honest reviews</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">Reviews can never be deleted &mdash; radical transparency</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">Support your community</span>
+        <span class="ticker-dot"></span>
+        <!-- Duplicate for seamless loop -->
+        <span class="ticker-item">Discover local businesses</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">Read honest reviews</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">Reviews can never be deleted &mdash; radical transparency</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">Support your community</span>
+        <span class="ticker-dot"></span>
+      </div>
+    </div>
   </div>
 
   <form action="/reviews" method="GET" class="search-form">
@@ -25,7 +51,7 @@
         <% businesses.forEach(function(business) { %>
           <article class="business-card">
             <div class="business-card-body">
-              <h3 class="business-card-name"><%= business.name %></h3>
+              <h3 class="business-card-name"><%= business.business_name %></h3>
               <span class="badge badge-category"><%= business.category %></span>
               <div class="business-card-rating">
                 <div class="star-display" data-rating="<%= business.avg_rating || 0 %>">

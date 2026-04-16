@@ -1,6 +1,36 @@
-<%- include('../layout/header', { title: 'Place Order', extraCss: ['/css/pages/orders.css'] }) %>
+<%- include('../layout/header', { title: 'Place Order', extraCss: ['/css/pages/orders.css', '/css/pages/dashboard.css'] }) %>
 
 <section class="order-create">
+
+  <!-- ═══ ANIMATED GRADIENT HEADER ═══ -->
+  <div class="dash-header">
+    <div class="dash-header-content">
+      <h1 class="dash-header-title">Place Order</h1>
+      <p class="dash-header-sub">From <%= business.business_name %></p>
+    </div>
+    <div class="ticker-strip">
+      <div class="ticker-track">
+        <span class="ticker-item">Ordering from <%= business.business_name %></span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">Your balance: <%= userCredits %> credits</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">Support local businesses</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">Earn more credits through surveys</span>
+        <span class="ticker-dot"></span>
+        <!-- Duplicate for seamless loop -->
+        <span class="ticker-item">Ordering from <%= business.business_name %></span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">Your balance: <%= userCredits %> credits</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">Support local businesses</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">Earn more credits through surveys</span>
+        <span class="ticker-dot"></span>
+      </div>
+    </div>
+  </div>
+
   <nav class="breadcrumb" aria-label="Breadcrumb">
     <a href="/orders">Orders</a>
     <span class="breadcrumb-sep">/</span>

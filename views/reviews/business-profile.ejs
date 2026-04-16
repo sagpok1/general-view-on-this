@@ -1,9 +1,39 @@
-<%- include('../layout/header', { title: business.name, extraCss: ['/css/pages/reviews.css'] }) %>
+<%- include('../layout/header', { title: business.business_name, extraCss: ['/css/pages/reviews.css', '/css/pages/dashboard.css'] }) %>
 
 <section class="page-section">
+
+  <!-- ═══ ANIMATED GRADIENT HEADER ═══ -->
+  <div class="dash-header">
+    <div class="dash-header-content">
+      <h1 class="dash-header-title"><%= business.business_name %></h1>
+      <p class="dash-header-sub"><%= business.category %> &mdash; <%= business.review_count || reviews.length %> review<%= (business.review_count || reviews.length) !== 1 ? 's' : '' %></p>
+    </div>
+    <div class="ticker-strip">
+      <div class="ticker-track">
+        <span class="ticker-item">Rating: <%= business.avg_rating ? parseFloat(business.avg_rating).toFixed(1) : 'No ratings yet' %></span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">Reviews can never be deleted &mdash; radical transparency</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">Share your honest experience</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">Support local businesses</span>
+        <span class="ticker-dot"></span>
+        <!-- Duplicate for seamless loop -->
+        <span class="ticker-item">Rating: <%= business.avg_rating ? parseFloat(business.avg_rating).toFixed(1) : 'No ratings yet' %></span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">Reviews can never be deleted &mdash; radical transparency</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">Share your honest experience</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">Support local businesses</span>
+        <span class="ticker-dot"></span>
+      </div>
+    </div>
+  </div>
+
   <div class="business-profile-header">
     <div class="business-profile-info">
-      <h1 class="business-name"><%= business.name %></h1>
+      <h1 class="business-name"><%= business.business_name %></h1>
       <span class="badge badge-category"><%= business.category %></span>
       <div class="business-rating-display">
         <div class="star-display" data-rating="<%= business.avg_rating || 0 %>">
