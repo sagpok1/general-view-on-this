@@ -9,7 +9,7 @@ router.get('/reviews', isLoggedIn, isAdmin, (req, res) => {
 
   res.render('admin/pending-reviews', {
     title: 'Pending Reviews',
-    pendingReviews
+    reviews: pendingReviews
   });
 });
 

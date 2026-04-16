@@ -18,7 +18,7 @@ router.get('/', (req, res) => {
   res.render('reviews/search', {
     title: 'Reviews',
     businesses,
-    search: search || ''
+    query: search || ''
   });
 });
 

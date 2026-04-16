@@ -12,8 +12,8 @@ router.get('/', isLoggedIn, (req, res) => {
 
   res.render('surveys/list', {
     title: 'Surveys',
-    available,
-    completed
+    availableSurveys: available,
+    completedSurveys: completed
   });
 });
 

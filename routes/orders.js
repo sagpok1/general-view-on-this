@@ -20,7 +20,7 @@ router.get('/', isLoggedIn, (req, res) => {
   res.render('orders/browse', {
     title: 'Browse Businesses',
     businesses,
-    search: search || '',
+    query: search || '',
     category: category || ''
   });
 });
@@ -49,7 +49,7 @@ router.get('/create/:businessId', isLoggedIn, (req, res) => {
   res.render('orders/create', {
     title: `Order from ${business.business_name}`,
     business,
-    creditBalance,
+    userCredits: creditBalance,
     errors: []
   });
 });
@@ -59,13 +59,13 @@ router.post('/', isLoggedIn, validateCsrf, [
   body('business_id')
     .isInt()
     .withMessage('Invalid business.'),
-  body('items_description')
+  body('items')
     .trim()
     .notEmpty()
     .withMessage('Please describe what you would like to order.')
     .isLength({ max: 1000 })
     .withMessage('Description must be under 1000 characters.'),
-  body('special_notes')
+  body('notes')
     .optional()
     .trim()
     .isLength({ max: 500 })
@@ -75,7 +75,7 @@ router.post('/', isLoggedIn, validateCsrf, [
     .withMessage('Credits to spend must be at least 1.')
 ], (req, res) => {
   const errors = validationResult(req);
-  const { business_id, items_description, special_notes, credits_spent } = req.body;
+  const { business_id, items, notes, credits_spent } = req.body;
 
   if (!errors.isEmpty()) {
     const business = Business.findById(business_id);
@@ -83,7 +83,7 @@ router.post('/', isLoggedIn, validateCsrf, [
     return res.render('orders/create', {
       title: business ? `Order from ${business.business_name}` : 'Create Order',
       business: business || {},
-      creditBalance,
+      userCredits: creditBalance,
       errors: errors.array()
     });
   }
@@ -110,8 +110,8 @@ router.post('/', isLoggedIn, validateCsrf, [
     Order.create({
       user_id: req.user.id,
       business_id: parseInt(business_id, 10),
-      items_description,
-      special_notes: special_notes || null,
+      items_description: items,
+      special_notes: notes || null,
       credits_spent: amount
     });
 
@@ -140,7 +140,7 @@ router.post('/:id/status', isLoggedIn, isBusinessAccount, (req, res) => {
   }
 
   const { status } = req.body;
-  const validStatuses = ['pending', 'confirmed', 'in_progress', 'completed', 'cancelled'];
+  const validStatuses = ['pending', 'accepted', 'ready', 'completed', 'declined'];
 
   if (!validStatuses.includes(status)) {
     req.session.message = { type: 'error', text: 'Invalid order status.' };

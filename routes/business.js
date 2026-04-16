@@ -21,18 +21,21 @@ router.get('/dashboard', isLoggedIn, isBusinessAccount, (req, res) => {
   const allOrders = Order.findByBusinessId(business.id);
   const pendingOrders = allOrders.filter(o => o.status === 'pending');
   const otherOrders = allOrders.filter(o => o.status !== 'pending');
-  const incomingOrders = [...pendingOrders, ...otherOrders];
+  const orders = [...pendingOrders, ...otherOrders];
 
-  // Get credit info
-  const creditBalance = Credit.getBalance(req.user.id);
-  const creditHistory = Credit.getHistory(req.user.id);
+  // Build stats for the template
+  const stats = {
+    pendingCount: pendingOrders.length,
+    totalOrders: allOrders.length,
+    avgRating: business.avg_rating || 0,
+    reviewCount: business.review_count || 0
+  };
 
   res.render('business/dashboard', {
     title: 'Business Dashboard',
     business,
-    incomingOrders,
-    creditBalance,
-    creditHistory
+    orders,
+    stats
   });
 });
 
@@ -45,12 +48,18 @@ router.get('/orders', isLoggedIn, isBusinessAccount, (req, res) => {
     return res.redirect('/dashboard');
   }
 
-  const orders = Order.findByBusinessId(business.id);
+  let orders = Order.findByBusinessId(business.id);
+  const { status } = req.query;
+
+  if (status && status !== 'all') {
+    orders = orders.filter(o => o.status === status);
+  }
 
   res.render('business/orders', {
     title: 'Business Orders',
     business,
-    orders
+    orders,
+    currentStatus: status || 'all'
   });
 });
 
@@ -71,7 +80,7 @@ router.post('/orders/:id', isLoggedIn, isBusinessAccount, validateCsrf, (req, re
   }
 
   const { status } = req.body;
-  const validStatuses = ['pending', 'confirmed', 'in_progress', 'completed', 'cancelled'];
+  const validStatuses = ['pending', 'accepted', 'ready', 'completed', 'declined'];
 
   if (!validStatuses.includes(status)) {
     req.session.message = { type: 'error', text: 'Invalid order status.' };
