@@ -1,0 +1,725 @@
+/* ===================================================================
+   General View On This — Orders (pages/orders.css)
+   Marketplace-feel business grid, order forms, status tracking
+   =================================================================== */
+
+/* ---------------------------------------------------------------
+   BUSINESS GRID (Browse Businesses)
+   --------------------------------------------------------------- */
+.business-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+.business-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  overflow: hidden;
+  transition:
+    transform var(--transition-fast),
+    box-shadow var(--transition-base);
+  display: flex;
+  flex-direction: column;
+}
+
+.business-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Category-colored gradient header */
+.business-card-header-gradient {
+  height: 8px;
+  background: var(--gradient-warm);
+  flex-shrink: 0;
+}
+
+.business-card-header-gradient--food {
+  background: var(--gradient-warm);
+}
+
+.business-card-header-gradient--service {
+  background: var(--gradient-cool);
+}
+
+.business-card-header-gradient--retail {
+  background: var(--gradient-fresh);
+}
+
+.business-card-header-gradient--other {
+  background: linear-gradient(135deg, var(--color-text-muted) 0%, var(--color-border) 100%);
+}
+
+.business-card-image {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  background-color: var(--color-surface-2);
+}
+
+.business-card-image-placeholder {
+  width: 100%;
+  height: 180px;
+  background: linear-gradient(135deg, var(--color-surface-2) 0%, var(--color-border) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  color: var(--color-text-muted);
+}
+
+.business-card-content {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.business-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 0.5rem;
+}
+
+.business-card-name {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  line-height: 1.3;
+}
+
+.business-card-category {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background-color: var(--color-surface-2);
+  color: var(--color-text-secondary);
+}
+
+.business-card-rating {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 0.5rem;
+}
+
+.business-card-stars {
+  display: inline-flex;
+  align-items: center;
+  gap: 1px;
+  color: var(--color-yellow);
+  font-size: 0.875rem;
+}
+
+.business-card-rating-value {
+  font-weight: 700;
+  font-size: 0.9375rem;
+  color: var(--color-text-primary);
+}
+
+.business-card-rating-count {
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+}
+
+.business-card-description {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  line-height: 1.55;
+  margin-bottom: 0.75rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.business-card-address {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+  margin-bottom: 1.25rem;
+}
+
+.business-card-address::before {
+  content: '';
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%239E9890' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z'%3E%3C/path%3E%3Ccircle cx='12' cy='10' r='3'%3E%3C/circle%3E%3C/svg%3E");
+  background-size: contain;
+  background-repeat: no-repeat;
+  flex-shrink: 0;
+}
+
+.business-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.business-card-price {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+}
+
+/* Full-width Order Now button at bottom */
+.business-card-action {
+  display: block;
+  width: 100%;
+  text-align: center;
+  padding: 14px;
+  background: var(--color-accent);
+  color: #FFFFFF;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  border: none;
+  border-radius: 0 0 16px 16px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-decoration: none;
+  margin-top: auto;
+}
+
+.business-card-action:hover {
+  background: var(--color-accent-hover);
+}
+
+/* ---------------------------------------------------------------
+   BUSINESS FILTER BAR
+   --------------------------------------------------------------- */
+.filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+  flex-wrap: wrap;
+}
+
+.filter-bar .search-bar {
+  flex: 1;
+  min-width: 220px;
+}
+
+.filter-chips {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border: 1.5px solid var(--color-border);
+  border-radius: 9999px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  background: var(--color-surface);
+}
+
+.filter-chip:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  background: var(--color-accent-light);
+}
+
+.filter-chip.active {
+  background-color: var(--color-accent);
+  color: #FFFFFF;
+  border-color: var(--color-accent);
+  box-shadow: var(--shadow-colored);
+}
+
+/* ---------------------------------------------------------------
+   ORDER FORM
+   --------------------------------------------------------------- */
+.order-form {
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.order-form-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.order-form-business {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 1.25rem;
+  background-color: var(--color-surface-2);
+  border-radius: var(--radius-md);
+  margin-bottom: 2rem;
+}
+
+.order-form-business-logo {
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-md);
+  object-fit: cover;
+  background-color: var(--color-border);
+}
+
+.order-form-business-name {
+  font-weight: 700;
+  font-size: 1.0625rem;
+}
+
+.order-form-business-category {
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+}
+
+.order-item-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.order-item-name {
+  flex: 1;
+  font-weight: 500;
+  font-size: 0.9375rem;
+}
+
+.order-item-price {
+  font-weight: 700;
+  color: var(--color-accent);
+  white-space: nowrap;
+}
+
+.order-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem 0;
+  font-weight: 700;
+  font-size: 1.25rem;
+  border-top: 2px solid var(--color-text-primary);
+  margin-top: 0.5rem;
+}
+
+/* ---------------------------------------------------------------
+   ORDER CARDS (Order List) — Horizontal with left color bar
+   --------------------------------------------------------------- */
+.order-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.order-card {
+  display: flex;
+  gap: 0;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  overflow: hidden;
+  transition:
+    box-shadow var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.order-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.order-card-indicator {
+  width: 5px;
+  flex-shrink: 0;
+  align-self: stretch;
+}
+
+.order-card-indicator.pending {
+  background-color: var(--color-yellow);
+}
+
+.order-card-indicator.accepted {
+  background-color: var(--color-blue);
+}
+
+.order-card-indicator.ready {
+  background: var(--gradient-fresh);
+}
+
+.order-card-indicator.completed {
+  background-color: #1E5E3A;
+}
+
+.order-card-indicator.declined {
+  background-color: var(--color-red);
+}
+
+.order-card-content {
+  flex: 1;
+  min-width: 0;
+  padding: 1.25rem;
+}
+
+.order-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 0.5rem;
+}
+
+.order-card-title {
+  font-weight: 700;
+  font-size: 1.0625rem;
+  color: var(--color-text-primary);
+}
+
+.order-card-id {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+.order-card-details {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  line-height: 1.55;
+  margin-bottom: 0.75rem;
+}
+
+.order-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+}
+
+.order-card-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 1.25rem 1.5rem 1.25rem 0;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.order-card-credits {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.order-card-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 0.75rem;
+}
+
+/* ---------------------------------------------------------------
+   ORDER STATUS BADGES — Pill shape, distinct colors
+   --------------------------------------------------------------- */
+.order-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 14px;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  white-space: nowrap;
+  letter-spacing: 0.02em;
+}
+
+.order-status-pending {
+  background-color: rgba(212, 160, 23, 0.12);
+  color: #92700C;
+}
+
+.order-status-accepted {
+  background-color: var(--color-blue-light);
+  color: var(--color-blue);
+}
+
+.order-status-ready {
+  background-color: #ECFDF5;
+  color: #059669;
+}
+
+.order-status-completed {
+  background-color: #D1FAE5;
+  color: #065F46;
+}
+
+.order-status-declined {
+  background-color: #FEF2F2;
+  color: var(--color-red);
+}
+
+.order-status-cancelled {
+  background-color: var(--color-surface-2);
+  color: var(--color-text-muted);
+}
+
+/* ---------------------------------------------------------------
+   ORDER STATUS TRACKER — Horizontal steps
+   --------------------------------------------------------------- */
+.order-status-tracker {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 2rem 0;
+  position: relative;
+  padding: 0 1rem;
+}
+
+.order-status-tracker::before {
+  content: '';
+  position: absolute;
+  top: 16px;
+  left: 2.5rem;
+  right: 2.5rem;
+  height: 3px;
+  background: var(--color-border);
+  border-radius: 2px;
+  z-index: 0;
+}
+
+.order-status-tracker-progress {
+  position: absolute;
+  top: 16px;
+  left: 2.5rem;
+  height: 3px;
+  background: var(--gradient-fresh);
+  border-radius: 2px;
+  z-index: 1;
+  transition: width 600ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.order-tracker-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+  z-index: 2;
+}
+
+.order-tracker-circle {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 3px solid var(--color-border);
+  background: var(--color-surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  transition: all var(--transition-base);
+}
+
+.order-tracker-step.completed .order-tracker-circle {
+  border-color: var(--color-green);
+  background: var(--color-green);
+  color: #FFFFFF;
+}
+
+@keyframes statusPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(232, 98, 42, 0.3); }
+  50%      { box-shadow: 0 0 0 8px rgba(232, 98, 42, 0); }
+}
+
+.order-tracker-step.current .order-tracker-circle {
+  border-color: var(--color-accent);
+  background: var(--color-accent-light);
+  color: var(--color-accent);
+  animation: statusPulse 2s ease-in-out infinite;
+}
+
+.order-tracker-label {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-text-muted);
+  text-align: center;
+  max-width: 80px;
+}
+
+.order-tracker-step.completed .order-tracker-label {
+  color: var(--color-green);
+}
+
+.order-tracker-step.current .order-tracker-label {
+  color: var(--color-accent);
+}
+
+/* ---------------------------------------------------------------
+   ORDER DETAIL VIEW
+   --------------------------------------------------------------- */
+.order-detail {
+  max-width: 700px;
+}
+
+.order-detail-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.order-detail-items {
+  margin-bottom: 1.5rem;
+}
+
+.order-detail-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--color-border);
+  font-size: 0.9375rem;
+}
+
+.order-detail-item:last-child {
+  border-bottom: none;
+}
+
+/* ---------------------------------------------------------------
+   BUSINESS DETAIL PAGE
+   --------------------------------------------------------------- */
+.business-detail-hero {
+  width: 100%;
+  height: 260px;
+  object-fit: cover;
+  border-radius: 16px;
+  background-color: var(--color-surface-2);
+  margin-bottom: 1.75rem;
+}
+
+.business-detail-info {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.business-detail-name {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: 700;
+}
+
+.business-detail-meta {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 0.5rem;
+  color: var(--color-text-secondary);
+  font-size: 0.9375rem;
+  flex-wrap: wrap;
+}
+
+/* ---------------------------------------------------------------
+   RESPONSIVE
+   --------------------------------------------------------------- */
+@media (max-width: 768px) {
+  .business-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .filter-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filter-bar .search-bar {
+    min-width: unset;
+  }
+
+  .order-card {
+    flex-direction: column;
+  }
+
+  .order-card-indicator {
+    width: 100%;
+    height: 5px;
+    align-self: auto;
+  }
+
+  .order-card-right {
+    flex-direction: row;
+    padding: 0 1.25rem 1.25rem;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .order-card-header {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .order-detail-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .order-status-tracker {
+    padding: 0;
+  }
+
+  .order-tracker-label {
+    font-size: 0.625rem;
+    max-width: 60px;
+  }
+}
+
+@media (max-width: 480px) {
+  .business-card-image,
+  .business-card-image-placeholder {
+    height: 140px;
+  }
+
+  .order-card-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .order-tracker-circle {
+    width: 28px;
+    height: 28px;
+    font-size: 0.625rem;
+  }
+}

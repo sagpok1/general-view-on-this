@@ -1,0 +1,72 @@
+<%- include('../layout/header', { title: 'My Orders', extraCss: ['/css/pages/orders.css'] }) %>
+
+<section class="my-orders">
+  <div class="page-header">
+    <h1>My Orders</h1>
+  </div>
+
+  <% if (orders.length > 0) { %>
+    <div class="order-list">
+      <% orders.forEach(function(order) { %>
+        <div class="order-card-full">
+          <div class="order-card-top">
+            <div class="order-card-info">
+              <h2 class="order-business-name"><%= order.business_name %></h2>
+              <p class="order-items"><%= order.items %></p>
+              <div class="order-meta">
+                <span class="order-credits">
+                  <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                    <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/>
+                    <text x="8" y="11" text-anchor="middle" font-size="9" font-weight="bold" fill="currentColor">C</text>
+                  </svg>
+                  <%= order.credits_spent %> credits
+                </span>
+                <span class="order-date">
+                  <%= new Date(order.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) %>
+                </span>
+              </div>
+            </div>
+            <div class="order-card-status">
+              <span class="badge badge-<%= order.status %>"><%= order.status %></span>
+            </div>
+          </div>
+
+          <div class="order-tracker">
+            <%
+              var steps = ['pending', 'accepted', 'ready', 'completed'];
+              var currentIndex = steps.indexOf(order.status);
+            %>
+            <div class="tracker-steps">
+              <% steps.forEach(function(step, index) { %>
+                <div class="tracker-step <%= index <= currentIndex ? 'tracker-step-done' : '' %> <%= index === currentIndex ? 'tracker-step-current' : '' %>">
+                  <div class="tracker-dot">
+                    <% if (index < currentIndex) { %>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"/>
+                      </svg>
+                    <% } %>
+                  </div>
+                  <span class="tracker-label"><%= step.charAt(0).toUpperCase() + step.slice(1) %></span>
+                </div>
+                <% if (index < steps.length - 1) { %>
+                  <div class="tracker-line <%= index < currentIndex ? 'tracker-line-done' : '' %>"></div>
+                <% } %>
+              <% }); %>
+            </div>
+          </div>
+        </div>
+      <% }); %>
+    </div>
+  <% } else { %>
+    <div class="empty-state">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+        <path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/>
+      </svg>
+      <h3>No orders yet</h3>
+      <p>You haven't placed any orders. <a href="/orders">Browse businesses</a> to get started!</p>
+    </div>
+  <% } %>
+</section>
+
+<%- include('../layout/footer') %>

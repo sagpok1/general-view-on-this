@@ -1,0 +1,69 @@
+<%- include('../layout/header', { title: 'Surveys', extraCss: ['/css/pages/surveys.css'] }) %>
+
+<section class="page-section">
+  <div class="page-header">
+    <div class="page-header-content">
+      <h1 class="page-title">Surveys</h1>
+      <p class="page-subtitle">Complete surveys to earn credits</p>
+    </div>
+    <div class="credit-balance-display">
+      <span class="credit-balance-label">Your Balance</span>
+      <span class="credit-balance-amount"><%= currentUser.credit_balance %> Credits</span>
+    </div>
+  </div>
+
+  <div class="survey-section">
+    <h2 class="section-title">Available Surveys</h2>
+
+    <% if (availableSurveys && availableSurveys.length > 0) { %>
+      <div class="survey-grid">
+        <% availableSurveys.forEach(function(survey) { %>
+          <article class="survey-card">
+            <div class="survey-card-body">
+              <span class="badge badge-category"><%= survey.category %></span>
+              <h3 class="survey-card-title"><%= survey.title %></h3>
+              <p class="survey-card-description"><%= survey.description %></p>
+            </div>
+            <div class="survey-card-footer">
+              <a href="/surveys/<%= survey.id %>/take" class="btn btn-primary">Take Survey</a>
+            </div>
+          </article>
+        <% }); %>
+      </div>
+    <% } else { %>
+      <div class="empty-state">
+        <p class="empty-state-text">You've completed all available surveys!</p>
+      </div>
+    <% } %>
+  </div>
+
+  <div class="survey-section">
+    <h2 class="section-title">Completed Surveys</h2>
+
+    <% if (completedSurveys && completedSurveys.length > 0) { %>
+      <div class="survey-grid">
+        <% completedSurveys.forEach(function(survey) { %>
+          <article class="survey-card survey-card-completed">
+            <div class="survey-completed-overlay">
+              <span class="badge badge-completed">Completed</span>
+            </div>
+            <div class="survey-card-body">
+              <span class="badge badge-category"><%= survey.category %></span>
+              <h3 class="survey-card-title"><%= survey.title %></h3>
+              <p class="survey-card-description"><%= survey.description %></p>
+            </div>
+            <div class="survey-card-footer">
+              <span class="survey-completed-date">Completed on <%= new Date(survey.completed_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) %></span>
+            </div>
+          </article>
+        <% }); %>
+      </div>
+    <% } else { %>
+      <div class="empty-state">
+        <p class="empty-state-text">You haven't completed any surveys yet.</p>
+      </div>
+    <% } %>
+  </div>
+</section>
+
+<%- include('../layout/footer', { extraJs: ['/js/survey.js'] }) %>

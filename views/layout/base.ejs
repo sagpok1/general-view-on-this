@@ -1,0 +1,21 @@
+<%#
+  General View On This Base Layout Pattern
+  ==============================
+  EJS does not support layout inheritance. Instead, each page view uses:
+
+    <%- include('../layout/header', { title: 'Page Title' }) %>
+
+    <!-- page content here -->
+
+    <%- include('../layout/footer') %>
+
+  Available locals (set via res.locals on every request):
+    - currentUser    : user object or null
+    - isAuthenticated: boolean
+    - message        : { type: 'success'|'error'|'info', text: '...' } or null
+    - csrfToken      : string
+
+  Optional locals for header/footer:
+    - extraCss : array of CSS paths, e.g. ['/css/pages/auth.css']
+    - extraJs  : array of JS paths,  e.g. ['/js/search.js']
+%>

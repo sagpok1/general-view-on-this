@@ -1,0 +1,116 @@
+<%- include('../layout/header', { title: 'Place Order', extraCss: ['/css/pages/orders.css'] }) %>
+
+<section class="order-create">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a href="/orders">Orders</a>
+    <span class="breadcrumb-sep">/</span>
+    <a href="/orders/create/<%= business.id %>"><%= business.business_name %></a>
+    <span class="breadcrumb-sep">/</span>
+    <span class="breadcrumb-current">Place Order</span>
+  </nav>
+
+  <div class="order-create-layout">
+    <div class="business-info-card">
+      <h2 class="business-info-name"><%= business.business_name %></h2>
+      <span class="badge badge-category badge-<%= business.category %>"><%= business.category %></span>
+
+      <% if (business.address) { %>
+        <div class="business-info-detail">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/>
+            <circle cx="12" cy="10" r="3"/>
+          </svg>
+          <span><%= business.address %></span>
+        </div>
+      <% } %>
+
+      <% if (business.avg_rating) { %>
+        <div class="business-info-detail">
+          <div class="stars">
+            <% for (var i = 1; i <= 5; i++) { %>
+              <% if (i <= Math.round(business.avg_rating)) { %>
+                <svg class="star star-filled" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                </svg>
+              <% } else { %>
+                <svg class="star star-empty" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                </svg>
+              <% } %>
+            <% } %>
+          </div>
+          <span class="rating-text"><%= Number(business.avg_rating).toFixed(1) %></span>
+        </div>
+      <% } %>
+    </div>
+
+    <form action="/orders" method="POST" class="order-form">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <input type="hidden" name="business_id" value="<%= business.id %>">
+
+      <h2 class="form-title">Place Your Order</h2>
+
+      <div class="form-group">
+        <label for="items" class="form-label">What would you like to order?</label>
+        <textarea
+          id="items"
+          name="items"
+          class="form-input form-textarea"
+          rows="4"
+          placeholder="Describe what you'd like to order..."
+          required
+        ></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="notes" class="form-label">Special notes <span class="form-hint">(optional)</span></label>
+        <textarea
+          id="notes"
+          name="notes"
+          class="form-input form-textarea"
+          rows="2"
+          placeholder="Any dietary restrictions, preferences, or special requests..."
+        ></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="credits" class="form-label">Credits to spend</label>
+        <input
+          type="number"
+          id="credits"
+          name="credits_spent"
+          class="form-input"
+          min="1"
+          max="<%= userCredits %>"
+          value="1"
+          required
+        >
+        <div class="form-balance">
+          Your balance: <strong><%= userCredits %> credits</strong>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-block" id="submitOrder">
+        Place Order (<span id="creditDisplay">1</span> credit<span id="creditPlural">s</span>)
+      </button>
+    </form>
+  </div>
+</section>
+
+<%- include('../layout/footer') %>
+
+<script>
+(function() {
+  var creditsInput = document.getElementById('credits');
+  var creditDisplay = document.getElementById('creditDisplay');
+  var creditPlural = document.getElementById('creditPlural');
+
+  if (creditsInput) {
+    creditsInput.addEventListener('input', function() {
+      var val = parseInt(this.value, 10) || 0;
+      creditDisplay.textContent = val;
+      creditPlural.textContent = val === 1 ? '' : 's';
+    });
+  }
+})();
+</script>

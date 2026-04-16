@@ -1,0 +1,1517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="General View On This — Connect with your neighborhood. Order from local businesses, write reviews, and earn credits through surveys.">
+  <title>General View On This — Connect with Your Neighborhood</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <style>
+    /* ============================================================
+       GVOT Landing Page — Premium Community Platform Design
+       ============================================================ */
+
+    /* --- Base Resets for Landing --- */
+    .landing-page {
+      overflow-x: hidden;
+    }
+
+    /* --- Navigation --- */
+    .landing-nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(232, 227, 218, 0.5);
+      transition: box-shadow 0.3s ease;
+    }
+    .landing-nav.scrolled {
+      box-shadow: 0 1px 20px rgba(0, 0, 0, 0.06);
+    }
+    .landing-nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .landing-nav-brand {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--color-text-primary);
+      letter-spacing: -0.5px;
+      position: relative;
+      cursor: default;
+    }
+    .landing-nav-brand .brand-tooltip {
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 0;
+      background: var(--color-text-primary);
+      color: #fff;
+      font-family: var(--font-body);
+      font-size: 0.75rem;
+      font-weight: 500;
+      padding: 6px 12px;
+      border-radius: 6px;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(-4px);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+    .landing-nav-brand .brand-tooltip::before {
+      content: '';
+      position: absolute;
+      top: -4px;
+      left: 16px;
+      width: 8px;
+      height: 8px;
+      background: var(--color-text-primary);
+      transform: rotate(45deg);
+    }
+    .landing-nav-brand:hover .brand-tooltip {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .landing-nav-links {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+    }
+    .landing-nav-link {
+      font-size: 0.925rem;
+      font-weight: 500;
+      color: var(--color-text-secondary);
+      transition: color 0.2s ease;
+    }
+    .landing-nav-link:hover {
+      color: var(--color-text-primary);
+    }
+    .landing-nav-cta {
+      display: inline-flex;
+      align-items: center;
+      padding: 10px 24px;
+      background: var(--color-accent);
+      color: #fff;
+      font-size: 0.9rem;
+      font-weight: 600;
+      border-radius: 100px;
+      transition: background 0.2s ease, transform 0.15s ease;
+    }
+    .landing-nav-cta:hover {
+      background: var(--color-accent-hover);
+      transform: translateY(-1px);
+    }
+    .landing-nav-mobile {
+      display: none;
+      flex-direction: column;
+      gap: 4px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+    }
+    .landing-nav-mobile span {
+      display: block;
+      width: 22px;
+      height: 2px;
+      background: var(--color-text-primary);
+      border-radius: 2px;
+      transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+
+    /* --- Hero Section --- */
+    .landing-hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 120px 2rem 80px;
+      overflow: hidden;
+      background: #FAFAF7;
+    }
+
+    /* Animated gradient mesh background */
+    .hero-mesh {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background:
+        radial-gradient(ellipse 80% 50% at 20% 40%, rgba(232, 98, 42, 0.08) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 60% at 80% 30%, rgba(43, 94, 167, 0.06) 0%, transparent 55%),
+        radial-gradient(ellipse 70% 50% at 50% 80%, rgba(45, 122, 79, 0.05) 0%, transparent 50%),
+        radial-gradient(ellipse 50% 40% at 70% 70%, rgba(212, 160, 23, 0.04) 0%, transparent 45%);
+      animation: meshShift 18s ease-in-out infinite;
+    }
+    @keyframes meshShift {
+      0%, 100% { transform: scale(1) translate(0, 0); }
+      33% { transform: scale(1.05) translate(-1%, 1%); }
+      66% { transform: scale(1.02) translate(1%, -0.5%); }
+    }
+
+    /* Floating decorative shapes */
+    .hero-shape {
+      position: absolute;
+      border-radius: 50%;
+      z-index: 0;
+      opacity: 0.5;
+    }
+    .hero-shape-1 {
+      width: 400px;
+      height: 400px;
+      top: -100px;
+      right: -80px;
+      background: radial-gradient(circle, rgba(232, 98, 42, 0.07) 0%, transparent 70%);
+      animation: floatShape1 22s ease-in-out infinite;
+    }
+    .hero-shape-2 {
+      width: 300px;
+      height: 300px;
+      bottom: -50px;
+      left: -60px;
+      background: radial-gradient(circle, rgba(43, 94, 167, 0.06) 0%, transparent 70%);
+      animation: floatShape2 26s ease-in-out infinite;
+    }
+    .hero-shape-3 {
+      width: 200px;
+      height: 200px;
+      top: 30%;
+      left: 10%;
+      background: radial-gradient(circle, rgba(45, 122, 79, 0.05) 0%, transparent 70%);
+      animation: floatShape3 20s ease-in-out infinite;
+    }
+    .hero-shape-4 {
+      width: 150px;
+      height: 150px;
+      bottom: 25%;
+      right: 12%;
+      background: radial-gradient(circle, rgba(212, 160, 23, 0.06) 0%, transparent 70%);
+      animation: floatShape1 24s ease-in-out infinite reverse;
+    }
+    @keyframes floatShape1 {
+      0%, 100% { transform: translate(0, 0) rotate(0deg); }
+      50% { transform: translate(-20px, 15px) rotate(5deg); }
+    }
+    @keyframes floatShape2 {
+      0%, 100% { transform: translate(0, 0) rotate(0deg); }
+      50% { transform: translate(15px, -20px) rotate(-3deg); }
+    }
+    @keyframes floatShape3 {
+      0%, 100% { transform: translate(0, 0); }
+      50% { transform: translate(10px, 10px); }
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      max-width: 780px;
+    }
+    .hero-tagline {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 20px;
+      background: rgba(232, 98, 42, 0.08);
+      border: 1px solid rgba(232, 98, 42, 0.15);
+      border-radius: 100px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--color-accent);
+      margin-bottom: 2rem;
+      animation: fadeInUp 0.8s ease forwards;
+    }
+    .hero-tagline svg {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+    }
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(2.75rem, 7vw, 4.5rem);
+      font-weight: 700;
+      color: var(--color-text-primary);
+      line-height: 1.08;
+      margin-bottom: 1.5rem;
+      letter-spacing: -1.5px;
+      animation: fadeInUp 0.8s ease 0.1s forwards;
+      opacity: 0;
+    }
+    .hero-title .hero-highlight {
+      background: linear-gradient(135deg, var(--color-accent) 0%, #d45520 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero-subtitle {
+      font-size: clamp(1.1rem, 2.5vw, 1.3rem);
+      color: var(--color-text-secondary);
+      line-height: 1.7;
+      margin-bottom: 2.5rem;
+      max-width: 580px;
+      margin-left: auto;
+      margin-right: auto;
+      animation: fadeInUp 0.8s ease 0.2s forwards;
+      opacity: 0;
+    }
+    .hero-ctas {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 3rem;
+      animation: fadeInUp 0.8s ease 0.3s forwards;
+      opacity: 0;
+    }
+    .hero-btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 16px 36px;
+      background: var(--color-accent);
+      color: #fff;
+      font-size: 1.05rem;
+      font-weight: 600;
+      border-radius: 100px;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 20px rgba(232, 98, 42, 0.3);
+    }
+    .hero-btn-primary:hover {
+      background: var(--color-accent-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 28px rgba(232, 98, 42, 0.4);
+    }
+    .hero-btn-primary svg {
+      width: 18px;
+      height: 18px;
+      transition: transform 0.2s ease;
+    }
+    .hero-btn-primary:hover svg {
+      transform: translateX(3px);
+    }
+    .hero-btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      padding: 16px 36px;
+      background: var(--color-surface);
+      color: var(--color-text-primary);
+      font-size: 1.05rem;
+      font-weight: 600;
+      border-radius: 100px;
+      border: 1.5px solid var(--color-border);
+      transition: all 0.2s ease;
+    }
+    .hero-btn-secondary:hover {
+      border-color: var(--color-text-muted);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+    }
+    .hero-social-proof {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      animation: fadeInUp 0.8s ease 0.4s forwards;
+      opacity: 0;
+    }
+    .hero-avatars {
+      display: flex;
+    }
+    .hero-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 2.5px solid #fff;
+      margin-left: -10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .hero-avatar:first-child {
+      margin-left: 0;
+    }
+    .hero-avatar-1 { background: var(--color-accent); }
+    .hero-avatar-2 { background: var(--color-blue); }
+    .hero-avatar-3 { background: var(--color-green); }
+    .hero-avatar-4 { background: #8B5CF6; }
+    .hero-social-proof-text {
+      font-size: 0.9rem;
+      color: var(--color-text-secondary);
+    }
+    .hero-social-proof-text strong {
+      color: var(--color-text-primary);
+      font-weight: 600;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* --- Stats Section --- */
+    .landing-stats {
+      padding: 5rem 2rem;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    .landing-stats::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 20% 50%, rgba(232, 98, 42, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 50%, rgba(43, 94, 167, 0.08) 0%, transparent 50%);
+      pointer-events: none;
+    }
+    .stats-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+    }
+    .stat-card {
+      text-align: center;
+      padding: 2rem 1rem;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      transition: background 0.3s ease;
+    }
+    .stat-card:hover {
+      background: rgba(255, 255, 255, 0.07);
+    }
+    .stat-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      margin-bottom: 1.25rem;
+    }
+    .stat-icon-businesses {
+      background: rgba(232, 98, 42, 0.15);
+    }
+    .stat-icon-businesses svg { color: #E8622A; }
+    .stat-icon-surveys {
+      background: rgba(45, 122, 79, 0.15);
+    }
+    .stat-icon-surveys svg { color: #2D7A4F; }
+    .stat-icon-orders {
+      background: rgba(43, 94, 167, 0.15);
+    }
+    .stat-icon-orders svg { color: #2B5EA7; }
+    .stat-number {
+      font-family: var(--font-display);
+      font-size: clamp(2.5rem, 5vw, 3.5rem);
+      font-weight: 700;
+      color: #ffffff;
+      line-height: 1;
+      margin-bottom: 0.5rem;
+    }
+    .stat-number .counter {
+      display: inline-block;
+    }
+    .stat-suffix {
+      color: rgba(232, 98, 42, 0.9);
+    }
+    .stat-label {
+      font-size: 0.95rem;
+      color: rgba(255, 255, 255, 0.55);
+      font-weight: 500;
+      letter-spacing: 0.5px;
+    }
+
+    /* --- How It Works Section --- */
+    .landing-how {
+      padding: 6rem 2rem;
+      background: #ffffff;
+    }
+    .section-container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .section-header {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+    .section-label {
+      display: inline-block;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      color: var(--color-accent);
+      margin-bottom: 1rem;
+    }
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 4vw, 2.75rem);
+      font-weight: 700;
+      color: var(--color-text-primary);
+      margin-bottom: 1rem;
+      letter-spacing: -0.5px;
+    }
+    .section-desc {
+      font-size: 1.1rem;
+      color: var(--color-text-secondary);
+      max-width: 520px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 3rem;
+      position: relative;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    /* Dotted connecting line */
+    .steps-grid::before {
+      content: '';
+      position: absolute;
+      top: 75px;
+      left: calc(16.66% + 30px);
+      right: calc(16.66% + 30px);
+      height: 2px;
+      background-image: repeating-linear-gradient(
+        to right,
+        var(--color-border) 0px,
+        var(--color-border) 8px,
+        transparent 8px,
+        transparent 16px
+      );
+    }
+    .step-card {
+      text-align: center;
+      position: relative;
+    }
+    .step-deco-number {
+      font-family: var(--font-display);
+      font-size: 5rem;
+      font-weight: 700;
+      color: rgba(0, 0, 0, 0.03);
+      line-height: 1;
+      position: absolute;
+      top: -15px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 0;
+      pointer-events: none;
+    }
+    .step-icon-wrap {
+      width: 88px;
+      height: 88px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+      position: relative;
+      z-index: 1;
+      transition: transform 0.3s ease;
+    }
+    .step-card:hover .step-icon-wrap {
+      transform: scale(1.05);
+    }
+    .step-icon-1 {
+      background: linear-gradient(135deg, #FDF0EB 0%, #fce4d8 100%);
+      color: var(--color-accent);
+    }
+    .step-icon-2 {
+      background: linear-gradient(135deg, #EBF0FA 0%, #d8e4f8 100%);
+      color: var(--color-blue);
+    }
+    .step-icon-3 {
+      background: linear-gradient(135deg, #EBF5F0 0%, #d4eddf 100%);
+      color: var(--color-green);
+    }
+    .step-label {
+      font-family: var(--font-body);
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--color-text-muted);
+      margin-bottom: 0.75rem;
+    }
+    .step-card h3 {
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--color-text-primary);
+      margin-bottom: 0.75rem;
+    }
+    .step-card p {
+      font-size: 0.95rem;
+      color: var(--color-text-secondary);
+      line-height: 1.7;
+      max-width: 280px;
+      margin: 0 auto;
+    }
+
+    /* --- Features Section --- */
+    .landing-features {
+      padding: 6rem 2rem;
+      background: var(--color-surface-2);
+    }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .feature-card {
+      background: #fff;
+      border-radius: 20px;
+      padding: 2.5rem 2rem;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      border: 1px solid rgba(232, 227, 218, 0.5);
+    }
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+    }
+    .feature-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+    }
+    .feature-card-orders::before {
+      background: linear-gradient(90deg, #E8622A, #f4845f);
+    }
+    .feature-card-reviews::before {
+      background: linear-gradient(90deg, #2B5EA7, #5b8fd9);
+    }
+    .feature-card-surveys::before {
+      background: linear-gradient(90deg, #2D7A4F, #4dab6f);
+    }
+    .feature-icon-circle {
+      width: 60px;
+      height: 60px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+    }
+    .feature-icon-orange {
+      background: var(--color-accent-light);
+    }
+    .feature-icon-blue {
+      background: var(--color-blue-light);
+    }
+    .feature-icon-green {
+      background: var(--color-green-light);
+    }
+    .feature-card h3 {
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--color-text-primary);
+      margin-bottom: 0.75rem;
+    }
+    .feature-card p {
+      font-size: 0.95rem;
+      color: var(--color-text-secondary);
+      line-height: 1.7;
+      margin-bottom: 1.25rem;
+    }
+    .feature-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--color-accent);
+      transition: gap 0.2s ease;
+    }
+    .feature-link:hover {
+      gap: 10px;
+    }
+    .feature-link svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* --- Social Proof / Trust Section --- */
+    .landing-trust {
+      padding: 6rem 2rem;
+      background: #ffffff;
+    }
+    .trust-content {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+      margin-bottom: 3.5rem;
+    }
+    .testimonial-card {
+      background: var(--color-bg);
+      border: 1px solid var(--color-border);
+      border-radius: 20px;
+      padding: 2rem;
+      position: relative;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .testimonial-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+    }
+    .testimonial-quote-icon {
+      color: var(--color-accent);
+      opacity: 0.2;
+      margin-bottom: 1rem;
+    }
+    .testimonial-text {
+      font-size: 1rem;
+      color: var(--color-text-primary);
+      line-height: 1.7;
+      margin-bottom: 1.5rem;
+      font-style: italic;
+    }
+    .testimonial-author {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .testimonial-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.875rem;
+      color: #fff;
+    }
+    .testimonial-avatar-1 { background: var(--color-accent); }
+    .testimonial-avatar-2 { background: var(--color-blue); }
+    .testimonial-avatar-3 { background: var(--color-green); }
+    .testimonial-name {
+      font-weight: 600;
+      font-size: 0.925rem;
+      color: var(--color-text-primary);
+    }
+    .testimonial-role {
+      font-size: 0.8rem;
+      color: var(--color-text-muted);
+    }
+
+    .trust-banner {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      padding: 1.75rem 2.5rem;
+      background: linear-gradient(135deg, #EBF5F0 0%, #e0f0e8 100%);
+      border: 1px solid rgba(45, 122, 79, 0.15);
+      border-radius: 16px;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    .trust-shield {
+      flex-shrink: 0;
+    }
+    .trust-banner-text h4 {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      color: var(--color-text-primary);
+      margin-bottom: 0.25rem;
+    }
+    .trust-banner-text p {
+      font-size: 0.9rem;
+      color: var(--color-text-secondary);
+      line-height: 1.5;
+    }
+
+    /* --- CTA Section --- */
+    .landing-cta {
+      padding: 6rem 2rem;
+      background: linear-gradient(135deg, #E8622A 0%, #d45520 40%, #c4472a 100%);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .landing-cta::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.06) 0%, transparent 50%);
+      pointer-events: none;
+    }
+    .cta-content {
+      position: relative;
+      z-index: 1;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .landing-cta h2 {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 4vw, 2.75rem);
+      color: #fff;
+      margin-bottom: 1rem;
+      letter-spacing: -0.5px;
+    }
+    .landing-cta p {
+      color: rgba(255, 255, 255, 0.85);
+      font-size: 1.15rem;
+      margin-bottom: 2.5rem;
+      line-height: 1.6;
+    }
+    .cta-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 18px 44px;
+      background: #fff;
+      color: var(--color-accent);
+      font-size: 1.1rem;
+      font-weight: 700;
+      border-radius: 100px;
+      transition: all 0.25s ease;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    }
+    .cta-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    }
+    .cta-btn svg {
+      width: 20px;
+      height: 20px;
+      transition: transform 0.2s ease;
+    }
+    .cta-btn:hover svg {
+      transform: translateX(3px);
+    }
+
+    /* --- Footer --- */
+    .landing-footer {
+      padding: 4rem 2rem 2rem;
+      background: #1a1a2e;
+      color: rgba(255, 255, 255, 0.7);
+    }
+    .footer-container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1.2fr;
+      gap: 3rem;
+      margin-bottom: 3rem;
+    }
+    .footer-brand-name {
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 0.75rem;
+    }
+    .footer-brand-desc {
+      font-size: 0.9rem;
+      line-height: 1.7;
+      color: rgba(255, 255, 255, 0.5);
+      margin-bottom: 1.5rem;
+      max-width: 280px;
+    }
+    .footer-socials {
+      display: flex;
+      gap: 12px;
+    }
+    .footer-social-link {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(255, 255, 255, 0.5);
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+    .footer-social-link:hover {
+      background: rgba(255, 255, 255, 0.15);
+      color: #fff;
+    }
+    .footer-col-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: rgba(255, 255, 255, 0.4);
+      margin-bottom: 1.25rem;
+    }
+    .footer-links {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .footer-link {
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.6);
+      transition: color 0.2s ease;
+    }
+    .footer-link:hover {
+      color: #fff;
+    }
+    .footer-contact-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 0.75rem;
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.55);
+    }
+    .footer-contact-item svg {
+      flex-shrink: 0;
+      margin-top: 2px;
+      color: rgba(255, 255, 255, 0.35);
+    }
+    .footer-bottom {
+      padding-top: 2rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .footer-copyright {
+      font-size: 0.825rem;
+      color: rgba(255, 255, 255, 0.35);
+    }
+    .footer-bottom-links {
+      display: flex;
+      gap: 1.5rem;
+    }
+    .footer-bottom-link {
+      font-size: 0.825rem;
+      color: rgba(255, 255, 255, 0.35);
+      transition: color 0.2s ease;
+    }
+    .footer-bottom-link:hover {
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    /* --- Scroll Animation --- */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ============================================================
+       Responsive Design
+       ============================================================ */
+
+    /* Tablet landscape / small desktop */
+    @media (max-width: 1024px) {
+      .features-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .testimonials-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .testimonials-grid .testimonial-card:last-child {
+        grid-column: 1 / -1;
+        max-width: 480px;
+        margin: 0 auto;
+      }
+      .footer-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 2.5rem;
+      }
+    }
+
+    /* Tablet portrait */
+    @media (max-width: 768px) {
+      .landing-nav-links {
+        display: none;
+      }
+      .landing-nav-mobile {
+        display: flex;
+      }
+      .landing-nav-links.open {
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        top: 72px;
+        left: 0;
+        right: 0;
+        background: #fff;
+        padding: 1.5rem 2rem;
+        border-bottom: 1px solid var(--color-border);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+        gap: 1rem;
+        align-items: stretch;
+      }
+      .landing-nav-links.open .landing-nav-cta {
+        text-align: center;
+        justify-content: center;
+      }
+
+      .landing-hero {
+        min-height: auto;
+        padding: 120px 1.5rem 60px;
+      }
+      .hero-title {
+        letter-spacing: -0.5px;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 1.25rem;
+      }
+
+      .steps-grid {
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+        max-width: 400px;
+        margin: 0 auto;
+      }
+      .steps-grid::before {
+        display: none;
+      }
+      .step-deco-number {
+        font-size: 4rem;
+      }
+
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .testimonials-grid {
+        grid-template-columns: 1fr;
+      }
+      .testimonials-grid .testimonial-card:last-child {
+        max-width: none;
+      }
+
+      .trust-banner {
+        flex-direction: column;
+        text-align: center;
+        padding: 2rem 1.5rem;
+      }
+
+      .hero-ctas {
+        flex-direction: column;
+        align-items: center;
+      }
+      .hero-btn-primary,
+      .hero-btn-secondary {
+        width: 100%;
+        max-width: 320px;
+        justify-content: center;
+      }
+
+      .footer-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+      .footer-bottom {
+        flex-direction: column;
+        text-align: center;
+      }
+      .footer-bottom-links {
+        justify-content: center;
+      }
+    }
+
+    /* Mobile */
+    @media (max-width: 375px) {
+      .landing-nav-inner {
+        padding: 0 1rem;
+      }
+      .landing-hero {
+        padding: 100px 1rem 48px;
+      }
+      .landing-stats,
+      .landing-how,
+      .landing-features,
+      .landing-trust,
+      .landing-cta {
+        padding-left: 1rem;
+        padding-right: 1rem;
+      }
+      .stat-card {
+        padding: 1.5rem 1rem;
+      }
+      .feature-card {
+        padding: 2rem 1.5rem;
+      }
+      .testimonial-card {
+        padding: 1.5rem;
+      }
+      .footer-container {
+        padding: 0;
+      }
+    }
+  </style>
+</head>
+<body class="landing-page">
+
+  <!-- ============================================================
+       Navigation
+       ============================================================ -->
+  <nav class="landing-nav" id="landingNav">
+    <div class="landing-nav-inner">
+      <div class="landing-nav-brand">
+        GVOT
+        <span class="brand-tooltip">General View On This</span>
+      </div>
+      <button class="landing-nav-mobile" aria-label="Toggle navigation" id="navToggle">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="landing-nav-links" id="navLinks">
+        <a href="/reviews" class="landing-nav-link">Browse Businesses</a>
+        <a href="/auth/login" class="landing-nav-link">Log In</a>
+        <a href="/auth/register" class="landing-nav-cta">Join Free</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ============================================================
+       Hero Section
+       ============================================================ -->
+  <section class="landing-hero">
+    <div class="hero-mesh"></div>
+    <div class="hero-shape hero-shape-1"></div>
+    <div class="hero-shape hero-shape-2"></div>
+    <div class="hero-shape hero-shape-3"></div>
+    <div class="hero-shape hero-shape-4"></div>
+
+    <div class="hero-content">
+      <div class="hero-tagline">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+        Your neighborhood, connected
+      </div>
+
+      <h1 class="hero-title">
+        Discover & support your <span class="hero-highlight">local community</span>
+      </h1>
+
+      <p class="hero-subtitle">
+        Earn credits by sharing your opinions. Spend them at local businesses.
+        Write honest reviews. Build real community trust.
+      </p>
+
+      <div class="hero-ctas">
+        <a href="/auth/register" class="hero-btn-primary">
+          Get Started Free
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+        <a href="/reviews" class="hero-btn-secondary">Browse Businesses</a>
+      </div>
+
+      <div class="hero-social-proof">
+        <div class="hero-avatars">
+          <div class="hero-avatar hero-avatar-1">S</div>
+          <div class="hero-avatar hero-avatar-2">M</div>
+          <div class="hero-avatar hero-avatar-3">A</div>
+          <div class="hero-avatar hero-avatar-4">R</div>
+        </div>
+        <span class="hero-social-proof-text">Join <strong><%= (stats.totalBusinesses + stats.totalOrders + 50) %>+</strong> community members</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       Stats Section
+       ============================================================ -->
+  <section class="landing-stats">
+    <div class="stats-container">
+      <div class="stats-grid">
+        <div class="stat-card reveal">
+          <div class="stat-icon stat-icon-businesses">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4v2h16V4zm1 10v-2l-1-5H4l-1 5v2h1v6h10v-6h4v6h2v-6h1zm-9 4H6v-4h6v4z"/></svg>
+          </div>
+          <div class="stat-number">
+            <span class="counter" data-target="<%= stats.totalBusinesses %>">0</span><span class="stat-suffix">+</span>
+          </div>
+          <div class="stat-label">Local Businesses</div>
+        </div>
+        <div class="stat-card reveal">
+          <div class="stat-icon stat-icon-surveys">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
+          </div>
+          <div class="stat-number">
+            <span class="counter" data-target="<%= stats.totalSurveys %>">0</span><span class="stat-suffix">+</span>
+          </div>
+          <div class="stat-label">Surveys Available</div>
+        </div>
+        <div class="stat-card reveal">
+          <div class="stat-icon stat-icon-orders">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M18 6h-2c0-2.21-1.79-4-4-4S8 3.79 8 6H6c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-6-2c1.1 0 2 .9 2 2h-4c0-1.1.9-2 2-2zm6 16H6V8h2v2c0 .55.45 1 1 1s1-.45 1-1V8h4v2c0 .55.45 1 1 1s1-.45 1-1V8h2v12z"/></svg>
+          </div>
+          <div class="stat-number">
+            <span class="counter" data-target="<%= stats.totalOrders %>">0</span><span class="stat-suffix">+</span>
+          </div>
+          <div class="stat-label">Orders Placed</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       How It Works
+       ============================================================ -->
+  <section class="landing-how">
+    <div class="section-container">
+      <div class="section-header reveal">
+        <div class="section-label">How It Works</div>
+        <h2 class="section-title">Three Steps to Community Connection</h2>
+        <p class="section-desc">Start supporting local businesses and earning credits in minutes. No credit card needed.</p>
+      </div>
+
+      <div class="steps-grid">
+        <div class="step-card reveal">
+          <div class="step-deco-number">01</div>
+          <div class="step-icon-wrap step-icon-1">
+            <svg viewBox="0 0 24 24" width="38" height="38" fill="currentColor"><path d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+          </div>
+          <div class="step-label">Step 01</div>
+          <h3>Create Your Account</h3>
+          <p>Sign up in seconds as a community member or local business owner. Always free.</p>
+        </div>
+
+        <div class="step-card reveal">
+          <div class="step-deco-number">02</div>
+          <div class="step-icon-wrap step-icon-2">
+            <svg viewBox="0 0 24 24" width="38" height="38" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z"/></svg>
+          </div>
+          <div class="step-label">Step 02</div>
+          <h3>Share Your Opinions</h3>
+          <p>Complete quick community surveys on local topics and earn 1 credit per survey.</p>
+        </div>
+
+        <div class="step-card reveal">
+          <div class="step-deco-number">03</div>
+          <div class="step-icon-wrap step-icon-3">
+            <svg viewBox="0 0 24 24" width="38" height="38" fill="currentColor"><path d="M18 6h-2c0-2.21-1.79-4-4-4S8 3.79 8 6H6c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-6-2c1.1 0 2 .9 2 2h-4c0-1.1.9-2 2-2zm6 16H6V8h2v2c0 .55.45 1 1 1s1-.45 1-1V8h4v2c0 .55.45 1 1 1s1-.45 1-1V8h2v12z"/></svg>
+          </div>
+          <div class="step-label">Step 03</div>
+          <h3>Order from Locals</h3>
+          <p>Spend your credits on pickup orders at local businesses. Support your neighborhood.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       Features
+       ============================================================ -->
+  <section class="landing-features">
+    <div class="section-container">
+      <div class="section-header reveal">
+        <div class="section-label">Features</div>
+        <h2 class="section-title">Everything Your Community Needs</h2>
+        <p class="section-desc">Built for neighborhoods that want to stay connected and support each other.</p>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-card feature-card-orders reveal">
+          <div class="feature-icon-circle feature-icon-orange">
+            <svg viewBox="0 0 24 24" width="28" height="28" fill="#E8622A"><path d="M18 6h-2c0-2.21-1.79-4-4-4S8 3.79 8 6H6c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-6-2c1.1 0 2 .9 2 2h-4c0-1.1.9-2 2-2zm6 16H6V8h2v2c0 .55.45 1 1 1s1-.45 1-1V8h4v2c0 .55.45 1 1 1s1-.45 1-1V8h2v12z"/></svg>
+          </div>
+          <h3>Credit-Based Orders</h3>
+          <p>No money changes hands. Earn credits through surveys and spend them on pickup orders from local businesses.</p>
+          <a href="/auth/register" class="feature-link">
+            Start earning
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+
+        <div class="feature-card feature-card-reviews reveal">
+          <div class="feature-icon-circle feature-icon-blue">
+            <svg viewBox="0 0 24 24" width="28" height="28" fill="#2B5EA7"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          </div>
+          <h3>Honest Reviews</h3>
+          <p>Reviews can never be deleted. Radical transparency means businesses earn trust through quality, not censorship.</p>
+          <a href="/reviews" class="feature-link">
+            Browse reviews
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+
+        <div class="feature-card feature-card-surveys reveal">
+          <div class="feature-icon-circle feature-icon-green">
+            <svg viewBox="0 0 24 24" width="28" height="28" fill="#2D7A4F"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
+          </div>
+          <h3>Community Surveys</h3>
+          <p>Share opinions on local topics like restaurants, events, and transportation. Each survey earns you 1 credit.</p>
+          <a href="/auth/register" class="feature-link">
+            Take a survey
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       Social Proof / Trust
+       ============================================================ -->
+  <section class="landing-trust">
+    <div class="trust-content">
+      <div class="section-header reveal">
+        <div class="section-label">Community Voices</div>
+        <h2 class="section-title">Trusted by Neighbors Like You</h2>
+        <p class="section-desc">Real people. Real opinions. Real community impact.</p>
+      </div>
+
+      <div class="testimonials-grid">
+        <div class="testimonial-card reveal">
+          <div class="testimonial-quote-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><path d="M6 17h3l2-4V7H5v6h3zm8 0h3l2-4V7h-6v6h3z"/></svg>
+          </div>
+          <p class="testimonial-text">I love that the reviews here feel genuine. No censorship, no filtered feedback. It helped me find the best coffee shop in my area.</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar testimonial-avatar-1">SP</div>
+            <div>
+              <div class="testimonial-name">Sarah P.</div>
+              <div class="testimonial-role">Community Member</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card reveal">
+          <div class="testimonial-quote-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><path d="M6 17h3l2-4V7H5v6h3zm8 0h3l2-4V7h-6v6h3z"/></svg>
+          </div>
+          <p class="testimonial-text">As a small business owner, GVOT gives me direct access to what my community actually wants. The survey credits system is brilliant.</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar testimonial-avatar-2">MK</div>
+            <div>
+              <div class="testimonial-name">Marcus K.</div>
+              <div class="testimonial-role">Local Business Owner</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card reveal">
+          <div class="testimonial-quote-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><path d="M6 17h3l2-4V7H5v6h3zm8 0h3l2-4V7h-6v6h3z"/></svg>
+          </div>
+          <p class="testimonial-text">Completing surveys takes just minutes, and the credits add up fast. I've already placed three orders at places I wouldn't have tried otherwise.</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar testimonial-avatar-3">AL</div>
+            <div>
+              <div class="testimonial-name">Amira L.</div>
+              <div class="testimonial-role">Active Contributor</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="trust-banner reveal">
+        <div class="trust-shield">
+          <svg width="44" height="44" viewBox="0 0 24 24" fill="#2D7A4F"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+        </div>
+        <div class="trust-banner-text">
+          <h4>Radical Transparency Guarantee</h4>
+          <p>Reviews on GVOT can never be deleted. Businesses and customers build real trust through honest, permanent feedback.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       CTA Section
+       ============================================================ -->
+  <section class="landing-cta">
+    <div class="cta-content reveal">
+      <h2>Ready to Support Your Community?</h2>
+      <p>Join your neighbors on GVOT. It's free, it's local, and it makes a real difference.</p>
+      <a href="/auth/register" class="cta-btn">
+        Create Your Free Account
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       Footer
+       ============================================================ -->
+  <footer class="landing-footer">
+    <div class="footer-container">
+      <div class="footer-grid">
+        <!-- Brand Column -->
+        <div>
+          <div class="footer-brand-name">General View On This</div>
+          <p class="footer-brand-desc">Connecting neighbors with local businesses through honest reviews, community surveys, and a credit-based ordering system.</p>
+          <div class="footer-socials">
+            <a href="#" class="footer-social-link" aria-label="Twitter">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M22.46 6c-.77.35-1.6.58-2.46.69.88-.53 1.56-1.37 1.88-2.38-.83.5-1.75.85-2.72 1.05C18.37 4.5 17.26 4 16 4c-2.35 0-4.27 1.92-4.27 4.29 0 .34.04.67.11.98C8.28 9.09 5.11 7.38 3 4.79c-.37.63-.58 1.37-.58 2.15 0 1.49.75 2.81 1.91 3.56-.71 0-1.37-.2-1.95-.5v.03c0 2.08 1.48 3.82 3.44 4.21a4.22 4.22 0 0 1-1.93.07 4.28 4.28 0 0 0 4 2.98 8.521 8.521 0 0 1-5.33 1.84c-.34 0-.68-.02-1.02-.06C3.44 20.29 5.7 21 8.12 21 16 21 20.33 14.46 20.33 8.79c0-.19 0-.37-.01-.56.84-.6 1.56-1.36 2.14-2.23z"/></svg>
+            </a>
+            <a href="#" class="footer-social-link" aria-label="Instagram">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+            </a>
+            <a href="#" class="footer-social-link" aria-label="Facebook">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- Quick Links -->
+        <div>
+          <div class="footer-col-title">Quick Links</div>
+          <div class="footer-links">
+            <a href="/reviews" class="footer-link">Browse Businesses</a>
+            <a href="/auth/register" class="footer-link">Create Account</a>
+            <a href="/auth/login" class="footer-link">Sign In</a>
+          </div>
+        </div>
+
+        <!-- Platform -->
+        <div>
+          <div class="footer-col-title">Platform</div>
+          <div class="footer-links">
+            <a href="#" class="footer-link">How It Works</a>
+            <a href="#" class="footer-link">For Businesses</a>
+            <a href="#" class="footer-link">Community Guidelines</a>
+          </div>
+        </div>
+
+        <!-- Contact -->
+        <div>
+          <div class="footer-col-title">Contact</div>
+          <div class="footer-contact-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+            <span>hello@gvot.community</span>
+          </div>
+          <div class="footer-contact-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+            <span>Built for communities everywhere</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div class="footer-copyright">&copy; <%= new Date().getFullYear() %> General View On This. All rights reserved.</div>
+        <div class="footer-bottom-links">
+          <a href="#" class="footer-bottom-link">Privacy Policy</a>
+          <a href="#" class="footer-bottom-link">Terms of Service</a>
+          <a href="#" class="footer-bottom-link">Accessibility</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============================================================
+       Scripts
+       ============================================================ -->
+  <script src="/js/main.js"></script>
+  <script>
+    (function() {
+      // --- Nav scroll effect ---
+      var nav = document.getElementById('landingNav');
+      window.addEventListener('scroll', function() {
+        if (window.scrollY > 20) {
+          nav.classList.add('scrolled');
+        } else {
+          nav.classList.remove('scrolled');
+        }
+      });
+
+      // --- Mobile nav toggle ---
+      var toggle = document.getElementById('navToggle');
+      var links = document.getElementById('navLinks');
+      if (toggle && links) {
+        toggle.addEventListener('click', function() {
+          links.classList.toggle('open');
+        });
+      }
+
+      // --- Counter animation ---
+      var counters = document.querySelectorAll('.counter');
+      var counterObserver = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            var counter = entry.target;
+            var target = parseInt(counter.getAttribute('data-target'), 10);
+            if (isNaN(target)) target = 0;
+            var duration = 2000;
+            var startTime = null;
+
+            function animate(timestamp) {
+              if (!startTime) startTime = timestamp;
+              var progress = Math.min((timestamp - startTime) / duration, 1);
+              // Ease-out cubic
+              var eased = 1 - Math.pow(1 - progress, 3);
+              counter.textContent = Math.floor(eased * target);
+              if (progress < 1) {
+                requestAnimationFrame(animate);
+              } else {
+                counter.textContent = target;
+              }
+            }
+            requestAnimationFrame(animate);
+            counterObserver.unobserve(counter);
+          }
+        });
+      }, { threshold: 0.3 });
+      counters.forEach(function(c) { counterObserver.observe(c); });
+
+      // --- Scroll reveal animation ---
+      var reveals = document.querySelectorAll('.reveal');
+      var revealObserver = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            revealObserver.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+      reveals.forEach(function(el) { revealObserver.observe(el); });
+    })();
+  </script>
+</body>
+</html>

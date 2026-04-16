@@ -1,0 +1,93 @@
+<%- include('../layout/header', { title: 'Business Dashboard', extraCss: ['/css/pages/dashboard.css', '/css/pages/orders.css'] }) %>
+
+<section class="page-section">
+  <div class="page-header">
+    <h1 class="page-title">Business Dashboard</h1>
+    <p class="page-subtitle"><%= business.name %></p>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <span class="stat-value"><%= stats.pendingCount %></span>
+      <span class="stat-label">Pending Orders</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-value"><%= stats.totalOrders %></span>
+      <span class="stat-label">Total Orders</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-value">
+        <div class="star-display" data-rating="<%= stats.avgRating || 0 %>">
+          <% for (var s = 1; s <= 5; s++) { %>
+            <span class="star <%= s <= Math.round(stats.avgRating || 0) ? 'star-filled' : 'star-empty' %>">&#9733;</span>
+          <% } %>
+        </div>
+        <span class="stat-rating-number"><%= stats.avgRating ? parseFloat(stats.avgRating).toFixed(1) : 'N/A' %></span>
+      </span>
+      <span class="stat-label">Average Rating</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-value"><%= stats.reviewCount %></span>
+      <span class="stat-label">Total Reviews</span>
+    </div>
+  </div>
+
+  <div class="dashboard-section">
+    <div class="section-header">
+      <h2 class="section-title">Incoming Orders</h2>
+      <a href="/business/orders" class="btn btn-secondary btn-sm">View All Orders</a>
+    </div>
+
+    <% if (orders && orders.length > 0) { %>
+      <div class="orders-list">
+        <% orders.slice(0, 10).forEach(function(order) { %>
+          <article class="order-card">
+            <div class="order-card-header">
+              <span class="order-customer-name"><%= order.customer_name %></span>
+              <span class="badge badge-status badge-<%= order.status %>"><%= order.status %></span>
+            </div>
+            <div class="order-card-body">
+              <p class="order-items"><%= order.items_description %></p>
+              <div class="order-details">
+                <span class="order-credits"><%= order.credits %> Credits</span>
+                <time class="order-date"><%= new Date(order.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) %></time>
+              </div>
+            </div>
+            <div class="order-card-actions">
+              <% if (order.status === 'pending') { %>
+                <form action="/business/orders/<%= order.id %>" method="POST" class="order-action-form">
+                  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <input type="hidden" name="status" value="accepted">
+                  <button type="submit" class="btn btn-primary btn-sm">Accept</button>
+                </form>
+                <form action="/business/orders/<%= order.id %>" method="POST" class="order-action-form">
+                  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <input type="hidden" name="status" value="declined">
+                  <button type="submit" class="btn btn-danger btn-sm">Decline</button>
+                </form>
+              <% } else if (order.status === 'accepted') { %>
+                <form action="/business/orders/<%= order.id %>" method="POST" class="order-action-form">
+                  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <input type="hidden" name="status" value="ready">
+                  <button type="submit" class="btn btn-primary btn-sm">Mark Ready</button>
+                </form>
+              <% } else if (order.status === 'ready') { %>
+                <form action="/business/orders/<%= order.id %>" method="POST" class="order-action-form">
+                  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <input type="hidden" name="status" value="completed">
+                  <button type="submit" class="btn btn-primary btn-sm">Complete</button>
+                </form>
+              <% } %>
+            </div>
+          </article>
+        <% }); %>
+      </div>
+    <% } else { %>
+      <div class="empty-state">
+        <p class="empty-state-text">No incoming orders yet.</p>
+      </div>
+    <% } %>
+  </div>
+</section>
+
+<%- include('../layout/footer') %>

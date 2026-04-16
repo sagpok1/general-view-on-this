@@ -1,0 +1,108 @@
+<%- include('../layout/header', { title: business.name, extraCss: ['/css/pages/reviews.css'] }) %>
+
+<section class="page-section">
+  <div class="business-profile-header">
+    <div class="business-profile-info">
+      <h1 class="business-name"><%= business.name %></h1>
+      <span class="badge badge-category"><%= business.category %></span>
+      <div class="business-rating-display">
+        <div class="star-display" data-rating="<%= business.avg_rating || 0 %>">
+          <% for (var s = 1; s <= 5; s++) { %>
+            <span class="star <%= s <= Math.round(business.avg_rating || 0) ? 'star-filled' : 'star-empty' %>">&#9733;</span>
+          <% } %>
+        </div>
+        <span class="rating-text">
+          <%= business.avg_rating ? parseFloat(business.avg_rating).toFixed(1) : '0.0' %>
+          (<%= business.review_count || reviews.length %> reviews)
+        </span>
+      </div>
+      <% if (business.address) { %>
+        <p class="business-detail"><strong>Address:</strong> <%= business.address %></p>
+      <% } %>
+      <% if (business.phone) { %>
+        <p class="business-detail"><strong>Phone:</strong> <%= business.phone %></p>
+      <% } %>
+      <% if (business.description) { %>
+        <p class="business-description"><%= business.description %></p>
+      <% } %>
+    </div>
+  </div>
+
+  <% if (isAuthenticated && (!currentUser || currentUser.id !== business.owner_id)) { %>
+    <div class="write-review-section">
+      <h2 class="section-title">Write a Review</h2>
+      <form action="/reviews/business/<%= business.id %>" method="POST" class="review-form">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+        <div class="form-group">
+          <label class="form-label">Rating</label>
+          <div class="star-rating-interactive" id="starRating">
+            <% for (var r = 1; r <= 5; r++) { %>
+              <span class="star-interactive" data-value="<%= r %>">&#9733;</span>
+            <% } %>
+          </div>
+          <input type="hidden" name="rating" id="ratingInput" value="" required>
+        </div>
+
+        <div class="form-group">
+          <label for="reviewTitle" class="form-label">Title</label>
+          <input type="text" id="reviewTitle" name="title" class="form-input" placeholder="Summarize your experience">
+        </div>
+
+        <div class="form-group">
+          <label for="reviewBody" class="form-label">Review</label>
+          <textarea id="reviewBody" name="body" class="form-textarea" rows="5" placeholder="Share your experience with this business..." required></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Post Review</button>
+      </form>
+    </div>
+  <% } %>
+
+  <div class="reviews-section">
+    <h2 class="section-title">Reviews</h2>
+
+    <% if (reviews && reviews.length > 0) { %>
+      <div class="reviews-list">
+        <% reviews.forEach(function(review) { %>
+          <article class="review-card">
+            <div class="review-header">
+              <div class="review-author">
+                <div class="avatar-initials">
+                  <%= review.reviewer_name ? review.reviewer_name.split(' ').map(function(n) { return n[0]; }).join('').toUpperCase().substring(0, 2) : 'U' %>
+                </div>
+                <span class="review-author-name"><%= review.reviewer_name || 'Anonymous' %></span>
+              </div>
+              <div class="review-meta">
+                <div class="star-display" data-rating="<%= review.rating %>">
+                  <% for (var rs = 1; rs <= 5; rs++) { %>
+                    <span class="star <%= rs <= review.rating ? 'star-filled' : 'star-empty' %>">&#9733;</span>
+                  <% } %>
+                </div>
+                <time class="review-date" datetime="<%= review.created_at %>">
+                  <%= new Date(review.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) %>
+                </time>
+              </div>
+            </div>
+            <div class="review-body">
+              <% if (review.title) { %>
+                <h4 class="review-title"><%= review.title %></h4>
+              <% } %>
+              <p class="review-text"><%= review.body %></p>
+            </div>
+          </article>
+        <% }); %>
+      </div>
+
+      <div class="transparency-notice">
+        <p>Reviews can never be deleted &mdash; radical transparency</p>
+      </div>
+    <% } else { %>
+      <div class="empty-state">
+        <p class="empty-state-text">Be the first to review this business!</p>
+      </div>
+    <% } %>
+  </div>
+</section>
+
+<%- include('../layout/footer', { extraJs: ['/js/stars.js'] }) %>

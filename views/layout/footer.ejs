@@ -1,0 +1,24 @@
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <p>&copy; <%= new Date().getFullYear() %> General View On This. All rights reserved.</p>
+      <nav class="footer-links">
+        <a href="/about">About</a>
+        <a href="/privacy">Privacy</a>
+        <a href="/terms">Terms</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="/js/main.js"></script>
+
+  <% if (typeof locals.extraJs !== 'undefined' && Array.isArray(locals.extraJs)) { %>
+    <% locals.extraJs.forEach(function(jsPath) { %>
+      <script src="<%= jsPath %>"></script>
+    <% }); %>
+  <% } %>
+
+  <div class="toast-container" id="toastContainer"></div>
+</body>
+</html>

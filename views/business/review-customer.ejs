@@ -1,0 +1,43 @@
+<%- include('../layout/header', { title: 'Review Customer', extraCss: ['/css/pages/reviews.css'] }) %>
+
+<section class="page-section">
+  <div class="page-header">
+    <h1 class="page-title">Review Customer: <%= customer.name %></h1>
+  </div>
+
+  <div class="notice notice-info">
+    <p>Business reviews of customers require admin verification before being published.</p>
+  </div>
+
+  <div class="review-form-container">
+    <form action="/business/review-customer/<%= customer.id %>" method="POST" class="review-form">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+      <div class="form-group">
+        <label class="form-label">Rating</label>
+        <div class="star-rating-interactive" id="starRating">
+          <% for (var r = 1; r <= 5; r++) { %>
+            <span class="star-interactive" data-value="<%= r %>">&#9733;</span>
+          <% } %>
+        </div>
+        <input type="hidden" name="rating" id="ratingInput" value="" required>
+      </div>
+
+      <div class="form-group">
+        <label for="reviewTitle" class="form-label">Title</label>
+        <input type="text" id="reviewTitle" name="title" class="form-input" placeholder="Summarize your experience with this customer">
+      </div>
+
+      <div class="form-group">
+        <label for="reviewBody" class="form-label">Review</label>
+        <textarea id="reviewBody" name="body" class="form-textarea" rows="6" placeholder="Share your experience with this customer..." required></textarea>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Submit Review for Verification</button>
+      </div>
+    </form>
+  </div>
+</section>
+
+<%- include('../layout/footer', { extraJs: ['/js/stars.js'] }) %>

@@ -1,0 +1,61 @@
+<%- include('../layout/header', { title: 'Find Local Businesses', extraCss: ['/css/pages/reviews.css'] }) %>
+
+<section class="page-section">
+  <div class="page-header">
+    <h1 class="page-title">Find Local Businesses</h1>
+  </div>
+
+  <form action="/reviews" method="GET" class="search-form">
+    <div class="search-input-group">
+      <input
+        type="text"
+        name="q"
+        class="search-input"
+        placeholder="Search by business name..."
+        value="<%= typeof query !== 'undefined' ? query : '' %>"
+        aria-label="Search businesses"
+      >
+      <button type="submit" class="btn btn-primary search-btn">Search</button>
+    </div>
+  </form>
+
+  <div class="results-section">
+    <% if (businesses && businesses.length > 0) { %>
+      <div class="business-grid">
+        <% businesses.forEach(function(business) { %>
+          <article class="business-card">
+            <div class="business-card-body">
+              <h3 class="business-card-name"><%= business.name %></h3>
+              <span class="badge badge-category"><%= business.category %></span>
+              <div class="business-card-rating">
+                <div class="star-display" data-rating="<%= business.avg_rating || 0 %>">
+                  <% for (var s = 1; s <= 5; s++) { %>
+                    <span class="star <%= s <= Math.round(business.avg_rating || 0) ? 'star-filled' : 'star-empty' %>">&#9733;</span>
+                  <% } %>
+                </div>
+                <span class="rating-text">
+                  <%= business.avg_rating ? parseFloat(business.avg_rating).toFixed(1) : 'No ratings' %>
+                  (<%= business.review_count || 0 %> reviews)
+                </span>
+              </div>
+              <p class="business-card-address"><%= business.address %></p>
+            </div>
+            <div class="business-card-footer">
+              <a href="/reviews/business/<%= business.id %>" class="btn btn-secondary">View Reviews</a>
+            </div>
+          </article>
+        <% }); %>
+      </div>
+    <% } else if (typeof query !== 'undefined' && query) { %>
+      <div class="empty-state">
+        <p class="empty-state-text">No businesses found for '<%- query %>'</p>
+      </div>
+    <% } else { %>
+      <div class="empty-state">
+        <p class="empty-state-text">Enter a search term to find local businesses.</p>
+      </div>
+    <% } %>
+  </div>
+</section>
+
+<%- include('../layout/footer', { extraJs: ['/js/search.js', '/js/stars.js'] }) %>

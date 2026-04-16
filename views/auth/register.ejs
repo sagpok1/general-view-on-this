@@ -1,0 +1,162 @@
+<%- include('../layout/header', { title: 'Register', extraCss: ['/css/pages/auth.css'] }) %>
+
+<section class="auth-container">
+  <div class="auth-card">
+    <h1 class="auth-title">Join General View On This</h1>
+    <p class="auth-subtitle">Support local businesses and earn rewards</p>
+
+    <div class="auth-toggle">
+      <button type="button" class="auth-toggle-btn active" data-type="personal">Personal</button>
+      <button type="button" class="auth-toggle-btn" data-type="business">Business</button>
+    </div>
+
+    <form action="/auth/register" method="POST" class="auth-form" id="registerForm">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <input type="hidden" name="account_type" id="accountType" value="personal">
+
+      <div class="form-group">
+        <label for="name" class="form-label">Full name</label>
+        <input
+          type="text"
+          id="name"
+          name="name"
+          class="form-input"
+          placeholder="Your full name"
+          required
+          autocomplete="name"
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="email" class="form-label">Email address</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          class="form-input"
+          placeholder="you@example.com"
+          required
+          autocomplete="email"
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="password" class="form-label">Password</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          class="form-input"
+          placeholder="Minimum 8 characters"
+          required
+          minlength="8"
+          autocomplete="new-password"
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="confirmPassword" class="form-label">Confirm password</label>
+        <input
+          type="password"
+          id="confirmPassword"
+          name="confirmPassword"
+          class="form-input"
+          placeholder="Re-enter your password"
+          required
+          minlength="8"
+          autocomplete="new-password"
+        >
+      </div>
+
+      <div class="business-fields" id="businessFields" style="display: none;">
+        <hr class="form-divider">
+        <h3 class="form-section-title">Business Information</h3>
+
+        <div class="form-group">
+          <label for="businessName" class="form-label">Business name</label>
+          <input
+            type="text"
+            id="businessName"
+            name="business_name"
+            class="form-input"
+            placeholder="Your business name"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="category" class="form-label">Category</label>
+          <select id="category" name="category" class="form-input form-select">
+            <option value="">Select a category</option>
+            <option value="restaurant">Restaurant</option>
+            <option value="retail">Retail</option>
+            <option value="service">Service</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="address" class="form-label">Business address</label>
+          <input
+            type="text"
+            id="address"
+            name="address"
+            class="form-input"
+            placeholder="123 Main St, City, State"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="phone" class="form-label">Phone number</label>
+          <input
+            type="tel"
+            id="phone"
+            name="phone"
+            class="form-input"
+            placeholder="(555) 123-4567"
+          >
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-block">Create Account</button>
+    </form>
+
+    <div class="auth-footer">
+      <p>Already have an account? <a href="/auth/login">Sign in</a></p>
+    </div>
+  </div>
+</section>
+
+<%- include('../layout/footer') %>
+
+<script>
+(function() {
+  var toggleBtns = document.querySelectorAll('.auth-toggle-btn');
+  var businessFields = document.getElementById('businessFields');
+  var accountTypeInput = document.getElementById('accountType');
+  var businessInputs = businessFields.querySelectorAll('input, select');
+
+  toggleBtns.forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      toggleBtns.forEach(function(b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+
+      var type = btn.getAttribute('data-type');
+      accountTypeInput.value = type;
+
+      if (type === 'business') {
+        businessFields.style.display = 'block';
+        businessInputs.forEach(function(input) {
+          if (input.id !== 'category') {
+            input.setAttribute('required', 'required');
+          }
+        });
+      } else {
+        businessFields.style.display = 'none';
+        businessInputs.forEach(function(input) {
+          input.removeAttribute('required');
+        });
+      }
+    });
+  });
+})();
+</script>

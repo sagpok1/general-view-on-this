@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 48">
+  <!-- "General View" in dark serif -->
+  <text
+    x="10"
+    y="35"
+    font-family="Georgia, 'Times New Roman', serif"
+    font-size="30"
+    font-weight="700"
+    letter-spacing="-0.5"
+    fill="#1A1714"
+  >General View</text>
+
+  <!-- "On This" in accent color -->
+  <text
+    x="232"
+    y="35"
+    font-family="Georgia, 'Times New Roman', serif"
+    font-size="30"
+    font-weight="700"
+    letter-spacing="-0.5"
+    fill="#E8622A"
+  >On This</text>
+
+  <!-- Decorative dot accent between words -->
+  <circle
+    cx="224"
+    cy="28"
+    r="3"
+    fill="#E8622A"
+    opacity="0.5"
+  />
+</svg>

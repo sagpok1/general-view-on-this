@@ -1,0 +1,41 @@
+<%- include('../layout/header', { title: 'Write a Review', extraCss: ['/css/pages/reviews.css'] }) %>
+
+<section class="page-section">
+  <div class="page-header">
+    <h1 class="page-title">Write a Review</h1>
+    <p class="page-subtitle">for <strong><%= business.name %></strong></p>
+  </div>
+
+  <div class="review-form-container">
+    <form action="/reviews/business/<%= business.id %>" method="POST" class="review-form">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+      <div class="form-group">
+        <label class="form-label">Rating</label>
+        <div class="star-rating-interactive" id="starRating">
+          <% for (var r = 1; r <= 5; r++) { %>
+            <span class="star-interactive" data-value="<%= r %>">&#9733;</span>
+          <% } %>
+        </div>
+        <input type="hidden" name="rating" id="ratingInput" value="" required>
+      </div>
+
+      <div class="form-group">
+        <label for="reviewTitle" class="form-label">Title</label>
+        <input type="text" id="reviewTitle" name="title" class="form-input" placeholder="Summarize your experience">
+      </div>
+
+      <div class="form-group">
+        <label for="reviewBody" class="form-label">Review</label>
+        <textarea id="reviewBody" name="body" class="form-textarea" rows="6" placeholder="Share your experience with this business..." required></textarea>
+      </div>
+
+      <div class="form-actions">
+        <a href="/reviews/business/<%= business.id %>" class="btn btn-secondary">Cancel</a>
+        <button type="submit" class="btn btn-primary">Post Review</button>
+      </div>
+    </form>
+  </div>
+</section>
+
+<%- include('../layout/footer', { extraJs: ['/js/stars.js'] }) %>

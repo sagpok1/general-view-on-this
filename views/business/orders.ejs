@@ -1,0 +1,68 @@
+<%- include('../layout/header', { title: 'Manage Orders', extraCss: ['/css/pages/orders.css'] }) %>
+
+<section class="page-section">
+  <div class="page-header">
+    <h1 class="page-title">Manage Orders</h1>
+  </div>
+
+  <nav class="filter-tabs" aria-label="Order status filters">
+    <a href="/business/orders" class="filter-tab <%= (!currentStatus || currentStatus === 'all') ? 'filter-tab-active' : '' %>">All</a>
+    <a href="/business/orders?status=pending" class="filter-tab <%= currentStatus === 'pending' ? 'filter-tab-active' : '' %>">Pending</a>
+    <a href="/business/orders?status=accepted" class="filter-tab <%= currentStatus === 'accepted' ? 'filter-tab-active' : '' %>">Accepted</a>
+    <a href="/business/orders?status=ready" class="filter-tab <%= currentStatus === 'ready' ? 'filter-tab-active' : '' %>">Ready</a>
+    <a href="/business/orders?status=completed" class="filter-tab <%= currentStatus === 'completed' ? 'filter-tab-active' : '' %>">Completed</a>
+    <a href="/business/orders?status=declined" class="filter-tab <%= currentStatus === 'declined' ? 'filter-tab-active' : '' %>">Declined</a>
+  </nav>
+
+  <% if (orders && orders.length > 0) { %>
+    <div class="orders-list">
+      <% orders.forEach(function(order) { %>
+        <article class="order-card">
+          <div class="order-card-header">
+            <span class="order-customer-name"><%= order.customer_name %></span>
+            <span class="badge badge-status badge-<%= order.status %>"><%= order.status %></span>
+          </div>
+          <div class="order-card-body">
+            <p class="order-items"><%= order.items_description %></p>
+            <div class="order-details">
+              <span class="order-credits"><%= order.credits %> Credits</span>
+              <time class="order-date"><%= new Date(order.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) %></time>
+            </div>
+          </div>
+          <div class="order-card-actions">
+            <% if (order.status === 'pending') { %>
+              <form action="/business/orders/<%= order.id %>" method="POST" class="order-action-form">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <input type="hidden" name="status" value="accepted">
+                <button type="submit" class="btn btn-primary btn-sm">Accept</button>
+              </form>
+              <form action="/business/orders/<%= order.id %>" method="POST" class="order-action-form">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <input type="hidden" name="status" value="declined">
+                <button type="submit" class="btn btn-danger btn-sm">Decline</button>
+              </form>
+            <% } else if (order.status === 'accepted') { %>
+              <form action="/business/orders/<%= order.id %>" method="POST" class="order-action-form">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <input type="hidden" name="status" value="ready">
+                <button type="submit" class="btn btn-primary btn-sm">Mark Ready</button>
+              </form>
+            <% } else if (order.status === 'ready') { %>
+              <form action="/business/orders/<%= order.id %>" method="POST" class="order-action-form">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <input type="hidden" name="status" value="completed">
+                <button type="submit" class="btn btn-primary btn-sm">Complete</button>
+              </form>
+            <% } %>
+          </div>
+        </article>
+      <% }); %>
+    </div>
+  <% } else { %>
+    <div class="empty-state">
+      <p class="empty-state-text">No orders found.</p>
+    </div>
+  <% } %>
+</section>
+
+<%- include('../layout/footer') %>

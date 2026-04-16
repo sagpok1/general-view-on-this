@@ -1,0 +1,61 @@
+<%- include('../layout/header', { title: survey.title, extraCss: ['/css/pages/surveys.css'] }) %>
+
+<section class="page-section">
+  <div class="survey-header">
+    <h1 class="page-title"><%= survey.title %></h1>
+    <p class="page-subtitle"><%= survey.description %></p>
+  </div>
+
+  <div class="survey-progress">
+    <div class="survey-progress-text">Question <span id="currentQuestion">1</span> of <span id="totalQuestions"><%= questions.length %></span></div>
+    <div class="survey-progress-bar">
+      <div class="survey-progress-fill" id="progressFill" style="width: <%= (1 / questions.length) * 100 %>%"></div>
+    </div>
+  </div>
+
+  <form action="/surveys/<%= survey.id %>/complete" method="POST" class="survey-form" id="surveyForm">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+    <% questions.forEach(function(question, index) { %>
+      <div class="survey-question" data-question="<%= index + 1 %>" style="<%= index === 0 ? '' : 'display: none;' %>">
+        <h3 class="question-text"><%= question.question_text %></h3>
+
+        <% if (question.question_type === 'multiple_choice') { %>
+          <div class="question-options">
+            <% var options = JSON.parse(question.options); %>
+            <% options.forEach(function(option, optIndex) { %>
+              <label class="radio-option">
+                <input type="radio" name="question_<%= question.id %>" value="<%= option %>" required>
+                <span class="radio-custom"></span>
+                <span class="radio-label"><%= option %></span>
+              </label>
+            <% }); %>
+          </div>
+
+        <% } else if (question.question_type === 'rating') { %>
+          <div class="rating-buttons">
+            <% for (var r = 1; r <= 5; r++) { %>
+              <label class="rating-button-label">
+                <input type="radio" name="question_<%= question.id %>" value="<%= r %>" required>
+                <span class="rating-button"><%= r %></span>
+              </label>
+            <% } %>
+          </div>
+
+        <% } else if (question.question_type === 'text') { %>
+          <div class="question-text-input">
+            <textarea name="question_<%= question.id %>" rows="4" placeholder="Type your answer here..." required></textarea>
+          </div>
+        <% } %>
+      </div>
+    <% }); %>
+
+    <div class="survey-navigation">
+      <button type="button" class="btn btn-secondary" id="prevBtn" style="display: none;">Previous</button>
+      <button type="button" class="btn btn-primary" id="nextBtn">Next</button>
+      <button type="submit" class="btn btn-primary btn-earn" id="submitBtn" style="display: none;">Complete Survey &amp; Earn 1 Credit</button>
+    </div>
+  </form>
+</section>
+
+<%- include('../layout/footer', { extraJs: ['/js/survey.js'] }) %>

@@ -1,0 +1,478 @@
+/* ===================================================================
+   General View On This — Auth Pages (pages/auth.css)
+   Premium authentication screens with animated gradients
+   =================================================================== */
+
+/* ---------------------------------------------------------------
+   ANIMATED GRADIENT BACKGROUND
+   --------------------------------------------------------------- */
+@keyframes authGradientShift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes authFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes authPulseGlow {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50%      { opacity: 0.7; transform: scale(1.05); }
+}
+
+/* ---------------------------------------------------------------
+   AUTH LAYOUT
+   --------------------------------------------------------------- */
+.auth-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(
+    135deg,
+    #FDF0EB 0%,
+    #FAFAF7 25%,
+    #EBF0FA 50%,
+    #FAFAF7 75%,
+    #EBF5F0 100%
+  );
+  background-size: 400% 400%;
+  animation: authGradientShift 20s ease infinite;
+}
+
+/* Decorative gradient circles in background corners */
+.auth-container::before,
+.auth-container::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+  filter: blur(80px);
+  animation: authPulseGlow 8s ease-in-out infinite;
+}
+
+.auth-container::before {
+  width: 400px;
+  height: 400px;
+  top: -120px;
+  right: -100px;
+  background: radial-gradient(circle, rgba(232, 98, 42, 0.18) 0%, transparent 70%);
+}
+
+.auth-container::after {
+  width: 350px;
+  height: 350px;
+  bottom: -100px;
+  left: -80px;
+  background: radial-gradient(circle, rgba(43, 94, 167, 0.14) 0%, transparent 70%);
+  animation-delay: 4s;
+}
+
+/* ---------------------------------------------------------------
+   AUTH CARD
+   --------------------------------------------------------------- */
+.auth-card {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 460px;
+  padding: 3rem;
+  background: var(--color-surface);
+  border: 1px solid rgba(232, 227, 218, 0.6);
+  border-radius: 20px;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.08),
+    0 1px 3px rgba(0, 0, 0, 0.04);
+  animation: authFadeUp 0.5s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+/* ---------------------------------------------------------------
+   AUTH HEADER
+   --------------------------------------------------------------- */
+.auth-title {
+  text-align: center;
+  margin-bottom: 0.5rem;
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  line-height: 1.2;
+}
+
+.auth-subtitle {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: var(--color-text-secondary);
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}
+
+/* ---------------------------------------------------------------
+   AUTH TOGGLE — Modern Segmented Control
+   --------------------------------------------------------------- */
+.auth-toggle {
+  display: flex;
+  background-color: var(--color-surface-2);
+  border-radius: 9999px;
+  padding: 4px;
+  margin-bottom: 2rem;
+}
+
+.auth-toggle-btn {
+  flex: 1;
+  padding: 11px 16px;
+  border-radius: 9999px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  text-align: center;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition:
+    all 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  border: none;
+  background: none;
+  position: relative;
+}
+
+.auth-toggle-btn:hover {
+  color: var(--color-text-primary);
+}
+
+.auth-toggle-btn.active {
+  background-color: var(--color-surface);
+  color: var(--color-text-primary);
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.08),
+    0 1px 2px rgba(0, 0, 0, 0.04);
+  transform: scale(1.02);
+}
+
+/* ---------------------------------------------------------------
+   AUTH DIVIDER — "OR" with extending lines
+   --------------------------------------------------------------- */
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 1.75rem 0;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--color-border);
+}
+
+.auth-divider span {
+  display: inline-block;
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  white-space: nowrap;
+}
+
+/* ---------------------------------------------------------------
+   AUTH FORM
+   --------------------------------------------------------------- */
+.auth-form .form-group {
+  margin-bottom: 1.25rem;
+}
+
+.auth-form .form-input {
+  height: 48px;
+  padding: 12px 16px;
+  font-size: 0.9375rem;
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+}
+
+.auth-form .form-input:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(232, 98, 42, 0.1);
+}
+
+.auth-form .btn-primary {
+  width: 100%;
+  height: 48px;
+  padding: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  margin-top: 0.75rem;
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+}
+
+.auth-form .btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-colored);
+}
+
+.auth-form .btn-primary:active {
+  transform: translateY(0);
+}
+
+/* Remember me / forgot password row */
+.auth-remember {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+  font-size: 0.875rem;
+}
+
+.auth-remember label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  transition: color var(--transition-fast);
+}
+
+.auth-remember label:hover {
+  color: var(--color-text-primary);
+}
+
+.auth-remember input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--color-accent);
+  border-radius: 4px;
+}
+
+.auth-forgot {
+  color: var(--color-accent);
+  font-weight: 600;
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.auth-forgot:hover {
+  color: var(--color-accent-hover);
+}
+
+/* ---------------------------------------------------------------
+   GOOGLE BUTTON
+   --------------------------------------------------------------- */
+.btn-google {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  height: 48px;
+  padding: 12px;
+  background-color: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+  border-radius: 10px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.btn-google:hover {
+  background-color: var(--color-surface-2);
+  border-color: var(--color-text-muted);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-google:active {
+  transform: scale(0.98);
+  box-shadow: none;
+}
+
+.btn-google .google-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+/* ---------------------------------------------------------------
+   AUTH FOOTER
+   --------------------------------------------------------------- */
+.auth-footer {
+  text-align: center;
+  margin-top: 2rem;
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+}
+
+.auth-footer a {
+  color: var(--color-accent);
+  font-weight: 600;
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.auth-footer a:hover {
+  color: var(--color-accent-hover);
+}
+
+/* ---------------------------------------------------------------
+   PASSWORD STRENGTH INDICATOR
+   --------------------------------------------------------------- */
+.password-strength {
+  display: flex;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.password-strength-bar {
+  flex: 1;
+  height: 4px;
+  background-color: var(--color-surface-2);
+  border-radius: 2px;
+  transition: background-color 400ms ease;
+}
+
+.password-strength-bar.weak {
+  background-color: var(--color-red);
+}
+
+.password-strength-bar.medium {
+  background-color: var(--color-yellow);
+}
+
+.password-strength-bar.strong {
+  background-color: var(--color-green);
+}
+
+.password-strength-text {
+  font-size: 0.75rem;
+  margin-top: 4px;
+  font-weight: 600;
+}
+
+/* ---------------------------------------------------------------
+   ROLE SELECTOR
+   --------------------------------------------------------------- */
+.role-selector {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.role-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 1.5rem 1rem;
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-align: center;
+  background: var(--color-surface);
+}
+
+.role-option:hover {
+  border-color: var(--color-text-muted);
+  background: var(--color-surface-2);
+  transform: translateY(-1px);
+}
+
+.role-option.selected {
+  border-color: var(--color-accent);
+  background-color: var(--color-accent-light);
+  box-shadow: 0 0 0 3px rgba(232, 98, 42, 0.1);
+}
+
+.role-option input {
+  display: none;
+}
+
+.role-icon {
+  font-size: 1.75rem;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-surface-2);
+  border-radius: var(--radius-md);
+}
+
+.role-option.selected .role-icon {
+  background: rgba(232, 98, 42, 0.12);
+}
+
+.role-label {
+  font-weight: 700;
+  font-size: 0.9375rem;
+  color: var(--color-text-primary);
+}
+
+.role-description {
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
+  line-height: 1.4;
+}
+
+/* ---------------------------------------------------------------
+   BUSINESS FIELDS — Smooth height transition
+   --------------------------------------------------------------- */
+.business-fields {
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transition:
+    max-height 500ms cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 300ms ease,
+    margin 300ms ease;
+  margin-top: 0;
+}
+
+.business-fields.visible {
+  max-height: 600px;
+  opacity: 1;
+  margin-top: 0.5rem;
+}
+
+/* ---------------------------------------------------------------
+   RESPONSIVE
+   --------------------------------------------------------------- */
+@media (max-width: 520px) {
+  .auth-container {
+    padding: 1rem;
+    align-items: flex-start;
+    padding-top: 3rem;
+  }
+
+  .auth-card {
+    padding: 2rem 1.5rem;
+    border-radius: 16px;
+  }
+
+  .auth-title {
+    font-size: 1.625rem;
+  }
+
+  .role-selector {
+    grid-template-columns: 1fr;
+  }
+
+  .auth-container::before,
+  .auth-container::after {
+    display: none;
+  }
+}
