@@ -28,7 +28,7 @@
     </div>
   </div>
 
-  <% if (isAuthenticated && (!currentUser || currentUser.id !== business.owner_id)) { %>
+  <% if (isAuthenticated && (!currentUser || currentUser.id !== business.user_id)) { %>
     <div class="write-review-section">
       <h2 class="section-title">Write a Review</h2>
       <form action="/reviews/business/<%= business.id %>" method="POST" class="review-form">
