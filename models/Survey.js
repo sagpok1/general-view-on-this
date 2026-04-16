@@ -58,7 +58,7 @@ const Survey = {
       `SELECT s.*
        FROM surveys s
        LEFT JOIN survey_completions sc ON s.id = sc.survey_id AND sc.user_id = ?
-       WHERE s.status = 'active' AND sc.id IS NULL`
+       WHERE s.is_active = 1 AND sc.id IS NULL`
     ).all(userId);
   },
 

@@ -161,17 +161,26 @@ router.post('/register', [
 });
 
 // GET /auth/google
-router.get('/google', passport.authenticate('google', {
-  scope: ['profile', 'email']
-}));
+router.get('/google', (req, res, next) => {
+  if (!passport._strategy('google')) {
+    req.session.message = { type: 'error', text: 'Google sign-in is not configured. Please use email login.' };
+    return res.redirect('/auth/login');
+  }
+  passport.authenticate('google', { scope: ['profile', 'email'] })(req, res, next);
+});
 
 // GET /auth/google/callback
-router.get('/google/callback', passport.authenticate('google', {
-  failureRedirect: '/auth/login',
-  failureMessage: true
-}), (req, res) => {
-  req.session.message = { type: 'success', text: 'Signed in with Google successfully!' };
-  res.redirect('/dashboard');
+router.get('/google/callback', (req, res, next) => {
+  if (!passport._strategy('google')) {
+    return res.redirect('/auth/login');
+  }
+  passport.authenticate('google', {
+    failureRedirect: '/auth/login',
+    failureMessage: true
+  })(req, res, () => {
+    req.session.message = { type: 'success', text: 'Signed in with Google successfully!' };
+    res.redirect('/dashboard');
+  });
 });
 
 // GET /auth/logout
