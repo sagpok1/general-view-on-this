@@ -1,23 +1,71 @@
 <%- include('../layout/header', { title: 'Dashboard', extraCss: ['/css/pages/dashboard.css'] }) %>
 
 <section class="dashboard">
-  <div class="dashboard-header">
-    <h1 class="dashboard-welcome">Welcome back, <%= currentUser.name %></h1>
+
+  <!-- ═══ ANIMATED GRADIENT HEADER ═══ -->
+  <div class="dash-header">
+    <div class="dash-header-content">
+      <h1 class="dash-header-title">Dashboard</h1>
+      <p class="dash-header-sub">Your community at a glance</p>
+    </div>
+    <div class="ticker-strip">
+      <div class="ticker-track">
+        <span class="ticker-item">Welcome to General View On This</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item"><%= surveysAvailable %> surveys available</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">Earn credits by sharing your opinions</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">Reviews can never be deleted — radical transparency</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">Support local businesses with your credits</span>
+        <span class="ticker-dot"></span>
+        <!-- Duplicate for seamless loop -->
+        <span class="ticker-item">Welcome to General View On This</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item"><%= surveysAvailable %> surveys available</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">Earn credits by sharing your opinions</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">Reviews can never be deleted — radical transparency</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">Support local businesses with your credits</span>
+        <span class="ticker-dot"></span>
+      </div>
+    </div>
   </div>
 
-  <div class="dashboard-stats">
-    <div class="stat-card stat-card-credits">
-      <div class="stat-icon">
-        <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-          <circle cx="14" cy="14" r="12" stroke="currentColor" stroke-width="2"/>
-          <text x="14" y="18" text-anchor="middle" font-size="14" font-weight="bold" fill="currentColor">C</text>
-        </svg>
+  <!-- ═══ CLOUD WELCOME BOX ═══ -->
+  <div class="cloud-welcome-wrapper">
+    <div class="cloud-bump cloud-bump-1"></div>
+    <div class="cloud-bump cloud-bump-2"></div>
+    <div class="cloud-bump cloud-bump-3"></div>
+    <div class="cloud-box">
+      <div class="cloud-greeting">
+        <span class="cloud-wave">👋</span>
+        <div>
+          <h2 class="cloud-title">Welcome back, <strong><%= currentUser.name %></strong></h2>
+          <p class="cloud-subtitle">You have <strong><%= credits %></strong> credit<%= credits !== 1 ? 's' : '' %> and <strong><%= surveysAvailable %></strong> survey<%= surveysAvailable !== 1 ? 's' : '' %> waiting</p>
+        </div>
       </div>
-      <div class="stat-value"><%= credits %></div>
-      <div class="stat-label">Credit Balance</div>
+    </div>
+  </div>
+
+  <!-- ═══ STATS CARDS ═══ -->
+  <div class="dashboard-stats">
+
+    <!-- Credit Balance — Coin -->
+    <div class="coin-card">
+      <div class="coin-outer">
+        <div class="coin-inner">
+          <div class="coin-value"><%= credits %></div>
+          <div class="coin-label">Credits</div>
+        </div>
+      </div>
     </div>
 
-    <div class="stat-card">
+    <!-- Surveys Completed — Green -->
+    <div class="stat-card stat-card-surveys">
       <div class="stat-icon">
         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M9 11l3 3L22 4"/>
@@ -28,7 +76,8 @@
       <div class="stat-label">Surveys Completed</div>
     </div>
 
-    <div class="stat-card">
+    <!-- Orders Placed — Orange -->
+    <div class="stat-card stat-card-orders">
       <div class="stat-icon">
         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
@@ -41,7 +90,7 @@
     </div>
 
     <% if (typeof businessOrderCount !== 'undefined' && businessOrderCount !== null) { %>
-      <div class="stat-card">
+      <div class="stat-card stat-card-business">
         <div class="stat-icon">
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
@@ -53,6 +102,7 @@
     <% } %>
   </div>
 
+  <!-- ═══ MAIN GRID ═══ -->
   <div class="dashboard-grid">
     <div class="dashboard-col">
       <div class="dashboard-section">
@@ -61,7 +111,7 @@
         <% if (recentOrders.length > 0) { %>
           <div class="order-list">
             <% recentOrders.forEach(function(order) { %>
-              <a href="/orders/<%= order.id %>" class="order-card">
+              <div class="order-card">
                 <div class="order-card-header">
                   <span class="order-business-name"><%= order.business_name %></span>
                   <span class="badge badge-<%= order.status %>"><%= order.status %></span>
@@ -72,7 +122,7 @@
                   </span>
                   <span class="order-credits"><%= order.credits_spent %> credits</span>
                 </div>
-              </a>
+              </div>
             <% }); %>
           </div>
         <% } else { %>
@@ -136,6 +186,7 @@
     </div>
   </div>
 
+  <!-- ═══ CREDIT HISTORY ═══ -->
   <div class="dashboard-section">
     <h2 class="section-title">Credit History</h2>
 
@@ -161,6 +212,7 @@
       </div>
     <% } %>
   </div>
+
 </section>
 
 <%- include('../layout/footer') %>

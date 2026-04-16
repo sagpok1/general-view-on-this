@@ -1,566 +1,663 @@
 /* ===================================================================
-   General View On This — Dashboard (pages/dashboard.css)
-   Clean, premium dashboard with gradient accents and timeline
+   General View On This — Animated Dashboard
    =================================================================== */
 
-/* ---------------------------------------------------------------
-   WELCOME SECTION
-   --------------------------------------------------------------- */
-.dashboard-welcome {
+/* ───────────────────────────────────────────────────────────────────
+   KEYFRAME ANIMATIONS
+   ─────────────────────────────────────────────────────────────────── */
+@keyframes headerGradient {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes tickerMove {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes cloudDrift {
+  0%, 100% { transform: translateX(0); }
+  50%      { transform: translateX(4px); }
+}
+
+@keyframes cloudBumpFloat {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50%      { transform: translateY(-3px) scale(1.04); }
+}
+
+@keyframes coinGradientShift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes coinRotateGlow {
+  0%, 100% { filter: brightness(1); }
+  50%      { filter: brightness(1.2); }
+}
+
+@keyframes pulseGreen {
+  0%   { box-shadow: 0 0 0 0 rgba(99, 153, 34, 0.35); }
+  70%  { box-shadow: 0 0 0 8px rgba(99, 153, 34, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(99, 153, 34, 0); }
+}
+
+@keyframes pulseOrange {
+  0%   { box-shadow: 0 0 0 0 rgba(186, 117, 23, 0.3); }
+  70%  { box-shadow: 0 0 0 8px rgba(186, 117, 23, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(186, 117, 23, 0); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+
+/* ───────────────────────────────────────────────────────────────────
+   ANIMATED GRADIENT HEADER
+   ─────────────────────────────────────────────────────────────────── */
+.dash-header {
+  position: relative;
+  background: linear-gradient(270deg, #1e3a5f, #2d7a4f, #5b3fa0, #1e5fa0, #2d7a4f, #4b2d8e);
+  background-size: 400% 400%;
+  animation: headerGradient 8s ease-in-out infinite;
+  border-radius: 20px;
+  padding: 2.5rem 2.5rem 0;
+  margin-bottom: 2rem;
+  overflow: hidden;
+  will-change: background-position;
+}
+
+.dash-header-content {
+  position: relative;
+  z-index: 2;
+  padding-bottom: 2rem;
+}
+
+.dash-header-title {
   font-family: var(--font-display);
   font-size: 2.25rem;
   font-weight: 700;
-  color: var(--color-text-primary);
+  color: #fff;
   margin-bottom: 0.25rem;
-  line-height: 1.2;
 }
 
-.dashboard-welcome .user-name {
-  background: var(--gradient-warm);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+.dash-header-sub {
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 1rem;
 }
 
-.dashboard-welcome-sub {
-  color: var(--color-text-secondary);
-  font-size: 1.0625rem;
+/* ── Ticker Strip ── */
+.ticker-strip {
+  position: relative;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(4px);
+  margin: 0 -2.5rem;
+  padding: 10px 0;
+}
+
+.ticker-track {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  white-space: nowrap;
+  animation: tickerMove 30s linear infinite;
+  will-change: transform;
+}
+
+.ticker-item {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  flex-shrink: 0;
+}
+
+.ticker-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.4);
+  flex-shrink: 0;
+}
+
+
+/* ───────────────────────────────────────────────────────────────────
+   CLOUD WELCOME BOX
+   ─────────────────────────────────────────────────────────────────── */
+.cloud-welcome-wrapper {
+  position: relative;
   margin-bottom: 2rem;
-  line-height: 1.5;
+  padding-top: 18px;
+  animation: fadeInUp 0.5s ease;
 }
 
-/* ---------------------------------------------------------------
+.cloud-bump {
+  position: absolute;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #e8f4fd 0%, #d4ecfb 100%);
+  border: 1.5px solid rgba(147, 197, 235, 0.35);
+  z-index: 1;
+  animation: cloudBumpFloat 4s ease-in-out infinite;
+  will-change: transform;
+}
+
+.cloud-bump-1 {
+  width: 44px;
+  height: 32px;
+  top: 0;
+  left: 40px;
+  animation-delay: 0s;
+}
+
+.cloud-bump-2 {
+  width: 56px;
+  height: 38px;
+  top: -4px;
+  left: 72px;
+  animation-delay: 0.6s;
+}
+
+.cloud-bump-3 {
+  width: 36px;
+  height: 26px;
+  top: 4px;
+  left: 118px;
+  animation-delay: 1.2s;
+}
+
+.cloud-box {
+  position: relative;
+  z-index: 2;
+  background: linear-gradient(135deg, #f0f8ff 0%, #e8f4fd 100%);
+  border: 1.5px solid rgba(147, 197, 235, 0.4);
+  border-radius: 20px 20px 20px 4px;
+  padding: 1.5rem 2rem;
+  box-shadow:
+    0 2px 8px rgba(147, 197, 235, 0.15),
+    0 8px 24px rgba(147, 197, 235, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  animation: cloudDrift 5s ease-in-out infinite;
+  will-change: transform;
+}
+
+.cloud-greeting {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.cloud-wave {
+  font-size: 2rem;
+  animation: cloudBumpFloat 2s ease-in-out infinite;
+}
+
+.cloud-title {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 400;
+  color: #1a3a5c;
+  margin-bottom: 0.15rem;
+}
+
+.cloud-title strong {
+  font-weight: 700;
+}
+
+.cloud-subtitle {
+  color: #4a7a9b;
+  font-size: 0.9rem;
+}
+
+.cloud-subtitle strong {
+  font-weight: 700;
+  color: #1a5a8a;
+}
+
+
+/* ───────────────────────────────────────────────────────────────────
    STATS GRID
-   --------------------------------------------------------------- */
+   ─────────────────────────────────────────────────────────────────── */
 .dashboard-stats {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: auto repeat(auto-fit, minmax(200px, 1fr));
   gap: 1.25rem;
   margin-bottom: 2.5rem;
+  align-items: center;
 }
 
+
+/* ───────────────────────────────────────────────────────────────────
+   COIN CREDIT CARD
+   ─────────────────────────────────────────────────────────────────── */
+.coin-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeInUp 0.5s ease 0.1s both;
+}
+
+.coin-outer {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  padding: 5px;
+  background: linear-gradient(135deg, #FAC775, #EF9F27, #BA7517, #EF9F27, #FAC775);
+  background-size: 200% 200%;
+  animation: coinGradientShift 4s ease-in-out infinite;
+  box-shadow:
+    0 4px 20px rgba(186, 117, 23, 0.3),
+    0 0 40px rgba(250, 199, 117, 0.15);
+  will-change: background-position;
+}
+
+.coin-inner {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: linear-gradient(160deg, #FFF5E0, #FAECC8, #FDE9B0);
+  border: 3px dashed rgba(186, 117, 23, 0.35);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  animation: coinRotateGlow 3s ease-in-out infinite;
+  will-change: filter;
+}
+
+.coin-value {
+  font-family: var(--font-display);
+  font-size: 2.75rem;
+  font-weight: 700;
+  color: #7A5A1A;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.coin-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #A07A2E;
+  margin-top: 4px;
+}
+
+
+/* ───────────────────────────────────────────────────────────────────
+   STAT CARDS — Surveys (Green) & Orders (Orange)
+   ─────────────────────────────────────────────────────────────────── */
 .stat-card {
   position: relative;
   padding: 1.5rem;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: 16px;
-  border-left: 4px solid var(--color-border);
-  transition:
-    transform var(--transition-fast),
-    box-shadow var(--transition-fast);
+  border-radius: 12px;
+  transition: transform 150ms ease;
+  animation: fadeInUp 0.5s ease 0.2s both;
 }
 
 .stat-card:hover {
   transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
 }
 
-/* Color-coded left borders per stat type */
-.stat-card--credits {
-  border-left-color: var(--color-yellow);
+/* ── Surveys — Green ── */
+.stat-card-surveys {
+  background: linear-gradient(135deg, #EAF3DE, #C0DD97);
+  border: 1.5px solid #639922;
+  animation: fadeInUp 0.5s ease 0.2s both, pulseGreen 3s ease-in-out infinite;
 }
 
-.stat-card--surveys {
-  border-left-color: var(--color-green);
+.stat-card-surveys .stat-icon {
+  color: #4A7A1A;
 }
 
-.stat-card--orders {
-  border-left-color: var(--color-blue);
+.stat-card-surveys .stat-value {
+  color: #2D5A0A;
 }
 
-.stat-card--reviews {
-  border-left-color: var(--color-accent);
+.stat-card-surveys .stat-label {
+  color: #4A7A1A;
 }
 
+/* ── Orders — Orange/Amber ── */
+.stat-card-orders {
+  background: linear-gradient(135deg, #FAEEDA, #FAC775);
+  border: 1.5px solid #BA7517;
+  animation: fadeInUp 0.5s ease 0.3s both, pulseOrange 3s ease-in-out 1s infinite;
+}
+
+.stat-card-orders .stat-icon {
+  color: #8A5A0A;
+}
+
+.stat-card-orders .stat-value {
+  color: #6A4A0A;
+}
+
+.stat-card-orders .stat-label {
+  color: #8A5A0A;
+}
+
+/* ── Business — Blue ── */
+.stat-card-business {
+  background: linear-gradient(135deg, #E0EEFB, #A8CCF0);
+  border: 1.5px solid #2B5EA7;
+  animation: fadeInUp 0.5s ease 0.4s both;
+}
+
+.stat-card-business .stat-icon {
+  color: #1A4A8A;
+}
+
+.stat-card-business .stat-value {
+  color: #1A3A6A;
+}
+
+.stat-card-business .stat-label {
+  color: #1A4A8A;
+}
+
+/* ── Shared stat styles ── */
 .stat-icon {
-  width: 44px;
-  height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: var(--radius-md);
-  font-size: 1.25rem;
-  margin-bottom: 1rem;
-}
-
-.stat-icon-accent {
-  background-color: var(--color-accent-light);
-  color: var(--color-accent);
-}
-
-.stat-icon-green {
-  background-color: var(--color-green-light);
-  color: var(--color-green);
-}
-
-.stat-icon-blue {
-  background-color: var(--color-blue-light);
-  color: var(--color-blue);
-}
-
-.stat-icon-yellow {
-  background-color: rgba(212, 160, 23, 0.12);
-  color: var(--color-yellow);
+  margin-bottom: 0.75rem;
 }
 
 .stat-value {
-  font-size: 2.5rem;
+  font-size: 2.25rem;
   font-weight: 700;
   line-height: 1.1;
-  color: var(--color-text-primary);
   letter-spacing: -0.02em;
 }
 
 .stat-label {
-  color: var(--color-text-muted);
-  font-size: 0.75rem;
-  font-weight: 600;
+  font-size: 0.72rem;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
   margin-top: 4px;
 }
 
-.stat-change {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 0.8125rem;
-  font-weight: 600;
-  margin-top: 8px;
-  padding: 2px 8px;
-  border-radius: 9999px;
-}
 
-.stat-change.positive {
-  color: var(--color-green);
-  background: var(--color-green-light);
-}
-
-.stat-change.negative {
-  color: var(--color-red);
-  background: rgba(192, 57, 43, 0.08);
-}
-
-/* ---------------------------------------------------------------
-   DASHBOARD GRID (65% / 35% split)
-   --------------------------------------------------------------- */
+/* ───────────────────────────────────────────────────────────────────
+   DASHBOARD GRID (65% / 35%)
+   ─────────────────────────────────────────────────────────────────── */
 .dashboard-grid {
   display: grid;
   grid-template-columns: 65% 35%;
   gap: 2rem;
   align-items: start;
+  margin-bottom: 2rem;
 }
 
-@media (max-width: 1024px) {
-  .dashboard-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* ---------------------------------------------------------------
-   SECTION HEADERS
-   --------------------------------------------------------------- */
-.section-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 1.25rem;
+.dashboard-section {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
 }
 
 .section-title {
   font-family: var(--font-display);
-  font-size: 1.25rem;
+  font-size: 1.2rem;
   font-weight: 700;
   color: var(--color-text-primary);
+  margin-bottom: 1rem;
 }
 
-.section-link {
-  color: var(--color-accent);
-  font-size: 0.875rem;
-  font-weight: 600;
-  text-decoration: none;
-  transition: all var(--transition-fast);
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-}
 
-.section-link:hover {
-  color: var(--color-accent-hover);
-  gap: 6px;
-}
-
-/* ---------------------------------------------------------------
-   ACTIVITY LIST — Timeline with dot + line
-   --------------------------------------------------------------- */
-.activity-list {
+/* ───────────────────────────────────────────────────────────────────
+   ORDER LIST
+   ─────────────────────────────────────────────────────────────────── */
+.order-list {
   display: flex;
   flex-direction: column;
-  position: relative;
+  gap: 0.5rem;
 }
 
-.activity-item {
-  display: flex;
-  gap: 1rem;
-  padding: 1rem 1rem 1rem 2rem;
-  position: relative;
-  transition: background-color var(--transition-fast);
+.order-card {
+  display: block;
+  padding: 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  text-decoration: none;
+  color: inherit;
+  transition: all 150ms ease;
 }
 
-/* Timeline vertical line */
-.activity-item::before {
-  content: '';
-  position: absolute;
-  left: 7px;
-  top: 0;
-  bottom: 0;
-  width: 2px;
-  background: var(--color-border);
-}
-
-.activity-item:last-child::before {
-  bottom: 50%;
-}
-
-/* Timeline dot */
-.activity-item::after {
-  content: '';
-  position: absolute;
-  left: 3px;
-  top: 1.35rem;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: var(--color-surface);
-  border: 2px solid var(--color-border);
-  z-index: 1;
-}
-
-.activity-item:first-child::after {
+.order-card:hover {
   border-color: var(--color-accent);
   background: var(--color-accent-light);
 }
 
-.activity-item:hover {
-  background-color: var(--color-surface-2);
-  border-radius: var(--radius-md);
-}
-
-.activity-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: var(--radius-md);
+.order-card-header {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  font-size: 1rem;
-  background-color: var(--color-surface-2);
+  margin-bottom: 0.35rem;
 }
 
-.activity-icon-order {
-  background-color: var(--color-accent-light);
-  color: var(--color-accent);
-}
-
-.activity-icon-survey {
-  background-color: var(--color-blue-light);
-  color: var(--color-blue);
-}
-
-.activity-icon-review {
-  background-color: var(--color-green-light);
-  color: var(--color-green);
-}
-
-.activity-icon-credit {
-  background-color: rgba(212, 160, 23, 0.12);
-  color: var(--color-yellow);
-}
-
-.activity-content {
-  flex: 1;
-  min-width: 0;
-}
-
-.activity-text {
-  font-size: 0.9375rem;
-  color: var(--color-text-primary);
-  line-height: 1.45;
-}
-
-.activity-text strong {
+.order-business-name {
   font-weight: 600;
+  color: var(--color-text-primary);
 }
 
-.activity-time {
-  font-size: 0.8125rem;
+.order-card-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
   color: var(--color-text-muted);
-  margin-top: 2px;
 }
 
-/* ---------------------------------------------------------------
-   QUICK ACTIONS — icon + text + arrow
-   --------------------------------------------------------------- */
+
+/* ───────────────────────────────────────────────────────────────────
+   QUICK ACTIONS
+   ─────────────────────────────────────────────────────────────────── */
 .quick-actions {
   display: flex;
   flex-direction: column;
   gap: 0.625rem;
 }
 
-.quick-action-btn {
+.action-card {
   display: flex;
   align-items: center;
   gap: 12px;
   padding: 14px 16px;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  font-size: 0.9375rem;
-  font-weight: 500;
-  color: var(--color-text-primary);
-  cursor: pointer;
-  transition: all var(--transition-fast);
+  border-radius: 12px;
   text-decoration: none;
-  width: 100%;
-  text-align: left;
-  position: relative;
+  color: inherit;
+  transition: all 150ms ease;
 }
 
-.quick-action-btn::after {
-  content: '\2192';
-  position: absolute;
-  right: 16px;
-  font-size: 1rem;
-  color: var(--color-text-muted);
-  transition: transform var(--transition-fast), color var(--transition-fast);
-}
-
-.quick-action-btn:hover {
+.action-card:hover {
   border-color: var(--color-accent);
-  background-color: var(--color-accent-light);
-  box-shadow: var(--shadow-xs);
-}
-
-.quick-action-btn:hover::after {
+  background: var(--color-accent-light);
   transform: translateX(4px);
-  color: var(--color-accent);
 }
 
-.quick-action-icon {
-  width: 36px;
-  height: 36px;
+.action-card-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: var(--color-surface-2);
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: var(--radius-md);
-  font-size: 1rem;
   flex-shrink: 0;
-}
-
-.quick-action-icon--accent {
-  background-color: var(--color-accent-light);
   color: var(--color-accent);
 }
 
-.quick-action-icon--green {
-  background-color: var(--color-green-light);
-  color: var(--color-green);
-}
-
-.quick-action-icon--blue {
-  background-color: var(--color-blue-light);
-  color: var(--color-blue);
-}
-
-.quick-action-icon--yellow {
-  background-color: rgba(212, 160, 23, 0.12);
-  color: var(--color-yellow);
-}
-
-/* ---------------------------------------------------------------
-   CREDIT BALANCE CARD
-   --------------------------------------------------------------- */
-.credit-balance-card {
-  background: var(--gradient-warm);
-  color: #FFFFFF;
-  border-radius: 16px;
-  padding: 1.75rem;
-  border: none;
-  position: relative;
-  overflow: hidden;
-}
-
-.credit-balance-card::before {
-  content: '';
-  position: absolute;
-  top: -40px;
-  right: -40px;
-  width: 120px;
-  height: 120px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 50%;
-}
-
-.credit-balance-card::after {
-  content: '';
-  position: absolute;
-  bottom: -20px;
-  left: -20px;
-  width: 80px;
-  height: 80px;
-  background: rgba(255, 255, 255, 0.06);
-  border-radius: 50%;
-}
-
-.credit-balance-label {
-  font-size: 0.875rem;
-  opacity: 0.85;
-  margin-bottom: 4px;
-  font-weight: 500;
-  position: relative;
-  z-index: 1;
-}
-
-.credit-balance-value {
-  font-size: 2.75rem;
-  font-weight: 700;
-  line-height: 1.15;
-  letter-spacing: -0.02em;
-  position: relative;
-  z-index: 1;
-}
-
-.credit-balance-action {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  margin-top: 1.25rem;
-  padding: 10px 20px;
-  background-color: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(8px);
-  color: #FFFFFF;
-  border-radius: 9999px;
-  font-size: 0.875rem;
+.action-card-body h3 {
+  font-size: 0.95rem;
   font-weight: 600;
-  text-decoration: none;
-  transition: all var(--transition-fast);
-  position: relative;
-  z-index: 1;
-}
-
-.credit-balance-action:hover {
-  background-color: rgba(255, 255, 255, 0.32);
-  transform: translateY(-1px);
-}
-
-/* ---------------------------------------------------------------
-   CREDIT HISTORY TABLE
-   --------------------------------------------------------------- */
-.credit-history-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.credit-history-table th {
-  text-align: left;
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--color-text-muted);
-  padding: 10px 12px;
-  border-bottom: 1px solid var(--color-border);
-}
-
-.credit-history-table td {
-  padding: 12px;
-  font-size: 0.9375rem;
-  border-bottom: 1px solid var(--color-border);
   color: var(--color-text-primary);
+  margin-bottom: 2px;
 }
 
-.credit-history-table tr:last-child td {
+.action-card-body p {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+
+/* ───────────────────────────────────────────────────────────────────
+   CREDIT HISTORY
+   ─────────────────────────────────────────────────────────────────── */
+.credit-history-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.credit-history-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.credit-history-item:last-child {
   border-bottom: none;
 }
 
-.credit-history-table tr:hover td {
-  background-color: var(--color-surface-2);
-}
-
-.credit-amount--positive {
-  color: var(--color-green);
-  font-weight: 600;
-}
-
-.credit-amount--negative {
-  color: var(--color-red);
-  font-weight: 600;
-}
-
-/* ---------------------------------------------------------------
-   RECENT ITEMS (Sidebar Lists)
-   --------------------------------------------------------------- */
-.recent-list {
-  display: flex;
-  flex-direction: column;
-}
-
-.recent-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 10px 12px;
-  border-radius: var(--radius-md);
-  text-decoration: none;
+.credit-history-desc {
+  font-size: 0.9rem;
   color: var(--color-text-primary);
-  transition: all var(--transition-fast);
-  font-size: 0.9375rem;
+  font-weight: 500;
 }
 
-.recent-item:hover {
-  background-color: var(--color-surface-2);
-  transform: translateX(2px);
+.credit-history-date {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  display: block;
+  margin-top: 2px;
 }
 
-.recent-item-meta {
-  font-size: 0.8125rem;
+.credit-history-amount {
+  font-weight: 700;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.credit-positive {
+  color: #2D7A4F;
+}
+
+.credit-negative {
+  color: #C0392B;
+}
+
+
+/* ───────────────────────────────────────────────────────────────────
+   EMPTY STATE
+   ─────────────────────────────────────────────────────────────────── */
+.empty-state {
+  text-align: center;
+  padding: 2rem;
   color: var(--color-text-muted);
 }
 
-/* ---------------------------------------------------------------
+.empty-state a {
+  color: var(--color-accent);
+  font-weight: 600;
+}
+
+
+/* ───────────────────────────────────────────────────────────────────
+   BADGES
+   ─────────────────────────────────────────────────────────────────── */
+.badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.badge-pending   { background: #FEF3C7; color: #92400E; }
+.badge-accepted  { background: #DBEAFE; color: #1E40AF; }
+.badge-ready     { background: #D1FAE5; color: #065F46; }
+.badge-completed { background: #BBF7D0; color: #14532D; }
+.badge-declined  { background: #FEE2E2; color: #991B1B; }
+
+
+/* ───────────────────────────────────────────────────────────────────
    RESPONSIVE
-   --------------------------------------------------------------- */
+   ─────────────────────────────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-stats {
+    grid-template-columns: 1fr repeat(2, 1fr);
+  }
+}
+
 @media (max-width: 768px) {
-  .dashboard-welcome {
+  .dash-header {
+    padding: 1.5rem 1.5rem 0;
+    border-radius: 14px;
+  }
+
+  .ticker-strip {
+    margin: 0 -1.5rem;
+  }
+
+  .dash-header-title {
     font-size: 1.75rem;
   }
 
   .dashboard-stats {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
+    grid-template-columns: 1fr;
   }
 
-  .stat-card {
-    padding: 1.25rem;
+  .coin-outer {
+    width: 120px;
+    height: 120px;
+  }
+
+  .coin-value {
+    font-size: 2rem;
+  }
+
+  .cloud-box {
+    padding: 1.25rem 1.5rem;
+  }
+
+  .cloud-greeting {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .cloud-bump {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .dash-header-title {
+    font-size: 1.5rem;
   }
 
   .stat-value {
     font-size: 1.75rem;
   }
 
-  .activity-item {
-    padding-left: 1.5rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .dashboard-stats {
-    grid-template-columns: 1fr;
+  .coin-outer {
+    width: 110px;
+    height: 110px;
   }
 
-  .dashboard-welcome {
-    font-size: 1.5rem;
+  .coin-value {
+    font-size: 1.75rem;
   }
 }
