@@ -144,7 +144,7 @@
         <% creditHistory.forEach(function(entry) { %>
           <li class="credit-history-item">
             <div class="credit-history-info">
-              <span class="credit-history-desc"><%= entry.description %></span>
+              <span class="credit-history-desc"><%= entry.reason %></span>
               <span class="credit-history-date">
                 <%= new Date(entry.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) %>
               </span>

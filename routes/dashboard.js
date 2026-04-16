@@ -17,19 +17,20 @@ router.get('/', isLoggedIn, (req, res) => {
   // Fetch recent orders (limit 5)
   const recentOrders = Order.findByUserId(userId).slice(0, 5);
 
-  // Fetch available surveys count
+  // Fetch survey counts
   const availableSurveys = Survey.getAvailableForUser(userId);
-  const availableSurveysCount = availableSurveys.length;
+  const completedSurveys = Survey.getCompletedByUser(userId);
 
   // Fetch credit history
   const creditHistory = Credit.getHistory(userId);
 
-  // Build template data
+  // Build template data — match variable names expected by the EJS template
   const templateData = {
     title: 'Dashboard',
-    creditBalance,
+    credits: creditBalance,
     recentOrders,
-    availableSurveysCount,
+    surveysCompleted: completedSurveys.length,
+    surveysAvailable: availableSurveys.length,
     creditHistory
   };
 
