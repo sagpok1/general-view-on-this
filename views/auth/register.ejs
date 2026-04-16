@@ -133,7 +133,7 @@
   var toggleBtns = document.querySelectorAll('.auth-toggle-btn');
   var businessFields = document.getElementById('businessFields');
   var accountTypeInput = document.getElementById('accountType');
-  var businessInputs = businessFields.querySelectorAll('input, select');
+  var businessNameInput = document.getElementById('businessName');
 
   toggleBtns.forEach(function(btn) {
     btn.addEventListener('click', function() {
@@ -145,15 +145,24 @@
 
       if (type === 'business') {
         businessFields.style.display = 'block';
-        businessInputs.forEach(function(input) {
-          if (input.id !== 'category') {
-            input.setAttribute('required', 'required');
-          }
-        });
+        // Only business name is required
+        if (businessNameInput) businessNameInput.required = true;
       } else {
         businessFields.style.display = 'none';
-        businessInputs.forEach(function(input) {
-          input.removeAttribute('required');
+        // Remove required and clear values so hidden fields don't block submit
+        if (businessNameInput) {
+          businessNameInput.required = false;
+          businessNameInput.value = '';
+        }
+        // Clear all business field values
+        var allInputs = businessFields.querySelectorAll('input, select');
+        allInputs.forEach(function(input) {
+          input.required = false;
+          if (input.tagName === 'SELECT') {
+            input.selectedIndex = 0;
+          } else {
+            input.value = '';
+          }
         });
       }
     });
