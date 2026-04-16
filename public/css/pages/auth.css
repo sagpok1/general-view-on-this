@@ -476,3 +476,41 @@
     display: none;
   }
 }
+
+/* ---------------------------------------------------------------
+   INLINE AUTH MESSAGES
+   --------------------------------------------------------------- */
+.auth-error,
+.auth-success {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-bottom: 1.25rem;
+  animation: fadeInUp 0.3s ease;
+}
+
+.auth-error {
+  background: #FEF2F2;
+  color: #B91C1C;
+  border: 1px solid #FECACA;
+}
+
+.auth-error svg {
+  color: #DC2626;
+  flex-shrink: 0;
+}
+
+.auth-success {
+  background: #F0FDF4;
+  color: #15803D;
+  border: 1px solid #BBF7D0;
+}
+
+.auth-success svg {
+  color: #16A34A;
+  flex-shrink: 0;
+}
