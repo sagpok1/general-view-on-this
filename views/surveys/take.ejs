@@ -98,13 +98,35 @@
 
     <div class="take-nav">
       <button type="button" class="btn take-btn-prev btn-prev" id="prevBtn" style="display: none;">← Previous</button>
-      <button type="button" class="btn take-btn-next btn-next" id="nextBtn">Next →</button>
-      <button type="submit" class="btn take-btn-submit btn-submit-survey" id="submitBtn" style="display: none;">
-        <span>Complete &amp; Earn</span>
-        <span class="take-btn-coin">1 ¢</span>
-      </button>
+      <div class="take-nav-right">
+        <button type="submit" class="btn take-btn-submit-early" id="submitEarlyBtn">
+          <span>Submit Now</span>
+          <span class="take-btn-coin">+1 ¢</span>
+        </button>
+        <button type="button" class="btn take-btn-next btn-next" id="nextBtn">Next →</button>
+        <button type="submit" class="btn take-btn-submit btn-submit-survey" id="submitBtn" style="display: none;">
+          <span>Complete &amp; Earn</span>
+          <span class="take-btn-coin">1 ¢</span>
+        </button>
+      </div>
     </div>
+
+    <p class="take-submit-hint">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
+      </svg>
+      You can submit early — all questions must be answered first.
+    </p>
   </form>
+
+  <!-- Batch Queue Continuation -->
+  <div id="batchContinuation" class="batch-continuation" style="display:none;">
+    <div class="batch-continuation-inner">
+      <span class="batch-dots"></span>
+      <span class="batch-text">You have <strong id="batchRemaining">0</strong> more selected surveys in your queue.</span>
+      <button type="button" id="clearBatchBtn" class="batch-clear">Clear queue</button>
+    </div>
+  </div>
 </section>
 
 <style>
@@ -565,6 +587,132 @@
   font-weight: 800;
 }
 
+.take-nav-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+}
+
+/* ── Submit Early Button ── */
+.take-btn-submit-early {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #fff;
+  color: var(--color-accent);
+  border: 2px solid var(--color-accent);
+  padding: 11px 20px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 200ms ease;
+}
+
+.take-btn-submit-early:hover {
+  background: var(--color-accent);
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(232, 98, 42, 0.25);
+}
+
+.take-btn-submit-early .take-btn-coin {
+  background: rgba(232, 98, 42, 0.1);
+  color: var(--color-accent);
+}
+
+.take-btn-submit-early:hover .take-btn-coin {
+  background: rgba(255, 255, 255, 0.25);
+  color: #fff;
+}
+
+/* Hide early submit once user is on last question (the Complete button takes over) */
+.take-btn-submit-early.is-hidden {
+  display: none;
+}
+
+/* ── Submit Hint ── */
+.take-submit-hint {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  justify-content: center;
+  margin-top: 12px;
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+.take-submit-hint svg {
+  flex-shrink: 0;
+  opacity: 0.6;
+}
+
+/* ── Batch Continuation Banner ── */
+.batch-continuation {
+  margin-top: 1.5rem;
+  padding: 14px 18px;
+  background: linear-gradient(135deg, #EAF3DE, #DCEBC3);
+  border: 1.5px solid #639922;
+  border-radius: 14px;
+  animation: takeCardSlide 0.4s ease both;
+}
+
+.batch-continuation-inner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #2D5A0A;
+  font-size: 0.9rem;
+}
+
+.batch-continuation-inner strong {
+  font-weight: 700;
+  color: #1A4A00;
+}
+
+.batch-dots {
+  display: inline-flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.batch-dots::before,
+.batch-dots::after {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #639922;
+  animation: takeRatingPulse 1.5s ease-in-out infinite;
+}
+
+.batch-dots::after {
+  animation-delay: 0.3s;
+}
+
+.batch-text {
+  flex: 1;
+}
+
+.batch-clear {
+  background: transparent;
+  border: 1px solid #639922;
+  color: #2D5A0A;
+  font-size: 0.8rem;
+  padding: 5px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 150ms ease;
+}
+
+.batch-clear:hover {
+  background: #639922;
+  color: #fff;
+}
+
 /* ── RESPONSIVE ── */
 @media (max-width: 768px) {
   .take-reward-banner {
@@ -630,6 +778,136 @@
     }
   });
   observer.observe(fill, { attributes: true, attributeFilter: ['style'] });
+})();
+
+// Early Submit — validates all questions are answered before submitting
+(function() {
+  var form = document.getElementById('surveyForm');
+  var earlyBtn = document.getElementById('submitEarlyBtn');
+  var submitBtn = document.getElementById('submitBtn');
+  var nextBtn = document.getElementById('nextBtn');
+  if (!form || !earlyBtn) return;
+
+  // Hide early submit when on last question (the big Complete button is active there)
+  function updateEarlyVisibility() {
+    if (submitBtn && submitBtn.style.display !== 'none') {
+      earlyBtn.classList.add('is-hidden');
+    } else {
+      earlyBtn.classList.remove('is-hidden');
+    }
+  }
+
+  // Observe submitBtn visibility changes (set by survey.js)
+  if (submitBtn) {
+    var submitObserver = new MutationObserver(updateEarlyVisibility);
+    submitObserver.observe(submitBtn, { attributes: true, attributeFilter: ['style'] });
+    updateEarlyVisibility();
+  }
+
+  earlyBtn.addEventListener('click', function(e) {
+    e.preventDefault();
+
+    // Validate: every question must have an answer
+    var cards = form.querySelectorAll('.question-card');
+    var missing = null;
+
+    for (var i = 0; i < cards.length; i++) {
+      var card = cards[i];
+      var type = card.dataset.type;
+      var answered = false;
+
+      if (type === 'multiple_choice' || type === 'rating') {
+        answered = !!card.querySelector('input[type="radio"]:checked');
+      } else if (type === 'text') {
+        var ta = card.querySelector('textarea');
+        answered = ta && ta.value.trim().length > 0;
+      }
+
+      if (!answered) {
+        missing = i;
+        break;
+      }
+    }
+
+    if (missing !== null) {
+      // Jump to the first unanswered question
+      cards.forEach(function(c, i) {
+        c.style.display = i === missing ? 'block' : 'none';
+        c.classList.toggle('active', i === missing);
+      });
+
+      // Update progress bar to reflect new position
+      var total = cards.length;
+      var fill = document.getElementById('progressFill');
+      if (fill) fill.style.width = (((missing + 1) / total) * 100) + '%';
+
+      // Update prev/next buttons
+      var prevBtn = document.getElementById('prevBtn');
+      if (prevBtn) prevBtn.style.display = missing === 0 ? 'none' : 'inline-flex';
+      if (nextBtn) nextBtn.style.display = missing === total - 1 ? 'none' : 'inline-flex';
+      if (submitBtn) submitBtn.style.display = missing === total - 1 ? 'inline-flex' : 'none';
+
+      // Shake + toast
+      cards[missing].style.animation = 'shake 0.4s ease';
+      setTimeout(function() { cards[missing].style.animation = ''; }, 450);
+
+      if (typeof window.showToast === 'function') {
+        window.showToast('Please answer this question before submitting.', 'error');
+      } else {
+        alert('Please answer all questions before submitting.');
+      }
+      return;
+    }
+
+    // All answered — confirm and submit
+    if (confirm('Submit your responses and earn 1 credit?')) {
+      form.submit();
+    }
+  });
+})();
+
+// Batch Queue — chains multiple surveys after completion
+(function() {
+  var KEY = 'gvot_survey_queue';
+  var banner = document.getElementById('batchContinuation');
+  var remainingEl = document.getElementById('batchRemaining');
+  var clearBtn = document.getElementById('clearBatchBtn');
+  if (!banner) return;
+
+  var queue = [];
+  try { queue = JSON.parse(sessionStorage.getItem(KEY) || '[]'); } catch (e) { queue = []; }
+
+  // Current survey ID from URL
+  var match = window.location.pathname.match(/\/surveys\/(\d+)/);
+  var currentId = match ? parseInt(match[1], 10) : null;
+
+  // Remove current ID from queue on page load
+  if (currentId !== null && queue.length > 0) {
+    queue = queue.filter(function(id) { return id !== currentId; });
+    sessionStorage.setItem(KEY, JSON.stringify(queue));
+  }
+
+  if (queue.length > 0) {
+    banner.style.display = 'block';
+    remainingEl.textContent = queue.length;
+  }
+
+  if (clearBtn) {
+    clearBtn.addEventListener('click', function() {
+      sessionStorage.removeItem(KEY);
+      banner.style.display = 'none';
+    });
+  }
+
+  // After form submit success (which redirects), we'll check the queue on next page.
+  // If a batch is active, the list page will redirect to the next one.
+  // We do this by setting a flag before submit.
+  var form = document.getElementById('surveyForm');
+  if (form && queue.length > 0) {
+    form.addEventListener('submit', function() {
+      sessionStorage.setItem('gvot_survey_queue_active', '1');
+    });
+  }
 })();
 </script>
 

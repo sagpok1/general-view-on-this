@@ -44,12 +44,31 @@
   </div>
 
   <div class="survey-section">
-    <h2 class="section-title">Available Surveys</h2>
+    <div class="section-head-row">
+      <h2 class="section-title">Available Surveys</h2>
+
+      <% if (availableSurveys && availableSurveys.length > 0) { %>
+        <div class="batch-controls">
+          <label class="batch-select-all">
+            <input type="checkbox" id="selectAllSurveys">
+            <span>Select all</span>
+          </label>
+          <button type="button" class="btn btn-batch" id="takeBatchBtn" disabled>
+            <span class="btn-batch-icon">▶</span>
+            <span>Take <span id="batchCount">0</span> selected</span>
+          </button>
+        </div>
+      <% } %>
+    </div>
 
     <% if (availableSurveys && availableSurveys.length > 0) { %>
       <div class="survey-grid">
         <% availableSurveys.forEach(function(survey) { %>
-          <article class="survey-card">
+          <article class="survey-card" data-survey-id="<%= survey.id %>">
+            <label class="survey-select-check">
+              <input type="checkbox" class="survey-check" value="<%= survey.id %>">
+              <span class="survey-select-mark"></span>
+            </label>
             <div class="survey-card-body">
               <span class="badge badge-category"><%= survey.category %></span>
               <h3 class="survey-card-title"><%= survey.title %></h3>
@@ -96,5 +115,224 @@
     <% } %>
   </div>
 </section>
+
+<style>
+/* ═══ SURVEY LIST — BATCH MODE ═══ */
+
+.section-head-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.batch-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.batch-select-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  user-select: none;
+}
+
+.batch-select-all input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--color-accent);
+  cursor: pointer;
+}
+
+.btn-batch {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #2D7A4F, #10B981);
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 200ms ease;
+  box-shadow: 0 4px 14px rgba(45, 122, 79, 0.25);
+}
+
+.btn-batch:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(45, 122, 79, 0.35);
+}
+
+.btn-batch:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  background: var(--color-text-muted);
+  box-shadow: none;
+}
+
+.btn-batch-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 50%;
+  font-size: 0.7rem;
+}
+
+/* ── Survey Card Checkbox ── */
+.survey-card {
+  position: relative;
+}
+
+.survey-select-check {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 3;
+  cursor: pointer;
+  user-select: none;
+}
+
+.survey-select-check input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.survey-select-mark {
+  display: block;
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  border: 2px solid var(--color-border);
+  background: rgba(255, 255, 255, 0.9);
+  transition: all 150ms ease;
+  position: relative;
+}
+
+.survey-select-check:hover .survey-select-mark {
+  border-color: var(--color-accent);
+  background: #fff;
+}
+
+.survey-select-check input:checked ~ .survey-select-mark {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  box-shadow: 0 2px 8px rgba(232, 98, 42, 0.3);
+}
+
+.survey-select-check input:checked ~ .survey-select-mark::after {
+  content: '';
+  position: absolute;
+  top: 4px;
+  left: 8px;
+  width: 6px;
+  height: 12px;
+  border-right: 2.5px solid #fff;
+  border-bottom: 2.5px solid #fff;
+  transform: rotate(45deg);
+}
+
+.survey-card.is-selected {
+  border-color: var(--color-accent);
+  box-shadow: 0 6px 20px rgba(232, 98, 42, 0.15);
+}
+
+/* Show/hide checkboxes responsively */
+@media (max-width: 640px) {
+  .section-head-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .batch-controls {
+    justify-content: space-between;
+  }
+}
+</style>
+
+<script>
+// Batch Selection + Take Multiple Surveys
+(function() {
+  var KEY = 'gvot_survey_queue';
+  var ACTIVE_KEY = 'gvot_survey_queue_active';
+  var selectAll = document.getElementById('selectAllSurveys');
+  var checks = document.querySelectorAll('.survey-check');
+  var batchBtn = document.getElementById('takeBatchBtn');
+  var countEl = document.getElementById('batchCount');
+  if (checks.length === 0 || !batchBtn) return;
+
+  function updateCount() {
+    var selected = Array.from(checks).filter(function(c) { return c.checked; });
+    countEl.textContent = selected.length;
+    batchBtn.disabled = selected.length === 0;
+
+    // Visual feedback on cards
+    checks.forEach(function(c) {
+      var card = c.closest('.survey-card');
+      if (card) card.classList.toggle('is-selected', c.checked);
+    });
+  }
+
+  checks.forEach(function(c) {
+    c.addEventListener('change', updateCount);
+  });
+
+  if (selectAll) {
+    selectAll.addEventListener('change', function() {
+      checks.forEach(function(c) { c.checked = selectAll.checked; });
+      updateCount();
+    });
+  }
+
+  batchBtn.addEventListener('click', function() {
+    var selected = Array.from(checks)
+      .filter(function(c) { return c.checked; })
+      .map(function(c) { return parseInt(c.value, 10); });
+
+    if (selected.length === 0) return;
+
+    // Store remaining in session (minus the first which we'll open now)
+    var first = selected[0];
+    var rest = selected.slice(1);
+    sessionStorage.setItem(KEY, JSON.stringify(rest));
+
+    window.location.href = '/surveys/' + first;
+  });
+
+  // After a batch survey completion, redirect to the next one in queue
+  // (the list page loads when survey is completed and redirects back)
+  var queue = [];
+  try { queue = JSON.parse(sessionStorage.getItem(KEY) || '[]'); } catch (e) { queue = []; }
+
+  if (queue.length > 0 && sessionStorage.getItem(ACTIVE_KEY)) {
+    sessionStorage.removeItem(ACTIVE_KEY);
+    var nextId = queue[0];
+
+    // Show a brief toast and auto-redirect
+    if (typeof window.showToast === 'function') {
+      window.showToast('Moving to next survey in your queue...', 'success');
+    }
+
+    setTimeout(function() {
+      window.location.href = '/surveys/' + nextId;
+    }, 800);
+  }
+})();
+</script>
 
 <%- include('../layout/footer', { extraJs: ['/js/survey.js'] }) %>
