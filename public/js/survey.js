@@ -193,6 +193,14 @@
   }
 
   function validateRating(card) {
+    // Rating questions use radio buttons like multiple choice,
+    // plus the older star-rating-interactive hidden input pattern
+    var checkedRadio = card.querySelector('input[type="radio"]:checked');
+    if (checkedRadio) {
+      clearValidationError(card);
+      return true;
+    }
+
     var ratingInput = card.querySelector('input[name*="rating"], input.rating-value, .star-rating-interactive input[type="hidden"]');
     if (!ratingInput || !ratingInput.value || ratingInput.value === '0') {
       showValidationError(card, 'Please select a rating to continue.');

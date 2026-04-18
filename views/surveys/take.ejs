@@ -869,13 +869,16 @@
 // Batch Queue — chains multiple surveys after completion
 (function() {
   var KEY = 'gvot_survey_queue';
+  var COMPLETED_KEY = 'gvot_survey_batch_completed';
   var banner = document.getElementById('batchContinuation');
   var remainingEl = document.getElementById('batchRemaining');
   var clearBtn = document.getElementById('clearBatchBtn');
-  if (!banner) return;
 
   var queue = [];
   try { queue = JSON.parse(sessionStorage.getItem(KEY) || '[]'); } catch (e) { queue = []; }
+
+  var completed = parseInt(sessionStorage.getItem(COMPLETED_KEY) || '0', 10);
+  if (isNaN(completed)) completed = 0;
 
   // Current survey ID from URL
   var match = window.location.pathname.match(/\/surveys\/(\d+)/);
@@ -887,25 +890,53 @@
     sessionStorage.setItem(KEY, JSON.stringify(queue));
   }
 
-  if (queue.length > 0) {
+  // Update the Submit button labels to reflect cumulative credits in batch mode
+  // +1 for the current survey about to be submitted
+  var aboutToEarn = completed + 1;
+  var coinLabels = document.querySelectorAll('.take-btn-coin');
+  var earlyBtn = document.getElementById('submitEarlyBtn');
+  var submitBtn = document.getElementById('submitBtn');
+
+  if (aboutToEarn > 1) {
+    // In a batch session — show running total
+    coinLabels.forEach(function(el) {
+      el.textContent = '+' + aboutToEarn + ' ¢';
+    });
+    if (earlyBtn) {
+      var earlyText = earlyBtn.querySelector('span:first-child');
+      if (earlyText) earlyText.textContent = 'Submit Now';
+    }
+    if (submitBtn) {
+      var submitText = submitBtn.querySelector('span:first-child');
+      if (submitText) submitText.textContent = 'Complete & Earn ' + aboutToEarn + ' total';
+    }
+  }
+
+  if (banner && queue.length > 0) {
     banner.style.display = 'block';
-    remainingEl.textContent = queue.length;
+    if (remainingEl) remainingEl.textContent = queue.length;
   }
 
   if (clearBtn) {
     clearBtn.addEventListener('click', function() {
       sessionStorage.removeItem(KEY);
-      banner.style.display = 'none';
+      sessionStorage.removeItem(COMPLETED_KEY);
+      if (banner) banner.style.display = 'none';
     });
   }
 
-  // After form submit success (which redirects), we'll check the queue on next page.
-  // If a batch is active, the list page will redirect to the next one.
-  // We do this by setting a flag before submit.
+  // When form is submitted, mark batch active + increment completed count
   var form = document.getElementById('surveyForm');
-  if (form && queue.length > 0) {
+  if (form) {
     form.addEventListener('submit', function() {
-      sessionStorage.setItem('gvot_survey_queue_active', '1');
+      // Only count as a batch session if we had a queue (or had previous completions)
+      if (queue.length > 0 || completed > 0) {
+        sessionStorage.setItem('gvot_survey_queue_active', '1');
+        sessionStorage.setItem(COMPLETED_KEY, String(completed + 1));
+      } else {
+        // Standalone submit — clear any stale batch state
+        sessionStorage.removeItem(COMPLETED_KEY);
+      }
     });
   }
 })();
