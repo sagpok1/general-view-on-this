@@ -310,39 +310,37 @@
     var first = selected[0];
     var rest = selected.slice(1);
     sessionStorage.setItem(KEY, JSON.stringify(rest));
-    // Reset completed counter for a new batch session
-    sessionStorage.removeItem('gvot_survey_batch_completed');
+    // Reset session counter for a clean batch start
+    sessionStorage.setItem('gvot_survey_session_completed', '0');
 
     window.location.href = '/surveys/' + first;
   });
 
   // After a batch survey completion, redirect to the next one in queue
-  // (the list page loads when survey is completed and redirects back)
   var queue = [];
   try { queue = JSON.parse(sessionStorage.getItem(KEY) || '[]'); } catch (e) { queue = []; }
 
-  var completed = parseInt(sessionStorage.getItem('gvot_survey_batch_completed') || '0', 10);
+  var completed = parseInt(sessionStorage.getItem('gvot_survey_session_completed') || '0', 10);
 
   if (queue.length > 0 && sessionStorage.getItem(ACTIVE_KEY)) {
     sessionStorage.removeItem(ACTIVE_KEY);
     var nextId = queue[0];
 
-    // Show a brief toast and auto-redirect
     if (typeof window.showToast === 'function') {
-      var earned = completed;
-      window.showToast('Earned ' + earned + ' credit' + (earned !== 1 ? 's' : '') + ' — next survey...', 'success');
+      window.showToast('Earned ' + completed + ' credit' + (completed !== 1 ? 's' : '') + ' — next survey...', 'success');
     }
 
     setTimeout(function() {
       window.location.href = '/surveys/' + nextId;
     }, 1000);
   } else if (completed > 0 && queue.length === 0) {
-    // Batch finished — show celebration toast and clear counter
-    sessionStorage.removeItem('gvot_survey_batch_completed');
+    // Batch or session finished — show celebration toast
     sessionStorage.removeItem(ACTIVE_KEY);
     if (typeof window.showToast === 'function') {
-      window.showToast('Batch complete! You earned ' + completed + ' credits 🎉', 'success');
+      window.showToast('Earned ' + completed + ' credit' + (completed !== 1 ? 's' : '') + ' this session 🎉', 'success');
     }
+    // Don't clear the session counter here — let the user see it persist
+    // until they start a new batch or close the tab
   }
 })();
 </script>
