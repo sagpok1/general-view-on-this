@@ -18,7 +18,6 @@
         <span class="ticker-dot"></span>
         <span class="ticker-item">All responses are anonymous</span>
         <span class="ticker-dot"></span>
-        <!-- Duplicate for seamless loop -->
         <span class="ticker-item"><%= questions.length %> question<%= questions.length !== 1 ? 's' : '' %> in this survey</span>
         <span class="ticker-dot"></span>
         <span class="ticker-item">Earn 1 credit on completion</span>
@@ -31,56 +30,607 @@
     </div>
   </div>
 
-  <div class="survey-progress">
-    <div class="survey-progress-text">Question <span id="currentQuestion">1</span> of <span id="totalQuestions"><%= questions.length %></span></div>
-    <div class="survey-progress-bar">
-      <div class="survey-progress-fill" id="progressFill" style="width: <%= (1 / questions.length) * 100 %>%"></div>
+  <!-- ═══ REWARD BANNER ═══ -->
+  <div class="take-reward-banner">
+    <div class="take-reward-coin">
+      <div class="take-coin-outer">
+        <div class="take-coin-inner">1</div>
+      </div>
+    </div>
+    <div class="take-reward-text">
+      <h3>Complete this survey to earn <strong>1 Credit</strong></h3>
+      <p>Credits unlock orders from local businesses. Your voice matters.</p>
     </div>
   </div>
 
-  <form action="/surveys/<%= survey.id %>/complete" method="POST" class="survey-form" id="surveyForm">
+  <!-- ═══ PROGRESS ═══ -->
+  <div class="take-progress-wrapper">
+    <div class="take-progress-text">
+      <span>Question <strong id="currentQuestion">1</strong> of <strong id="totalQuestions"><%= questions.length %></strong></span>
+      <span class="take-progress-percent" id="progressPercent"><%= Math.round((1 / questions.length) * 100) %>%</span>
+    </div>
+    <div class="take-progress-bar">
+      <div class="take-progress-fill progress-fill" id="progressFill" style="width: <%= (1 / questions.length) * 100 %>%"></div>
+    </div>
+  </div>
+
+  <form action="/surveys/<%= survey.id %>/complete" method="POST" class="take-survey-form survey-form" id="surveyForm">
     <input type="hidden" name="_csrf" value="<%= csrfToken %>">
 
     <% questions.forEach(function(question, index) { %>
-      <div class="survey-question" data-question="<%= index + 1 %>" style="<%= index === 0 ? '' : 'display: none;' %>">
-        <h3 class="question-text"><%= question.question_text %></h3>
+      <div class="take-question-card question-card survey-question" data-type="<%= question.question_type %>" data-question="<%= index + 1 %>" style="<%= index === 0 ? '' : 'display: none;' %>">
+        <div class="take-question-number">Question <%= index + 1 %></div>
+        <h3 class="take-question-text"><%= question.question_text %></h3>
 
         <% if (question.question_type === 'multiple_choice') { %>
-          <div class="question-options">
+          <div class="take-options-grid">
             <% var options = JSON.parse(question.options); %>
             <% options.forEach(function(option, optIndex) { %>
-              <label class="radio-option">
+              <label class="take-option">
                 <input type="radio" name="question_<%= question.id %>" value="<%= option %>" required>
-                <span class="radio-custom"></span>
-                <span class="radio-label"><%= option %></span>
+                <span class="take-option-circle"></span>
+                <span class="take-option-label"><%= option %></span>
               </label>
             <% }); %>
           </div>
 
         <% } else if (question.question_type === 'rating') { %>
-          <div class="rating-buttons">
+          <div class="take-rating-row">
             <% for (var r = 1; r <= 5; r++) { %>
-              <label class="rating-button-label">
+              <label class="take-rating-item">
                 <input type="radio" name="question_<%= question.id %>" value="<%= r %>" required>
-                <span class="rating-button"><%= r %></span>
+                <span class="take-rating-coin"><%= r %></span>
               </label>
             <% } %>
           </div>
+          <div class="take-rating-labels">
+            <span>Poor</span>
+            <span>Excellent</span>
+          </div>
 
         <% } else if (question.question_type === 'text') { %>
-          <div class="question-text-input">
-            <textarea name="question_<%= question.id %>" rows="4" placeholder="Type your answer here..." required></textarea>
+          <div class="take-textarea-wrap">
+            <textarea name="question_<%= question.id %>" rows="4" placeholder="Share your thoughts..." required></textarea>
           </div>
         <% } %>
       </div>
     <% }); %>
 
-    <div class="survey-navigation">
-      <button type="button" class="btn btn-secondary" id="prevBtn" style="display: none;">Previous</button>
-      <button type="button" class="btn btn-primary" id="nextBtn">Next</button>
-      <button type="submit" class="btn btn-primary btn-earn" id="submitBtn" style="display: none;">Complete Survey &amp; Earn 1 Credit</button>
+    <div class="take-nav">
+      <button type="button" class="btn take-btn-prev btn-prev" id="prevBtn" style="display: none;">← Previous</button>
+      <button type="button" class="btn take-btn-next btn-next" id="nextBtn">Next →</button>
+      <button type="submit" class="btn take-btn-submit btn-submit-survey" id="submitBtn" style="display: none;">
+        <span>Complete &amp; Earn</span>
+        <span class="take-btn-coin">1 ¢</span>
+      </button>
     </div>
   </form>
 </section>
+
+<style>
+/* ═══ SURVEY TAKE — ANIMATED THEME ═══ */
+
+@keyframes takeCoinSpin {
+  0%, 100% { transform: rotate(0deg); filter: brightness(1); }
+  50%      { transform: rotate(5deg); filter: brightness(1.15); }
+}
+
+@keyframes takeCoinShine {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes takeProgressShimmer {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@keyframes takeCardSlide {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes takeRatingPulse {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.05); }
+}
+
+/* ── REWARD BANNER ── */
+.take-reward-banner {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  background: linear-gradient(135deg, #FAC775, #FAEEDA 60%, #FEF3C7);
+  border: 1.5px solid #BA7517;
+  border-radius: 20px 20px 20px 4px;
+  padding: 1.25rem 1.75rem;
+  margin-bottom: 2rem;
+  box-shadow:
+    0 2px 8px rgba(186, 117, 23, 0.15),
+    0 8px 24px rgba(250, 199, 117, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.take-reward-banner::before {
+  content: '';
+  position: absolute;
+  top: -30px;
+  right: -30px;
+  width: 120px;
+  height: 120px;
+  background: rgba(255, 255, 255, 0.35);
+  border-radius: 50%;
+}
+
+.take-reward-coin {
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.take-coin-outer {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  padding: 4px;
+  background: linear-gradient(135deg, #FAC775, #EF9F27, #BA7517, #EF9F27, #FAC775);
+  background-size: 200% 200%;
+  animation: takeCoinShine 4s ease-in-out infinite, takeCoinSpin 3s ease-in-out infinite;
+  box-shadow: 0 4px 16px rgba(186, 117, 23, 0.35);
+  will-change: background-position, transform;
+}
+
+.take-coin-inner {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: linear-gradient(160deg, #FFF5E0, #FAECC8);
+  border: 2px dashed rgba(186, 117, 23, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #7A5A1A;
+}
+
+.take-reward-text {
+  flex: 1;
+  position: relative;
+  z-index: 1;
+}
+
+.take-reward-text h3 {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 400;
+  color: #5A3A0A;
+  margin-bottom: 2px;
+}
+
+.take-reward-text h3 strong {
+  font-weight: 700;
+}
+
+.take-reward-text p {
+  font-size: 0.85rem;
+  color: #7A5A1A;
+}
+
+/* ── PROGRESS BAR ── */
+.take-progress-wrapper {
+  margin-bottom: 2rem;
+}
+
+.take-progress-text {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+
+.take-progress-text strong {
+  color: var(--color-accent);
+  font-weight: 700;
+}
+
+.take-progress-percent {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  color: var(--color-accent);
+  font-weight: 700;
+}
+
+.take-progress-bar {
+  height: 14px;
+  background: rgba(232, 98, 42, 0.08);
+  border-radius: 999px;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid rgba(232, 98, 42, 0.15);
+}
+
+.take-progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #E8622A 0%, #F59E0B 50%, #E8622A 100%);
+  background-size: 200% 100%;
+  animation: takeCoinShine 3s ease-in-out infinite;
+  transition: width 500ms cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 0 12px rgba(232, 98, 42, 0.4);
+}
+
+.take-progress-fill::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+  animation: takeProgressShimmer 2s ease-in-out infinite;
+}
+
+/* ── FORM ── */
+.take-survey-form {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+/* ── QUESTION CARD (Cloud Style) ── */
+.take-question-card {
+  background: linear-gradient(135deg, #f0f8ff 0%, #e8f4fd 100%);
+  border: 1.5px solid rgba(147, 197, 235, 0.4);
+  border-radius: 20px 20px 20px 4px;
+  padding: 2rem 2.25rem;
+  margin-bottom: 1.5rem;
+  box-shadow:
+    0 2px 8px rgba(147, 197, 235, 0.15),
+    0 8px 24px rgba(147, 197, 235, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  animation: takeCardSlide 0.4s ease both;
+}
+
+.take-question-number {
+  display: inline-block;
+  padding: 4px 12px;
+  background: rgba(232, 98, 42, 0.1);
+  color: var(--color-accent);
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 1rem;
+}
+
+.take-question-text {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #1a3a5c;
+  line-height: 1.35;
+  margin-bottom: 1.5rem;
+}
+
+/* ── MULTIPLE CHOICE ── */
+.take-options-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.75rem;
+}
+
+.take-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: rgba(255, 255, 255, 0.85);
+  border: 2px solid rgba(147, 197, 235, 0.3);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 200ms ease;
+  position: relative;
+}
+
+.take-option:hover {
+  border-color: var(--color-accent);
+  background: rgba(255, 255, 255, 1);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(232, 98, 42, 0.1);
+}
+
+.take-option input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.take-option-circle {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid var(--color-border);
+  background: #fff;
+  flex-shrink: 0;
+  transition: all 200ms ease;
+  position: relative;
+}
+
+.take-option input[type="radio"]:checked ~ .take-option-circle {
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+  box-shadow: 0 0 0 4px rgba(232, 98, 42, 0.15);
+}
+
+.take-option input[type="radio"]:checked ~ .take-option-circle::after {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  background: #fff;
+  border-radius: 50%;
+}
+
+.take-option:has(input:checked) {
+  border-color: var(--color-accent);
+  background: linear-gradient(135deg, rgba(253, 240, 235, 1), rgba(255, 255, 255, 1));
+  box-shadow: 0 4px 14px rgba(232, 98, 42, 0.15);
+}
+
+.take-option-label {
+  font-weight: 500;
+  color: #1a3a5c;
+  font-size: 0.95rem;
+}
+
+/* ── RATING COINS ── */
+.take-rating-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 10px;
+}
+
+.take-rating-item {
+  flex: 1;
+  cursor: pointer;
+}
+
+.take-rating-item input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.take-rating-coin {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.85);
+  border: 2.5px solid rgba(147, 197, 235, 0.4);
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #4a7a9b;
+  transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.take-rating-item:hover .take-rating-coin {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  transform: scale(1.08);
+}
+
+.take-rating-item input[type="radio"]:checked ~ .take-rating-coin {
+  background: linear-gradient(135deg, #FAC775, #EF9F27, #BA7517);
+  background-size: 200% 200%;
+  animation: takeCoinShine 3s ease-in-out infinite, takeRatingPulse 2s ease-in-out infinite;
+  border-color: #BA7517;
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(186, 117, 23, 0.35);
+}
+
+.take-rating-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0 6px;
+}
+
+/* ── TEXT AREA ── */
+.take-textarea-wrap {
+  position: relative;
+}
+
+.take-textarea-wrap textarea {
+  width: 100%;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.85);
+  border: 2px solid rgba(147, 197, 235, 0.4);
+  border-radius: 14px;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  color: #1a3a5c;
+  line-height: 1.6;
+  resize: vertical;
+  transition: all 200ms ease;
+  min-height: 120px;
+}
+
+.take-textarea-wrap textarea:focus {
+  outline: none;
+  border-color: var(--color-accent);
+  background: #fff;
+  box-shadow: 0 0 0 4px rgba(232, 98, 42, 0.1);
+}
+
+/* ── NAVIGATION ── */
+.take-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  box-shadow: var(--shadow-sm);
+}
+
+.take-btn-prev {
+  background: var(--color-surface-2);
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
+  padding: 12px 22px;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 200ms ease;
+}
+
+.take-btn-prev:hover {
+  background: var(--color-border);
+  color: var(--color-text-primary);
+}
+
+.take-btn-next {
+  background: linear-gradient(135deg, #E8622A 0%, #F59E0B 100%);
+  background-size: 200% 200%;
+  animation: takeCoinShine 4s ease-in-out infinite;
+  color: #fff;
+  border: none;
+  padding: 14px 32px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 200ms ease;
+  box-shadow: 0 4px 14px rgba(232, 98, 42, 0.25);
+  margin-left: auto;
+}
+
+.take-btn-next:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(232, 98, 42, 0.35);
+}
+
+.take-btn-submit {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: linear-gradient(135deg, #FAC775, #EF9F27, #BA7517);
+  background-size: 200% 200%;
+  animation: takeCoinShine 3s ease-in-out infinite;
+  color: #fff;
+  border: none;
+  padding: 14px 24px 14px 28px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 200ms ease;
+  box-shadow: 0 4px 16px rgba(186, 117, 23, 0.35);
+  margin-left: auto;
+}
+
+.take-btn-submit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 22px rgba(186, 117, 23, 0.5);
+}
+
+.take-btn-coin {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 38px;
+  height: 28px;
+  padding: 0 10px;
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(4px);
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 800;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  .take-reward-banner {
+    flex-direction: column;
+    text-align: center;
+    padding: 1.25rem;
+  }
+
+  .take-coin-outer {
+    width: 60px;
+    height: 60px;
+  }
+
+  .take-coin-inner {
+    font-size: 1.5rem;
+  }
+
+  .take-question-card {
+    padding: 1.5rem 1.25rem;
+  }
+
+  .take-question-text {
+    font-size: 1.15rem;
+  }
+
+  .take-options-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .take-rating-coin {
+    font-size: 1.25rem;
+  }
+
+  .take-nav {
+    padding: 1rem;
+  }
+
+  .take-btn-next,
+  .take-btn-submit {
+    padding: 12px 22px;
+    font-size: 0.9rem;
+  }
+}
+</style>
+
+<script>
+// Update question counter + percent when progress bar width changes
+(function() {
+  var fill = document.getElementById('progressFill');
+  var currentEl = document.getElementById('currentQuestion');
+  var percentEl = document.getElementById('progressPercent');
+  var totalEl = document.getElementById('totalQuestions');
+  if (!fill || !currentEl || !percentEl || !totalEl) return;
+
+  var total = parseInt(totalEl.textContent, 10);
+  var observer = new MutationObserver(function() {
+    var width = parseFloat(fill.style.width);
+    if (!isNaN(width)) {
+      var currentQ = Math.round((width / 100) * total);
+      if (currentQ < 1) currentQ = 1;
+      currentEl.textContent = currentQ;
+      percentEl.textContent = Math.round(width) + '%';
+    }
+  });
+  observer.observe(fill, { attributes: true, attributeFilter: ['style'] });
+})();
+</script>
 
 <%- include('../layout/footer', { extraJs: ['/js/survey.js'] }) %>
