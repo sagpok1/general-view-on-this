@@ -32,9 +32,9 @@
   </div>
 
   <% if (orders.length > 0) { %>
-    <div class="order-list">
+    <div class="order-list" data-reveal-stagger="90">
       <% orders.forEach(function(order) { %>
-        <div class="order-card-full">
+        <div class="order-card-full pop-reveal">
           <div class="order-card-top">
             <div class="order-card-info">
               <h2 class="order-business-name"><%= order.business_name %></h2>

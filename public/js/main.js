@@ -209,4 +209,103 @@
     };
   };
 
+  // ─── Reveal on Scroll + Stagger ──────────────────────────────────────
+  // Elements with [data-reveal] fade/slide into view as they scroll
+  // into the viewport. Parents with [data-reveal-stagger] have their
+  // direct children staged with an incremental delay.
+  (function initReveal() {
+    var prefersReduced = window.matchMedia &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (prefersReduced || !('IntersectionObserver' in window)) {
+      document.querySelectorAll('[data-reveal], .pop-reveal').forEach(function (el) {
+        el.classList.add('is-revealed');
+      });
+      return;
+    }
+
+    // Staged delay for children of stagger containers
+    document.querySelectorAll('[data-reveal-stagger]').forEach(function (parent) {
+      var step = parseInt(parent.getAttribute('data-reveal-stagger'), 10) || 70;
+      var max = parseInt(parent.getAttribute('data-reveal-max'), 10) || 12;
+      var kids = parent.children;
+      for (var i = 0; i < kids.length; i++) {
+        var k = kids[i];
+        if (!k.hasAttribute('data-reveal') && !k.classList.contains('pop-reveal')) {
+          k.setAttribute('data-reveal', '');
+        }
+        k.style.setProperty('--reveal-delay', Math.min(i, max) * step + 'ms');
+      }
+    });
+
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-revealed');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, {
+      root: null,
+      rootMargin: '0px 0px -40px 0px',
+      threshold: 0.08
+    });
+
+    document.querySelectorAll('[data-reveal], .pop-reveal').forEach(function (el) {
+      observer.observe(el);
+    });
+  })();
+
+  // ─── Counter Animation ───────────────────────────────────────────────
+  // Elements with [data-counter] containing a numeric target will count
+  // up from 0 smoothly once they scroll into view.
+  (function initCounters() {
+    var nodes = document.querySelectorAll('[data-counter]');
+    if (nodes.length === 0) return;
+
+    var prefersReduced = window.matchMedia &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function run(el) {
+      var target = parseFloat(el.getAttribute('data-counter')) || 0;
+      if (prefersReduced || target === 0) {
+        el.textContent = formatCount(target);
+        return;
+      }
+      var duration = parseInt(el.getAttribute('data-counter-duration'), 10) || 1100;
+      var start = performance.now();
+      function frame(now) {
+        var p = Math.min(1, (now - start) / duration);
+        // easeOutCubic
+        var eased = 1 - Math.pow(1 - p, 3);
+        el.textContent = formatCount(Math.round(target * eased));
+        if (p < 1) requestAnimationFrame(frame);
+      }
+      requestAnimationFrame(frame);
+    }
+
+    function formatCount(n) {
+      return n.toLocaleString('en-US');
+    }
+
+    if (!('IntersectionObserver' in window)) {
+      nodes.forEach(run);
+      return;
+    }
+
+    var obs = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) {
+          run(e.target);
+          obs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.4 });
+
+    nodes.forEach(function (n) {
+      n.textContent = '0';
+      obs.observe(n);
+    });
+  })();
+
 })();

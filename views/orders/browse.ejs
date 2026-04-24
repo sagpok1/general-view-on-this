@@ -61,9 +61,9 @@
   </form>
 
   <% if (businesses.length > 0) { %>
-    <div class="business-grid">
+    <div class="business-grid" data-reveal-stagger="80" data-reveal-max="14">
       <% businesses.forEach(function(biz) { %>
-        <div class="business-card">
+        <div class="business-card pop-reveal anim-glow anim-shine">
           <div class="business-card-header">
             <h2 class="business-card-name"><%= biz.business_name %></h2>
             <span class="badge badge-category badge-<%= biz.category %>"><%= biz.category %></span>
@@ -108,7 +108,7 @@
             </div>
           <% } %>
 
-          <a href="/orders/create/<%= biz.id %>" class="btn btn-primary btn-block business-card-btn">Order Now</a>
+          <a href="/orders/create/<%= biz.id %>" class="btn btn-primary btn-block business-card-btn anim-shine">Order Now</a>
         </div>
       <% }); %>
     </div>

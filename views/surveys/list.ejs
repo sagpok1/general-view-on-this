@@ -77,9 +77,9 @@
         <p class="survey-empty-filter" id="surveyEmptyFilter" hidden>No surveys match your filter.</p>
       </div>
 
-      <div class="survey-grid" id="surveyGrid">
+      <div class="survey-grid" id="surveyGrid" data-reveal-stagger="60" data-reveal-max="16">
         <% availableSurveys.forEach(function(survey) { %>
-          <article class="survey-card" data-survey-id="<%= survey.id %>"
+          <article class="survey-card pop-reveal" data-survey-id="<%= survey.id %>"
                    data-cat="<%= survey.category || '' %>"
                    data-search="<%= (survey.title + ' ' + (survey.description || '')).toLowerCase() %>">
             <label class="survey-select-check">

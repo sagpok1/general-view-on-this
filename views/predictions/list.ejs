@@ -29,19 +29,19 @@
   </div>
 
   <!-- ═══ STATS STRIP ═══ -->
-  <div class="predict-stats-strip">
+  <div class="predict-stats-strip" data-reveal>
     <div class="predict-stat">
-      <div class="predict-stat-value"><%= stats.totalPredictions %></div>
+      <div class="predict-stat-value" data-counter="<%= stats.totalPredictions %>"><%= stats.totalPredictions %></div>
       <div class="predict-stat-label">Open markets</div>
     </div>
     <div class="predict-stat-divider"></div>
     <div class="predict-stat">
-      <div class="predict-stat-value"><%= stats.totalVotes %></div>
+      <div class="predict-stat-value" data-counter="<%= stats.totalVotes %>"><%= stats.totalVotes %></div>
       <div class="predict-stat-label">Predictions cast</div>
     </div>
     <div class="predict-stat-divider"></div>
     <div class="predict-stat">
-      <div class="predict-stat-value"><%= stats.uniqueVoters %></div>
+      <div class="predict-stat-value" data-counter="<%= stats.uniqueVoters %>"><%= stats.uniqueVoters %></div>
       <div class="predict-stat-label">Forecasters</div>
     </div>
   </div>
@@ -73,9 +73,9 @@
       <p>No predictions yet. Check back soon.</p>
     </div>
   <% } else { %>
-    <div class="predict-grid" id="predictGrid">
+    <div class="predict-grid" id="predictGrid" data-reveal-stagger="70" data-reveal-max="12">
       <% predictions.forEach(function(p) { %>
-        <article class="predict-card <%= p.my_option_id ? 'is-voted' : '' %> <%= p.status !== 'open' ? 'is-closed' : '' %>"
+        <article class="predict-card pop-reveal <%= p.my_option_id ? 'is-voted' : '' %> <%= p.status !== 'open' ? 'is-closed' : '' %>"
                  data-cat="<%= p.category || '' %>"
                  data-search="<%= (p.title + ' ' + (p.description || '')).toLowerCase() %>">
           <span class="predict-card-accent" aria-hidden="true"></span>

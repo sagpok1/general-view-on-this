@@ -24,9 +24,9 @@
     </div>
   </div>
 
-  <div class="games-grid">
+  <div class="games-grid" data-reveal-stagger="100">
     <% games.forEach(function(g) { %>
-      <a class="game-tile game-tile-<%= g.slug %>" href="/games/<%= g.slug %>">
+      <a class="game-tile pop-reveal anim-glow game-tile-<%= g.slug %>" href="/games/<%= g.slug %>">
         <div class="game-tile-art" aria-hidden="true">
           <% if (g.slug === 'flappy') { %>
             <svg viewBox="0 0 120 80" fill="none" xmlns="http://www.w3.org/2000/svg">

@@ -1,0 +1,235 @@
+/* ═══════════════════════════════════════════════════════════════
+   Shared Animation System — gvot
+   Scroll reveals, hover polish, micro-interactions
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Reveal baseline ───────────────────────────────────────────── */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 650ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 650ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+
+[data-reveal="fade"] { transform: none; }
+
+[data-reveal="scale"] { transform: scale(0.96); }
+
+[data-reveal="slide-left"]  { transform: translateX(-24px); }
+[data-reveal="slide-right"] { transform: translateX(24px); }
+
+[data-reveal].is-revealed {
+  opacity: 1;
+  transform: translateY(0) translateX(0) scale(1);
+}
+
+/* Stagger container: each child gets a delay picked up from --reveal-delay
+   (set by main.js during IntersectionObserver callback) */
+[data-reveal-stagger] > * {
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+/* ── Page load: instant show (no observer fallback) ────────────── */
+.no-js [data-reveal] { opacity: 1; transform: none; }
+
+/* ── Counter stays invisible until counted ─────────────────────── */
+[data-counter] {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ═══ Card pop-in: exaggerated for store/business cards ═══════════ */
+.pop-reveal {
+  opacity: 0;
+  transform: translateY(30px) scale(0.92);
+  filter: blur(4px);
+  transition:
+    opacity 700ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 700ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 700ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform, filter;
+}
+
+.pop-reveal.is-revealed {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  filter: blur(0);
+}
+
+/* ═══ Hover shine on buttons / CTAs ══════════════════════════════ */
+.anim-shine {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.anim-shine::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    115deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.35) 50%,
+    transparent 70%
+  );
+  transform: translateX(-150%);
+  transition: transform 750ms cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.anim-shine:hover::after {
+  transform: translateX(150%);
+}
+
+/* ═══ Soft glow on hover ═════════════════════════════════════════ */
+.anim-glow {
+  transition:
+    transform var(--transition-base, 250ms ease),
+    box-shadow var(--transition-base, 250ms ease);
+}
+
+.anim-glow:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    0 20px 40px -12px rgba(0, 0, 0, 0.18),
+    0 0 0 1px rgba(232, 98, 42, 0.15);
+}
+
+/* ═══ Gentle float (for hero elements) ═══════════════════════════ */
+@keyframes animFloat {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-8px); }
+}
+
+.anim-float {
+  animation: animFloat 4s ease-in-out infinite;
+}
+
+/* ═══ Spinning conic gradient border (high-tech look) ════════════ */
+@keyframes animRotate {
+  to { transform: rotate(360deg); }
+}
+
+.anim-gradient-border {
+  position: relative;
+  isolation: isolate;
+}
+
+.anim-gradient-border::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  background: conic-gradient(
+    from 0deg,
+    #E8622A, #F59E0B, #10B981, #2B5EA7, #7C3AED, #E8622A
+  );
+  animation: animRotate 6s linear infinite;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 300ms;
+}
+
+.anim-gradient-border:hover::before {
+  opacity: 1;
+}
+
+/* ═══ Hover tilt (subtle 3D) ═════════════════════════════════════ */
+.anim-tilt {
+  transform-style: preserve-3d;
+  transition: transform 400ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.anim-tilt:hover {
+  transform: perspective(800px) rotateX(2deg) rotateY(-2deg) translateZ(4px);
+}
+
+/* ═══ Pulse ring ═════════════════════════════════════════════════ */
+@keyframes animPulseRing {
+  0%   { box-shadow: 0 0 0 0 rgba(232, 98, 42, 0.4); }
+  70%  { box-shadow: 0 0 0 14px rgba(232, 98, 42, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(232, 98, 42, 0); }
+}
+
+.anim-pulse-ring {
+  animation: animPulseRing 2.2s ease-out infinite;
+}
+
+/* ═══ Underline sweep ════════════════════════════════════════════ */
+.anim-underline {
+  position: relative;
+}
+
+.anim-underline::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 350ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.anim-underline:hover::after {
+  transform: scaleX(1);
+}
+
+/* ═══ Loading shimmer (for skeleton / placeholders) ══════════════ */
+@keyframes animShimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+
+.anim-skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--color-surface-2, #f0edea) 0%,
+    rgba(255, 255, 255, 0.8) 50%,
+    var(--color-surface-2, #f0edea) 100%
+  );
+  background-size: 800px 100%;
+  animation: animShimmer 1.6s ease-in-out infinite;
+}
+
+/* ═══ Page transition: fade main content on load ═════════════════ */
+@keyframes animPageIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.main-content > section,
+.main-content > .page-section {
+  animation: animPageIn 500ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* ═══ Respect reduced motion ═════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal],
+  .pop-reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    transition: none !important;
+  }
+
+  .anim-float,
+  .anim-pulse-ring,
+  .main-content > section,
+  .main-content > .page-section,
+  .anim-skeleton,
+  .anim-gradient-border::before {
+    animation: none !important;
+  }
+
+  .anim-shine::after,
+  .anim-glow,
+  .anim-tilt {
+    transition: none !important;
+  }
+}
