@@ -61,21 +61,37 @@ const Prediction = {
       ORDER BY CASE WHEN p.status = 'open' THEN 0 ELSE 1 END, p.close_date ASC, p.id DESC
     `).all(userId);
 
-    const getLead = db.prepare(`
-      SELECT po.id, po.label,
+    const getAllOptions = db.prepare(`
+      SELECT po.id, po.label, po.order_index,
              (SELECT COUNT(*) FROM prediction_votes v WHERE v.option_id = po.id) AS c
       FROM prediction_options po
       WHERE po.prediction_id = ?
       ORDER BY c DESC, po.order_index ASC
-      LIMIT 1
     `);
 
     for (const r of rows) {
-      const lead = getLead.get(r.id);
-      r.leading_label = lead ? lead.label : null;
-      r.leading_pct = lead && r.total_votes > 0 ? Math.round((lead.c / r.total_votes) * 100) : 0;
+      const all = getAllOptions.all(r.id);
+      r.option_count = all.length;
+      r.top_options = all.slice(0, 2).map(function(o) {
+        return {
+          id: o.id,
+          label: o.label,
+          count: o.c,
+          pct: r.total_votes > 0 ? Math.round((o.c / r.total_votes) * 100) : 0,
+          is_mine: o.id === r.my_option_id
+        };
+      });
+      r.leading_label = all[0] ? all[0].label : null;
+      r.leading_pct = all[0] && r.total_votes > 0 ? Math.round((all[0].c / r.total_votes) * 100) : 0;
     }
     return rows;
+  },
+
+  getOverallStats() {
+    const t = db.prepare('SELECT COUNT(*) AS c FROM predictions').get().c;
+    const v = db.prepare('SELECT COUNT(*) AS c FROM prediction_votes').get().c;
+    const u = db.prepare('SELECT COUNT(DISTINCT user_id) AS c FROM prediction_votes').get().c;
+    return { totalPredictions: t, totalVotes: v, uniqueVoters: u };
   }
 };
 

@@ -6,6 +6,7 @@ const Prediction = require('../models/Prediction');
 // GET /predictions — list all predictions with summary
 router.get('/', isLoggedIn, (req, res) => {
   const predictions = Prediction.listWithSummary(req.user.id);
+  const stats = Prediction.getOverallStats();
 
   // Group by category for filter pills
   const categories = Array.from(new Set(predictions.map(p => p.category).filter(Boolean)));
@@ -13,7 +14,8 @@ router.get('/', isLoggedIn, (req, res) => {
   res.render('predictions/list', {
     title: 'Predictions',
     predictions,
-    categories
+    categories,
+    stats
   });
 });
 
