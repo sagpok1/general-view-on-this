@@ -1,0 +1,205 @@
+/* ═══ Games — Arcade ═══ */
+
+.games-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.25rem;
+  margin-top: 1.5rem;
+}
+
+.game-tile {
+  display: flex;
+  flex-direction: column;
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  transition: all var(--transition-base);
+}
+
+.game-tile:hover {
+  transform: translateY(-4px);
+  border-color: var(--color-accent);
+  box-shadow: var(--shadow-md);
+}
+
+.game-tile-art {
+  aspect-ratio: 3/2;
+  background: var(--color-surface-2);
+}
+
+.game-tile-art svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.game-tile-body {
+  padding: 1rem 1.25rem 1.25rem;
+}
+
+.game-tile-name {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0 0 0.25rem;
+}
+
+.game-tile-tagline {
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+  margin: 0 0 0.75rem;
+}
+
+.game-tile-scores {
+  display: flex;
+  gap: 1.5rem;
+  padding-top: 0.75rem;
+  border-top: 1px dashed var(--color-border);
+}
+
+.game-tile-scores > div {
+  display: flex;
+  flex-direction: column;
+}
+
+.game-tile-score-label {
+  font-size: 0.7rem;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.game-tile-scores strong {
+  font-family: var(--font-mono);
+  font-size: 1.1rem;
+  color: var(--color-text-primary);
+}
+
+/* ═══ Game Page Shell ═══ */
+.game-page {
+  max-width: 840px;
+  margin: 0 auto;
+}
+
+.game-back {
+  display: inline-block;
+  margin-bottom: 1rem;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+.game-back:hover { color: var(--color-accent); }
+
+.game-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.game-title {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  margin: 0;
+}
+
+.game-scores {
+  display: flex;
+  gap: 1.25rem;
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+}
+
+.game-scores span { color: var(--color-text-muted); }
+.game-scores strong { color: var(--color-text-primary); margin-left: 0.35rem; }
+
+.game-stage {
+  position: relative;
+  aspect-ratio: 3/4;
+  max-width: 480px;
+  margin: 0 auto;
+  background: #0f172a;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+  touch-action: none;
+}
+
+.game-stage canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.game-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(15, 23, 42, 0.78);
+  backdrop-filter: blur(4px);
+  color: #fff;
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.game-overlay[hidden] { display: none; }
+
+.game-overlay-title {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  margin: 0 0 0.5rem;
+}
+
+.game-overlay-body {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.85);
+  margin-bottom: 1.25rem;
+  max-width: 320px;
+}
+
+.game-overlay .btn {
+  background: var(--color-accent);
+  color: #fff;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  cursor: pointer;
+  font: inherit;
+  transition: all var(--transition-fast);
+}
+.game-overlay .btn:hover { background: var(--color-accent-hover); transform: translateY(-1px); }
+
+.game-instructions {
+  margin-top: 1rem;
+  padding: 1rem 1.25rem;
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+}
+
+.game-instructions kbd {
+  font-family: var(--font-mono);
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-size: 0.82rem;
+}
+
+@media (max-width: 520px) {
+  .game-stage { aspect-ratio: 2/3; }
+}

@@ -1,0 +1,246 @@
+<%- include('../layout/header', { title: 'Lane Racer', extraCss: ['/css/pages/games.css'] }) %>
+
+<section class="page-section game-page">
+  <a href="/games" class="game-back">← Back to arcade</a>
+
+  <div class="game-head">
+    <h1 class="game-title">Lane Racer</h1>
+    <div class="game-scores">
+      <span>Your best<strong id="myBest"><%= myBest %></strong></span>
+      <span>Top<strong id="topScore"><%= topScore %></strong></span>
+    </div>
+  </div>
+
+  <div class="game-stage" id="stage">
+    <canvas id="game" width="480" height="640"></canvas>
+    <div class="game-overlay" id="overlay">
+      <h2 class="game-overlay-title">Ready?</h2>
+      <p class="game-overlay-body">Weave through traffic. Use <kbd>←</kbd> <kbd>→</kbd> or the on-screen buttons.</p>
+      <button class="btn" id="startBtn">Start</button>
+    </div>
+  </div>
+
+  <p class="game-instructions">
+    <kbd>←</kbd> <kbd>→</kbd> or <kbd>A</kbd>/<kbd>D</kbd> to steer. Touch the left/right edges of the canvas on mobile. Score grows with distance.
+  </p>
+</section>
+
+<script>
+(function() {
+  var canvas = document.getElementById('game');
+  var ctx = canvas.getContext('2d');
+  var W = canvas.width, H = canvas.height;
+
+  var overlay = document.getElementById('overlay');
+  var ovTitle = overlay.querySelector('.game-overlay-title');
+  var ovBody = overlay.querySelector('.game-overlay-body');
+  var startBtn = document.getElementById('startBtn');
+  var myBestEl = document.getElementById('myBest');
+  var topScoreEl = document.getElementById('topScore');
+
+  var player, cars, dashOffset, score, speed, running, gameOver, frame;
+  var LANES = [W * 0.22, W * 0.5, W * 0.78];
+  var keys = {};
+
+  function reset() {
+    player = { x: LANES[1], y: H - 110, w: 44, h: 70, targetX: LANES[1] };
+    cars = [];
+    dashOffset = 0;
+    score = 0;
+    speed = 5;
+    frame = 0;
+    gameOver = false;
+  }
+
+  function steer(dir) {
+    if (!running || gameOver) return;
+    var idx = LANES.indexOf(player.targetX);
+    // Nearest lane if somehow off
+    if (idx === -1) {
+      var best = 0, bd = Infinity;
+      LANES.forEach(function(lx, i) {
+        var d = Math.abs(lx - player.x);
+        if (d < bd) { bd = d; best = i; }
+      });
+      idx = best;
+    }
+    idx = Math.max(0, Math.min(LANES.length - 1, idx + dir));
+    player.targetX = LANES[idx];
+  }
+
+  function spawnCar() {
+    var lane = Math.floor(Math.random() * LANES.length);
+    // avoid two cars stacking in the same lane near top
+    for (var i = 0; i < cars.length; i++) {
+      if (cars[i].y < 120 && Math.abs(cars[i].x - LANES[lane]) < 4) return;
+    }
+    cars.push({
+      x: LANES[lane],
+      y: -80,
+      w: 44,
+      h: 70,
+      color: ['#3B82F6', '#F59E0B', '#10B981', '#EC4899', '#EF4444'][Math.floor(Math.random() * 5)],
+      vy: speed + Math.random() * 1.5
+    });
+  }
+
+  function step() {
+    frame++;
+    speed = 5 + Math.min(7, score / 300);
+    dashOffset = (dashOffset + speed) % 40;
+
+    // move player toward target lane
+    player.x += (player.targetX - player.x) * 0.22;
+
+    // spawn cars
+    if (frame % Math.max(28, 60 - Math.floor(score / 200)) === 0) spawnCar();
+
+    // update cars
+    for (var i = cars.length - 1; i >= 0; i--) {
+      var c = cars[i];
+      c.y += c.vy;
+      if (c.y > H + 80) cars.splice(i, 1);
+    }
+
+    // collisions — AABB
+    var px1 = player.x - player.w/2, px2 = player.x + player.w/2;
+    var py1 = player.y - player.h/2, py2 = player.y + player.h/2;
+    for (var j = 0; j < cars.length; j++) {
+      var cc = cars[j];
+      var cx1 = cc.x - cc.w/2, cx2 = cc.x + cc.w/2;
+      var cy1 = cc.y - cc.h/2, cy2 = cc.y + cc.h/2;
+      if (px1 < cx2 && px2 > cx1 && py1 < cy2 && py2 > cy1) return end();
+    }
+
+    score += 1;
+  }
+
+  function drawCar(c, isPlayer) {
+    var x = c.x - c.w/2, y = c.y - c.h/2;
+    ctx.fillStyle = c.color || '#EF4444';
+    roundRect(x, y, c.w, c.h, 8);
+    ctx.fill();
+    ctx.strokeStyle = '#111';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    // windshield
+    ctx.fillStyle = '#1f2937';
+    roundRect(x + 5, y + (isPlayer ? c.h - 26 : 6), c.w - 10, 18, 4);
+    ctx.fill();
+    // wheels
+    ctx.fillStyle = '#111';
+    ctx.fillRect(x - 3, y + 10, 4, 14);
+    ctx.fillRect(x + c.w - 1, y + 10, 4, 14);
+    ctx.fillRect(x - 3, y + c.h - 24, 4, 14);
+    ctx.fillRect(x + c.w - 1, y + c.h - 24, 4, 14);
+  }
+
+  function roundRect(x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
+  }
+
+  function draw() {
+    // grass
+    ctx.fillStyle = '#14532d';
+    ctx.fillRect(0, 0, W, H);
+
+    // road
+    var roadX = W * 0.08, roadW = W * 0.84;
+    ctx.fillStyle = '#1f2937';
+    ctx.fillRect(roadX, 0, roadW, H);
+
+    // curbs
+    ctx.fillStyle = '#fff';
+    for (var y = -20 + dashOffset; y < H; y += 40) {
+      ctx.fillRect(roadX - 6, y, 6, 20);
+      ctx.fillRect(roadX + roadW, y, 6, 20);
+    }
+    // dashed lane lines
+    ctx.fillStyle = '#fbbf24';
+    for (var y2 = -20 + dashOffset; y2 < H; y2 += 40) {
+      ctx.fillRect(LANES[0] + (LANES[1] - LANES[0])/2 - 3, y2, 6, 22);
+      ctx.fillRect(LANES[1] + (LANES[2] - LANES[1])/2 - 3, y2, 6, 22);
+    }
+
+    // cars
+    cars.forEach(function(c) { drawCar(c, false); });
+    drawCar(player, true);
+
+    // HUD
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 26px DM Sans, sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText('Score: ' + score, 16, 36);
+    ctx.textAlign = 'right';
+    ctx.fillText('Speed: ' + speed.toFixed(1), W - 16, 36);
+  }
+
+  function loop() {
+    if (!running) return;
+    if (!gameOver) { step(); draw(); }
+    requestAnimationFrame(loop);
+  }
+
+  function start() {
+    reset();
+    running = true;
+    overlay.setAttribute('hidden', '');
+    requestAnimationFrame(loop);
+  }
+
+  function end() {
+    gameOver = true;
+    running = false;
+    overlay.removeAttribute('hidden');
+    ovTitle.textContent = 'Crashed!';
+    ovBody.innerHTML = 'Distance: <strong>' + score + '</strong>';
+    startBtn.textContent = 'Play again';
+    submitScore(score);
+  }
+
+  function submitScore(s) {
+    if (s <= 0) return;
+    fetch('/games/score', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ game: 'race', score: s })
+    }).then(function(r) { return r.ok ? r.json() : null; })
+      .then(function(data) {
+        if (!data) return;
+        myBestEl.textContent = data.myBest;
+        topScoreEl.textContent = data.topScore;
+      }).catch(function() {});
+  }
+
+  document.addEventListener('keydown', function(e) {
+    if (keys[e.code]) return;
+    keys[e.code] = true;
+    if (e.code === 'ArrowLeft' || e.code === 'KeyA') { e.preventDefault(); steer(-1); }
+    if (e.code === 'ArrowRight' || e.code === 'KeyD') { e.preventDefault(); steer(1); }
+    if ((e.code === 'Space' || e.code === 'Enter') && !running) start();
+  });
+  document.addEventListener('keyup', function(e) { keys[e.code] = false; });
+
+  // Touch steering: tap left or right half
+  canvas.addEventListener('touchstart', function(e) {
+    if (!running) { start(); return; }
+    e.preventDefault();
+    var rect = canvas.getBoundingClientRect();
+    var cx = e.touches[0].clientX - rect.left;
+    steer(cx < rect.width / 2 ? -1 : 1);
+  }, { passive: false });
+
+  startBtn.addEventListener('click', start);
+
+  reset();
+  draw();
+})();
+</script>
+
+<%- include('../layout/footer') %>

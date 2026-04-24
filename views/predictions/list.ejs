@@ -1,0 +1,119 @@
+<%- include('../layout/header', { title: 'Predictions', extraCss: ['/css/pages/predictions.css', '/css/pages/dashboard.css'] }) %>
+
+<section class="page-section">
+  <div class="dash-header">
+    <div class="dash-header-content">
+      <h1 class="dash-header-title">Predictions</h1>
+      <p class="dash-header-sub">Forecast outcomes. No money — just community wisdom.</p>
+    </div>
+    <div class="ticker-strip">
+      <div class="ticker-track">
+        <span class="ticker-item"><%= predictions.length %> markets open</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">One vote per person</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">See what your community thinks</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">No bets, no stakes — just forecasts</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item"><%= predictions.length %> markets open</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">One vote per person</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">See what your community thinks</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">No bets, no stakes — just forecasts</span>
+        <span class="ticker-dot"></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="predict-toolbar">
+    <div class="predict-search-wrap">
+      <input type="search" id="predictSearch" class="predict-search" placeholder="Search predictions…" aria-label="Search predictions">
+    </div>
+    <div class="predict-filters" role="tablist" aria-label="Filter by category">
+      <button type="button" class="predict-chip is-active" data-cat="all">All</button>
+      <% categories.forEach(function(c) { %>
+        <button type="button" class="predict-chip" data-cat="<%= c %>"><%= c.charAt(0).toUpperCase() + c.slice(1) %></button>
+      <% }); %>
+    </div>
+  </div>
+
+  <% if (predictions.length === 0) { %>
+    <div class="empty-state"><p class="empty-state-text">No predictions yet. Check back soon.</p></div>
+  <% } else { %>
+    <div class="predict-grid" id="predictGrid">
+      <% predictions.forEach(function(p) { %>
+        <article class="predict-card <%= p.my_option_id ? 'is-voted' : '' %> <%= p.status !== 'open' ? 'is-closed' : '' %>"
+                 data-cat="<%= p.category || '' %>"
+                 data-search="<%= (p.title + ' ' + (p.description || '')).toLowerCase() %>">
+          <div class="predict-card-head">
+            <span class="badge badge-category"><%= p.category %></span>
+            <% if (p.status === 'open') { %>
+              <span class="predict-status predict-status-open">Open</span>
+            <% } else { %>
+              <span class="predict-status predict-status-closed">Closed</span>
+            <% } %>
+          </div>
+          <h3 class="predict-card-title"><%= p.title %></h3>
+          <p class="predict-card-desc"><%= p.description %></p>
+
+          <div class="predict-meter">
+            <% if (p.total_votes > 0) { %>
+              <div class="predict-meter-bar">
+                <div class="predict-meter-fill" style="width: <%= p.leading_pct %>%"></div>
+              </div>
+              <div class="predict-meter-label">
+                <strong><%= p.leading_pct %>%</strong> say <em><%= p.leading_label %></em>
+                <span class="predict-meter-total">· <%= p.total_votes %> vote<%= p.total_votes === 1 ? '' : 's' %></span>
+              </div>
+            <% } else { %>
+              <div class="predict-meter-bar"><div class="predict-meter-fill" style="width: 0%"></div></div>
+              <div class="predict-meter-label predict-meter-empty">Be the first to predict.</div>
+            <% } %>
+          </div>
+
+          <div class="predict-card-foot">
+            <% if (p.close_date) { %>
+              <span class="predict-close-date">Closes <%= new Date(p.close_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) %></span>
+            <% } %>
+            <a href="/predictions/<%= p.id %>" class="btn btn-primary btn-sm">
+              <%= p.my_option_id ? 'View results' : 'Predict' %>
+            </a>
+          </div>
+        </article>
+      <% }); %>
+    </div>
+  <% } %>
+</section>
+
+<script>
+(function() {
+  var search = document.getElementById('predictSearch');
+  var chips = document.querySelectorAll('.predict-chip');
+  var cards = document.querySelectorAll('#predictGrid .predict-card');
+  var activeCat = 'all';
+
+  function apply() {
+    var q = (search.value || '').trim().toLowerCase();
+    cards.forEach(function(card) {
+      var catMatch = activeCat === 'all' || card.dataset.cat === activeCat;
+      var textMatch = !q || card.dataset.search.indexOf(q) !== -1;
+      card.style.display = (catMatch && textMatch) ? '' : 'none';
+    });
+  }
+
+  chips.forEach(function(c) {
+    c.addEventListener('click', function() {
+      chips.forEach(function(x) { x.classList.remove('is-active'); });
+      c.classList.add('is-active');
+      activeCat = c.dataset.cat;
+      apply();
+    });
+  });
+  if (search) search.addEventListener('input', apply);
+})();
+</script>
+
+<%- include('../layout/footer') %>

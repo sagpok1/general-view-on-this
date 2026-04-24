@@ -1,0 +1,73 @@
+<%- include('../layout/header', { title: prediction.title, extraCss: ['/css/pages/predictions.css', '/css/pages/dashboard.css'] }) %>
+
+<section class="page-section">
+  <a href="/predictions" class="predict-back">← Back to predictions</a>
+
+  <div class="predict-detail-card">
+    <div class="predict-detail-head">
+      <span class="badge badge-category"><%= prediction.category %></span>
+      <% if (prediction.status === 'open') { %>
+        <span class="predict-status predict-status-open">Open</span>
+      <% } else { %>
+        <span class="predict-status predict-status-closed">Closed</span>
+      <% } %>
+    </div>
+
+    <h1 class="predict-detail-title"><%= prediction.title %></h1>
+    <p class="predict-detail-desc"><%= prediction.description %></p>
+
+    <% if (prediction.close_date) { %>
+      <p class="predict-detail-meta">Closes <%= new Date(prediction.close_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %> · <%= totalVotes %> vote<%= totalVotes === 1 ? '' : 's' %></p>
+    <% } %>
+
+    <% if (myOptionId || prediction.status !== 'open') { %>
+      <div class="predict-results">
+        <% options.forEach(function(opt) {
+          var pct = totalVotes > 0 ? Math.round((opt.vote_count / totalVotes) * 100) : 0;
+          var mine = opt.id === myOptionId;
+        %>
+          <div class="predict-result-row <%= mine ? 'is-mine' : '' %>">
+            <div class="predict-result-meta">
+              <span class="predict-result-label">
+                <%= opt.label %>
+                <% if (mine) { %><span class="predict-result-you">your pick</span><% } %>
+              </span>
+              <span class="predict-result-pct"><%= pct %>%</span>
+            </div>
+            <div class="predict-result-bar">
+              <div class="predict-result-fill" style="width: <%= pct %>%"></div>
+            </div>
+            <div class="predict-result-count"><%= opt.vote_count %> vote<%= opt.vote_count === 1 ? '' : 's' %></div>
+          </div>
+        <% }); %>
+      </div>
+
+      <% if (myOptionId) { %>
+        <p class="predict-voted-note">Thanks for predicting — results update live as others vote.</p>
+      <% } %>
+
+    <% } else { %>
+
+      <form method="POST" action="/predictions/<%= prediction.id %>/vote" class="predict-vote-form">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <p class="predict-vote-prompt">What do you think will happen?</p>
+        <div class="predict-vote-options">
+          <% options.forEach(function(opt) { %>
+            <label class="predict-vote-option">
+              <input type="radio" name="option_id" value="<%= opt.id %>" required>
+              <span class="predict-vote-option-body">
+                <span class="predict-vote-option-dot"></span>
+                <span class="predict-vote-option-label"><%= opt.label %></span>
+              </span>
+            </label>
+          <% }); %>
+        </div>
+        <button type="submit" class="btn btn-primary">Lock in prediction</button>
+        <p class="predict-vote-footnote">You can only vote once per prediction.</p>
+      </form>
+
+    <% } %>
+  </div>
+</section>
+
+<%- include('../layout/footer') %>

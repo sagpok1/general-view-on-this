@@ -1,0 +1,82 @@
+<%- include('../layout/header', { title: 'Games', extraCss: ['/css/pages/games.css', '/css/pages/dashboard.css'] }) %>
+
+<section class="page-section">
+  <div class="dash-header">
+    <div class="dash-header-content">
+      <h1 class="dash-header-title">Arcade</h1>
+      <p class="dash-header-sub">Quick browser games — take a break and beat your best score.</p>
+    </div>
+    <div class="ticker-strip">
+      <div class="ticker-track">
+        <span class="ticker-item">Three games, one click</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">Keyboard + touch supported</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">Beat the community high score</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">Three games, one click</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">Keyboard + touch supported</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">Beat the community high score</span>
+        <span class="ticker-dot"></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="games-grid">
+    <% games.forEach(function(g) { %>
+      <a class="game-tile game-tile-<%= g.slug %>" href="/games/<%= g.slug %>">
+        <div class="game-tile-art" aria-hidden="true">
+          <% if (g.slug === 'flappy') { %>
+            <svg viewBox="0 0 120 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect width="120" height="80" rx="8" fill="url(#fg1)"/>
+              <circle cx="40" cy="42" r="10" fill="#FBBF24" stroke="#111" stroke-width="2"/>
+              <circle cx="44" cy="40" r="2" fill="#111"/>
+              <polygon points="48,42 56,44 48,46" fill="#EA580C"/>
+              <rect x="82" y="0" width="14" height="26" fill="#16A34A" stroke="#0F5132" stroke-width="2"/>
+              <rect x="82" y="54" width="14" height="26" fill="#16A34A" stroke="#0F5132" stroke-width="2"/>
+              <defs><linearGradient id="fg1" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#60A5FA"/><stop offset="1" stop-color="#7C3AED"/>
+              </linearGradient></defs>
+            </svg>
+          <% } else if (g.slug === 'slicer') { %>
+            <svg viewBox="0 0 120 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect width="120" height="80" rx="8" fill="url(#fg2)"/>
+              <circle cx="30" cy="40" r="12" fill="#EF4444" stroke="#111" stroke-width="2"/>
+              <circle cx="70" cy="30" r="10" fill="#FBBF24" stroke="#111" stroke-width="2"/>
+              <circle cx="95" cy="55" r="9" fill="#A3E635" stroke="#111" stroke-width="2"/>
+              <path d="M10 70 L110 15" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity="0.9"/>
+              <defs><linearGradient id="fg2" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#F59E0B"/><stop offset="1" stop-color="#E8622A"/>
+              </linearGradient></defs>
+            </svg>
+          <% } else { %>
+            <svg viewBox="0 0 120 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect width="120" height="80" rx="8" fill="url(#fg3)"/>
+              <rect x="20" y="0" width="80" height="80" fill="#1F2937"/>
+              <rect x="58" y="6" width="4" height="12" fill="#fff"/>
+              <rect x="58" y="30" width="4" height="12" fill="#fff"/>
+              <rect x="58" y="56" width="4" height="12" fill="#fff"/>
+              <rect x="34" y="50" width="22" height="26" rx="4" fill="#EF4444" stroke="#111" stroke-width="2"/>
+              <rect x="64" y="8" width="22" height="26" rx="4" fill="#3B82F6" stroke="#111" stroke-width="2"/>
+              <defs><linearGradient id="fg3" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#10B981"/><stop offset="1" stop-color="#2D7A4F"/>
+              </linearGradient></defs>
+            </svg>
+          <% } %>
+        </div>
+        <div class="game-tile-body">
+          <h3 class="game-tile-name"><%= g.name %></h3>
+          <p class="game-tile-tagline"><%= g.tagline %></p>
+          <div class="game-tile-scores">
+            <div><span class="game-tile-score-label">Your best</span><strong><%= g.myBest %></strong></div>
+            <div><span class="game-tile-score-label">Top</span><strong><%= g.topScore %></strong></div>
+          </div>
+        </div>
+      </a>
+    <% }); %>
+  </div>
+</section>
+
+<%- include('../layout/footer') %>

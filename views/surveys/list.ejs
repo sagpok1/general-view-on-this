@@ -62,9 +62,26 @@
     </div>
 
     <% if (availableSurveys && availableSurveys.length > 0) { %>
-      <div class="survey-grid">
+      <div class="survey-toolbar">
+        <input type="search" id="surveySearch" class="survey-search-input" placeholder="Search surveys…" aria-label="Search surveys">
+        <div class="survey-filter-chips" id="surveyFilterChips">
+          <button type="button" class="survey-filter-chip is-active" data-cat="all">All</button>
+          <%
+            var cats = [];
+            availableSurveys.forEach(function(s) { if (s.category && cats.indexOf(s.category) === -1) cats.push(s.category); });
+            cats.forEach(function(c) {
+          %>
+            <button type="button" class="survey-filter-chip" data-cat="<%= c %>"><%= c.charAt(0).toUpperCase() + c.slice(1) %></button>
+          <% }); %>
+        </div>
+        <p class="survey-empty-filter" id="surveyEmptyFilter" hidden>No surveys match your filter.</p>
+      </div>
+
+      <div class="survey-grid" id="surveyGrid">
         <% availableSurveys.forEach(function(survey) { %>
-          <article class="survey-card" data-survey-id="<%= survey.id %>">
+          <article class="survey-card" data-survey-id="<%= survey.id %>"
+                   data-cat="<%= survey.category || '' %>"
+                   data-search="<%= (survey.title + ' ' + (survey.description || '')).toLowerCase() %>">
             <label class="survey-select-check">
               <input type="checkbox" class="survey-check" value="<%= survey.id %>">
               <span class="survey-select-mark"></span>
@@ -252,6 +269,68 @@
   box-shadow: 0 6px 20px rgba(232, 98, 42, 0.15);
 }
 
+/* ── Toolbar: search + category chips ── */
+.survey-toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.survey-search-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  font: inherit;
+  color: var(--color-text-primary);
+  transition: all var(--transition-fast);
+}
+
+.survey-search-input:focus {
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(232, 98, 42, 0.12);
+}
+
+.survey-filter-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.survey-filter-chip {
+  padding: 0.4rem 0.9rem;
+  border: 1.5px solid var(--color-border);
+  border-radius: 999px;
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-transform: capitalize;
+}
+
+.survey-filter-chip:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.survey-filter-chip.is-active {
+  background: var(--color-accent);
+  color: #fff;
+  border-color: var(--color-accent);
+}
+
+.survey-empty-filter {
+  margin-top: 0.25rem;
+  color: var(--color-text-muted);
+  font-style: italic;
+  font-size: 0.9rem;
+}
+
 /* Show/hide checkboxes responsively */
 @media (max-width: 640px) {
   .section-head-row {
@@ -264,6 +343,44 @@
   }
 }
 </style>
+
+<script>
+// Survey search + category filter
+(function() {
+  var search = document.getElementById('surveySearch');
+  var chipWrap = document.getElementById('surveyFilterChips');
+  var grid = document.getElementById('surveyGrid');
+  var emptyFilter = document.getElementById('surveyEmptyFilter');
+  if (!search || !chipWrap || !grid) return;
+
+  var chips = chipWrap.querySelectorAll('.survey-filter-chip');
+  var cards = grid.querySelectorAll('.survey-card');
+  var activeCat = 'all';
+
+  function apply() {
+    var q = (search.value || '').trim().toLowerCase();
+    var visible = 0;
+    cards.forEach(function(card) {
+      var catMatch = activeCat === 'all' || card.dataset.cat === activeCat;
+      var textMatch = !q || (card.dataset.search || '').indexOf(q) !== -1;
+      var show = catMatch && textMatch;
+      card.style.display = show ? '' : 'none';
+      if (show) visible++;
+    });
+    if (emptyFilter) emptyFilter.hidden = visible > 0;
+  }
+
+  chips.forEach(function(c) {
+    c.addEventListener('click', function() {
+      chips.forEach(function(x) { x.classList.remove('is-active'); });
+      c.classList.add('is-active');
+      activeCat = c.dataset.cat;
+      apply();
+    });
+  });
+  search.addEventListener('input', apply);
+})();
+</script>
 
 <script>
 // Batch Selection + Take Multiple Surveys

@@ -1,0 +1,275 @@
+<%- include('../layout/header', { title: 'Fruit Slicer', extraCss: ['/css/pages/games.css'] }) %>
+
+<section class="page-section game-page">
+  <a href="/games" class="game-back">← Back to arcade</a>
+
+  <div class="game-head">
+    <h1 class="game-title">Fruit Slicer</h1>
+    <div class="game-scores">
+      <span>Your best<strong id="myBest"><%= myBest %></strong></span>
+      <span>Top<strong id="topScore"><%= topScore %></strong></span>
+    </div>
+  </div>
+
+  <div class="game-stage" id="stage">
+    <canvas id="game" width="480" height="640"></canvas>
+    <div class="game-overlay" id="overlay">
+      <h2 class="game-overlay-title">Ready?</h2>
+      <p class="game-overlay-body">Drag to slice fruit. Avoid bombs. Miss three fruit and it's over.</p>
+      <button class="btn" id="startBtn">Start</button>
+    </div>
+  </div>
+
+  <p class="game-instructions">
+    Drag the mouse or finger across fruit to slice. Dark bombs = instant game over.
+  </p>
+</section>
+
+<script>
+(function() {
+  var canvas = document.getElementById('game');
+  var ctx = canvas.getContext('2d');
+  var W = canvas.width, H = canvas.height;
+
+  var overlay = document.getElementById('overlay');
+  var ovTitle = overlay.querySelector('.game-overlay-title');
+  var ovBody = overlay.querySelector('.game-overlay-body');
+  var startBtn = document.getElementById('startBtn');
+  var myBestEl = document.getElementById('myBest');
+  var topScoreEl = document.getElementById('topScore');
+
+  var items, particles, trail, score, misses, running, gameOver, frame;
+  var lastPt = null, slicing = false;
+
+  var FRUIT_COLORS = [
+    { fill: '#EF4444', juice: '#fca5a5' },  // red apple
+    { fill: '#FBBF24', juice: '#fde68a' },  // lemon
+    { fill: '#A3E635', juice: '#d9f99d' },  // lime
+    { fill: '#F97316', juice: '#fed7aa' },  // orange
+    { fill: '#8B5CF6', juice: '#ddd6fe' }   // plum
+  ];
+
+  function reset() {
+    items = [];
+    particles = [];
+    trail = [];
+    score = 0;
+    misses = 0;
+    frame = 0;
+    gameOver = false;
+  }
+
+  function spawn() {
+    var isBomb = Math.random() < 0.13;
+    var x = 60 + Math.random() * (W - 120);
+    var vx = (W/2 - x) * 0.005 + (Math.random() - 0.5) * 2;
+    var vy = -12 - Math.random() * 3.5;
+    var kind = isBomb ? 'bomb' : 'fruit';
+    var c = isBomb ? { fill: '#111827', juice: '#4b5563' } : FRUIT_COLORS[Math.floor(Math.random() * FRUIT_COLORS.length)];
+    items.push({
+      x: x, y: H + 30, vx: vx, vy: vy,
+      r: isBomb ? 22 : 20 + Math.random() * 6,
+      kind: kind, color: c, rot: Math.random() * Math.PI, vr: (Math.random() - 0.5) * 0.1,
+      sliced: false
+    });
+  }
+
+  function step() {
+    frame++;
+    if (frame % 40 === 0) spawn();
+    if (frame % 120 === 0 && Math.random() < 0.5) spawn();
+
+    for (var i = items.length - 1; i >= 0; i--) {
+      var it = items[i];
+      it.x += it.vx;
+      it.y += it.vy;
+      it.vy += 0.28;
+      it.rot += it.vr;
+
+      if (it.y - it.r > H + 40) {
+        if (!it.sliced && it.kind === 'fruit') {
+          misses++;
+          if (misses >= 3) { end(); return; }
+        }
+        items.splice(i, 1);
+      }
+    }
+
+    for (var p = particles.length - 1; p >= 0; p--) {
+      var pa = particles[p];
+      pa.x += pa.vx; pa.y += pa.vy; pa.vy += 0.35; pa.life--;
+      if (pa.life <= 0) particles.splice(p, 1);
+    }
+
+    // age trail
+    trail = trail.filter(function(t) { t.life--; return t.life > 0; });
+  }
+
+  function burst(it) {
+    var n = it.kind === 'bomb' ? 26 : 14;
+    for (var i = 0; i < n; i++) {
+      particles.push({
+        x: it.x, y: it.y,
+        vx: (Math.random() - 0.5) * 6,
+        vy: (Math.random() - 0.5) * 6 - 2,
+        r: 3 + Math.random() * 3,
+        color: it.color.juice,
+        life: 30 + Math.random() * 20
+      });
+    }
+  }
+
+  function draw() {
+    // background
+    var g = ctx.createLinearGradient(0, 0, 0, H);
+    g.addColorStop(0, '#1f2937');
+    g.addColorStop(1, '#0f172a');
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, W, H);
+
+    // items
+    items.forEach(function(it) {
+      ctx.save();
+      ctx.translate(it.x, it.y);
+      ctx.rotate(it.rot);
+      ctx.fillStyle = it.color.fill;
+      ctx.beginPath();
+      ctx.arc(0, 0, it.r, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#111';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      if (it.kind === 'bomb') {
+        ctx.fillStyle = '#4b5563';
+        ctx.fillRect(-2, -it.r - 6, 4, 8);
+        ctx.fillStyle = '#f59e0b';
+        ctx.beginPath();
+        ctx.arc(0, -it.r - 8, 2.5, 0, Math.PI * 2);
+        ctx.fill();
+      } else {
+        // leaf
+        ctx.fillStyle = '#16a34a';
+        ctx.beginPath();
+        ctx.ellipse(it.r * 0.3, -it.r * 0.8, 5, 3, -0.4, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+    });
+
+    // particles
+    particles.forEach(function(p) {
+      ctx.fillStyle = p.color;
+      ctx.globalAlpha = Math.max(0, p.life / 50);
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fill();
+    });
+    ctx.globalAlpha = 1;
+
+    // slice trail
+    if (trail.length > 1) {
+      ctx.strokeStyle = 'rgba(255,255,255,0.85)';
+      ctx.lineWidth = 4;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(trail[0].x, trail[0].y);
+      for (var i = 1; i < trail.length; i++) ctx.lineTo(trail[i].x, trail[i].y);
+      ctx.stroke();
+    }
+
+    // HUD
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 26px DM Sans, sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText('Score: ' + score, 16, 36);
+    ctx.textAlign = 'right';
+    ctx.fillStyle = misses >= 2 ? '#EF4444' : '#fff';
+    ctx.fillText('Miss: ' + misses + '/3', W - 16, 36);
+  }
+
+  function loop() {
+    if (!running) return;
+    if (!gameOver) { step(); draw(); }
+    requestAnimationFrame(loop);
+  }
+
+  function start() {
+    reset();
+    running = true;
+    overlay.setAttribute('hidden', '');
+    requestAnimationFrame(loop);
+  }
+
+  function end() {
+    gameOver = true;
+    running = false;
+    overlay.removeAttribute('hidden');
+    ovTitle.textContent = 'Game Over';
+    ovBody.innerHTML = 'Sliced: <strong>' + score + '</strong>';
+    startBtn.textContent = 'Play again';
+    submitScore(score);
+  }
+
+  function submitScore(s) {
+    if (s <= 0) return;
+    fetch('/games/score', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ game: 'slicer', score: s })
+    }).then(function(r) { return r.ok ? r.json() : null; })
+      .then(function(data) {
+        if (!data) return;
+        myBestEl.textContent = data.myBest;
+        topScoreEl.textContent = data.topScore;
+      }).catch(function() {});
+  }
+
+  function getPt(e) {
+    var rect = canvas.getBoundingClientRect();
+    var cx = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+    var cy = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+    return { x: cx * (W / rect.width), y: cy * (H / rect.height) };
+  }
+
+  function handleSlice(p) {
+    trail.push({ x: p.x, y: p.y, life: 14 });
+    if (trail.length > 20) trail.shift();
+    if (!lastPt) { lastPt = p; return; }
+    // segment-hit test
+    for (var i = items.length - 1; i >= 0; i--) {
+      var it = items[i];
+      if (it.sliced) continue;
+      // distance from point to line segment
+      var dx = p.x - lastPt.x, dy = p.y - lastPt.y;
+      var len2 = dx * dx + dy * dy || 1;
+      var t = ((it.x - lastPt.x) * dx + (it.y - lastPt.y) * dy) / len2;
+      t = Math.max(0, Math.min(1, t));
+      var px = lastPt.x + t * dx, py = lastPt.y + t * dy;
+      var d2 = (it.x - px) * (it.x - px) + (it.y - py) * (it.y - py);
+      if (d2 < it.r * it.r) {
+        it.sliced = true;
+        if (it.kind === 'bomb') { burst(it); items.splice(i, 1); return end(); }
+        score++;
+        burst(it);
+        items.splice(i, 1);
+      }
+    }
+    lastPt = p;
+  }
+
+  canvas.addEventListener('mousedown', function(e) { if (!running) return; slicing = true; lastPt = null; handleSlice(getPt(e)); });
+  canvas.addEventListener('mousemove', function(e) { if (running && slicing) handleSlice(getPt(e)); });
+  window.addEventListener('mouseup', function() { slicing = false; lastPt = null; });
+
+  canvas.addEventListener('touchstart', function(e) { e.preventDefault(); if (!running) return; slicing = true; lastPt = null; handleSlice(getPt(e)); }, { passive: false });
+  canvas.addEventListener('touchmove', function(e) { e.preventDefault(); if (running && slicing) handleSlice(getPt(e)); }, { passive: false });
+  window.addEventListener('touchend', function() { slicing = false; lastPt = null; });
+
+  startBtn.addEventListener('click', start);
+
+  reset();
+  draw();
+})();
+</script>
+
+<%- include('../layout/footer') %>

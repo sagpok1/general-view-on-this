@@ -1,0 +1,208 @@
+<%- include('../layout/header', { title: 'Flappy Flight', extraCss: ['/css/pages/games.css'] }) %>
+
+<section class="page-section game-page">
+  <a href="/games" class="game-back">← Back to arcade</a>
+
+  <div class="game-head">
+    <h1 class="game-title">Flappy Flight</h1>
+    <div class="game-scores">
+      <span>Your best<strong id="myBest"><%= myBest %></strong></span>
+      <span>Top<strong id="topScore"><%= topScore %></strong></span>
+    </div>
+  </div>
+
+  <div class="game-stage" id="stage">
+    <canvas id="game" width="480" height="640"></canvas>
+    <div class="game-overlay" id="overlay">
+      <h2 class="game-overlay-title" id="ovTitle">Ready?</h2>
+      <p class="game-overlay-body" id="ovBody">Press <kbd>Space</kbd> or tap to flap. Dodge the pipes.</p>
+      <button class="btn" id="startBtn">Start</button>
+    </div>
+  </div>
+
+  <p class="game-instructions">
+    Flap with <kbd>Space</kbd>, <kbd>↑</kbd>, or a click/tap. One hit and you're done.
+  </p>
+</section>
+
+<script>
+(function() {
+  var canvas = document.getElementById('game');
+  var ctx = canvas.getContext('2d');
+  var W = canvas.width, H = canvas.height;
+
+  var overlay = document.getElementById('overlay');
+  var ovTitle = document.getElementById('ovTitle');
+  var ovBody = document.getElementById('ovBody');
+  var startBtn = document.getElementById('startBtn');
+  var myBestEl = document.getElementById('myBest');
+  var topScoreEl = document.getElementById('topScore');
+
+  var bird, pipes, score, gameOver, running, frame;
+
+  function reset() {
+    bird = { x: 110, y: H/2, r: 14, v: 0 };
+    pipes = [];
+    score = 0;
+    gameOver = false;
+    frame = 0;
+  }
+
+  function flap() {
+    if (!running) return;
+    if (gameOver) return;
+    bird.v = -7.5;
+  }
+
+  function spawnPipe() {
+    var gap = 160;
+    var minY = 80, maxY = H - 80 - gap;
+    var y = minY + Math.random() * (maxY - minY);
+    pipes.push({ x: W, top: y, gap: gap, passed: false });
+  }
+
+  function step() {
+    frame++;
+
+    // physics
+    bird.v += 0.38;
+    bird.y += bird.v;
+
+    // spawn pipes every ~90 frames
+    if (frame % 90 === 0) spawnPipe();
+
+    // update pipes
+    for (var i = pipes.length - 1; i >= 0; i--) {
+      var p = pipes[i];
+      p.x -= 2.6;
+      if (!p.passed && p.x + 40 < bird.x) { p.passed = true; score++; }
+      if (p.x < -60) pipes.splice(i, 1);
+    }
+
+    // collisions
+    if (bird.y + bird.r > H - 40 || bird.y - bird.r < 0) return end();
+    for (var j = 0; j < pipes.length; j++) {
+      var pp = pipes[j];
+      if (bird.x + bird.r > pp.x && bird.x - bird.r < pp.x + 60) {
+        if (bird.y - bird.r < pp.top || bird.y + bird.r > pp.top + pp.gap) return end();
+      }
+    }
+  }
+
+  function draw() {
+    // sky gradient
+    var g = ctx.createLinearGradient(0, 0, 0, H);
+    g.addColorStop(0, '#60A5FA');
+    g.addColorStop(1, '#7C3AED');
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, W, H);
+
+    // ground
+    ctx.fillStyle = '#2D7A4F';
+    ctx.fillRect(0, H - 40, W, 40);
+    ctx.fillStyle = '#1f5d3a';
+    for (var i = 0; i < W; i += 14) ctx.fillRect(i, H - 40, 6, 4);
+
+    // pipes
+    for (var j = 0; j < pipes.length; j++) {
+      var p = pipes[j];
+      ctx.fillStyle = '#16A34A';
+      ctx.fillRect(p.x, 0, 60, p.top);
+      ctx.fillRect(p.x, p.top + p.gap, 60, H - (p.top + p.gap) - 40);
+      ctx.fillStyle = '#0F5132';
+      ctx.fillRect(p.x - 4, p.top - 14, 68, 14);
+      ctx.fillRect(p.x - 4, p.top + p.gap, 68, 14);
+    }
+
+    // bird
+    ctx.save();
+    ctx.translate(bird.x, bird.y);
+    var tilt = Math.max(-0.5, Math.min(1.2, bird.v / 10));
+    ctx.rotate(tilt);
+    ctx.fillStyle = '#FBBF24';
+    ctx.beginPath();
+    ctx.arc(0, 0, bird.r, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = '#111';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    // eye
+    ctx.fillStyle = '#111';
+    ctx.beginPath();
+    ctx.arc(5, -3, 2.2, 0, Math.PI * 2);
+    ctx.fill();
+    // beak
+    ctx.fillStyle = '#EA580C';
+    ctx.beginPath();
+    ctx.moveTo(bird.r - 2, 0);
+    ctx.lineTo(bird.r + 8, -3);
+    ctx.lineTo(bird.r + 8, 3);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+
+    // score
+    ctx.fillStyle = '#fff';
+    ctx.strokeStyle = 'rgba(0,0,0,0.4)';
+    ctx.lineWidth = 4;
+    ctx.font = 'bold 42px DM Sans, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.strokeText(score, W/2, 70);
+    ctx.fillText(score, W/2, 70);
+  }
+
+  function loop() {
+    if (!running) return;
+    if (!gameOver) { step(); draw(); }
+    requestAnimationFrame(loop);
+  }
+
+  function start() {
+    reset();
+    running = true;
+    overlay.setAttribute('hidden', '');
+    requestAnimationFrame(loop);
+  }
+
+  function end() {
+    gameOver = true;
+    running = false;
+    overlay.removeAttribute('hidden');
+    ovTitle.textContent = 'Game Over';
+    ovBody.innerHTML = 'Score: <strong>' + score + '</strong>';
+    startBtn.textContent = 'Play again';
+    submitScore(score);
+  }
+
+  function submitScore(s) {
+    if (s <= 0) return;
+    fetch('/games/score', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ game: 'flappy', score: s })
+    }).then(function(r) { return r.ok ? r.json() : null; })
+      .then(function(data) {
+        if (!data) return;
+        myBestEl.textContent = data.myBest;
+        topScoreEl.textContent = data.topScore;
+      }).catch(function() {});
+  }
+
+  startBtn.addEventListener('click', start);
+
+  document.addEventListener('keydown', function(e) {
+    if (e.code === 'Space' || e.code === 'ArrowUp') {
+      e.preventDefault();
+      if (!running) start(); else flap();
+    }
+  });
+  canvas.addEventListener('mousedown', function(e) { e.preventDefault(); if (!running) start(); else flap(); });
+  canvas.addEventListener('touchstart', function(e) { e.preventDefault(); if (!running) start(); else flap(); }, { passive: false });
+
+  // initial idle draw
+  reset();
+  draw();
+})();
+</script>
+
+<%- include('../layout/footer') %>

@@ -110,9 +110,156 @@ db.exec(`
     reference_id INTEGER,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   );
+
+  CREATE TABLE IF NOT EXISTS predictions (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL,
+    description TEXT,
+    category TEXT,
+    close_date TEXT,
+    status TEXT NOT NULL DEFAULT 'open',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
+
+  CREATE TABLE IF NOT EXISTS prediction_options (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    prediction_id INTEGER NOT NULL REFERENCES predictions(id),
+    label TEXT NOT NULL,
+    order_index INTEGER DEFAULT 0
+  );
+
+  CREATE TABLE IF NOT EXISTS prediction_votes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL REFERENCES users(id),
+    prediction_id INTEGER NOT NULL REFERENCES predictions(id),
+    option_id INTEGER NOT NULL REFERENCES prediction_options(id),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(user_id, prediction_id)
+  );
+
+  CREATE TABLE IF NOT EXISTS game_scores (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL REFERENCES users(id),
+    game TEXT NOT NULL,
+    score INTEGER NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
 `);
 
+function seedPredictions() {
+  const row = db.prepare('SELECT COUNT(*) AS c FROM predictions').get();
+  if (row.c > 0) return;
+
+  const insertPrediction = db.prepare(`
+    INSERT INTO predictions (title, description, category, close_date, status)
+    VALUES (?, ?, ?, ?, 'open')
+  `);
+  const insertOption = db.prepare(`
+    INSERT INTO prediction_options (prediction_id, label, order_index)
+    VALUES (?, ?, ?)
+  `);
+
+  const seeds = [
+    {
+      title: 'Will a local farmers market open downtown this year?',
+      description: 'Community prediction on whether a new farmers market will be announced before December.',
+      category: 'community',
+      close_date: '2026-12-31',
+      options: ['Yes', 'No']
+    },
+    {
+      title: 'Which cuisine will top next month\'s restaurant openings?',
+      description: 'Which cuisine will dominate new local restaurant openings in the coming weeks.',
+      category: 'food',
+      close_date: '2026-06-30',
+      options: ['Italian', 'Mexican', 'Asian', 'American', 'Mediterranean']
+    },
+    {
+      title: 'Will remote work stay above 30% of local jobs in 2026?',
+      description: 'Forecast the share of remote/hybrid jobs in your area for the rest of the year.',
+      category: 'work',
+      close_date: '2026-12-31',
+      options: ['Yes, stays above 30%', 'No, will drop below']
+    },
+    {
+      title: 'Which EV brand will see the biggest adoption spike locally?',
+      description: 'Pick the EV maker most likely to grow fastest in your community this year.',
+      category: 'tech',
+      close_date: '2026-12-31',
+      options: ['Tesla', 'Ford', 'Rivian', 'Hyundai/Kia', 'Chinese brands']
+    },
+    {
+      title: 'Will coffee prices rise again this summer?',
+      description: 'Community outlook on whether a pound of coffee beans will trend higher by August.',
+      category: 'food',
+      close_date: '2026-08-31',
+      options: ['Higher', 'About the same', 'Lower']
+    },
+    {
+      title: 'Which streaming service will gain the most subscribers in 2026?',
+      description: 'Predict the biggest streaming winner for the year among US viewers.',
+      category: 'entertainment',
+      close_date: '2026-12-31',
+      options: ['Netflix', 'Disney+', 'Max', 'Apple TV+', 'Amazon Prime']
+    },
+    {
+      title: 'Will your city add new bike lanes this year?',
+      description: 'Forecast whether your local government will announce new bike infrastructure.',
+      category: 'community',
+      close_date: '2026-12-31',
+      options: ['Yes', 'No', 'Only pilot / temporary']
+    },
+    {
+      title: 'Which sport will have the most-watched finals in 2026?',
+      description: 'Predict the most-watched US championship game or series this year.',
+      category: 'sports',
+      close_date: '2026-12-31',
+      options: ['NFL Super Bowl', 'NBA Finals', 'World Series', 'Stanley Cup', 'MLS Cup']
+    },
+    {
+      title: 'Will home prices in your area rise, fall, or stay flat?',
+      description: 'Community take on local housing trends through the end of the year.',
+      category: 'housing',
+      close_date: '2026-12-31',
+      options: ['Rise 5%+', 'Slight rise', 'Flat', 'Slight fall', 'Fall 5%+']
+    },
+    {
+      title: 'Which social platform will teens use most by year-end?',
+      description: 'Pick the platform with the largest under-25 share by December.',
+      category: 'tech',
+      close_date: '2026-12-31',
+      options: ['TikTok', 'Instagram', 'YouTube', 'Snapchat', 'Something new']
+    },
+    {
+      title: 'Will gas prices average below $3.50/gal this summer?',
+      description: 'Forecast US summer gas price trend.',
+      category: 'economy',
+      close_date: '2026-09-01',
+      options: ['Yes, below $3.50', 'No, above $3.50']
+    },
+    {
+      title: 'Will your favorite local restaurant still be open in 12 months?',
+      description: 'A friendly community gut-check on small business survival.',
+      category: 'food',
+      close_date: '2027-04-23',
+      options: ['Definitely', 'Probably', 'Not sure', 'Probably not']
+    }
+  ];
+
+  const tx = db.transaction(() => {
+    for (const p of seeds) {
+      const r = insertPrediction.run(p.title, p.description, p.category, p.close_date);
+      const pid = r.lastInsertRowid;
+      p.options.forEach((label, i) => insertOption.run(pid, label, i));
+    }
+  });
+  tx();
+  console.log(`Seeded ${seeds.length} predictions.`);
+}
+
 function seedData() {
+  seedPredictions();
+
   const existingAdmin = db.prepare('SELECT id FROM users WHERE email = ?').get('admin@generalviewonthis.com');
   if (existingAdmin) {
     console.log('Seed data already exists, skipping.');
