@@ -1,124 +1,99 @@
-<%- include('../layout/header', { title: 'Browse Businesses', extraCss: ['/css/pages/orders.css', '/css/pages/dashboard.css'] }) %>
+<%- include('../layout/header', { title: 'Browse Businesses', extraCss: ['/css/pages/orders.css', '/css/pages/orders-v2.css', '/css/pages/dashboard.css'] }) %>
 
-<section class="orders-browse">
+<section class="orders-browse page-section">
 
-  <!-- ═══ ANIMATED GRADIENT HEADER ═══ -->
+  <!-- ═══ HEADER ═══ -->
   <div class="dash-header">
     <div class="dash-header-content">
-      <h1 class="dash-header-title">Browse Businesses</h1>
-      <p class="dash-header-sub">Discover local shops and services</p>
+      <h1 class="dash-header-title">Local businesses</h1>
+      <p class="dash-header-sub">Spend your credits with local shops and services</p>
     </div>
     <div class="ticker-strip">
       <div class="ticker-track">
-        <span class="ticker-item"><%= businesses.length %> businesses available</span>
+        <span class="ticker-item"><%= businesses.length %> businesses</span>
         <span class="ticker-dot"></span>
         <span class="ticker-item">Support local</span>
         <span class="ticker-dot"></span>
-        <span class="ticker-item">Earn credits through surveys</span>
+        <span class="ticker-item">Pay with survey credits</span>
         <span class="ticker-dot"></span>
-        <span class="ticker-item">Order with credits</span>
-        <span class="ticker-dot"></span>
-        <!-- Duplicate for seamless loop -->
-        <span class="ticker-item"><%= businesses.length %> businesses available</span>
+        <span class="ticker-item"><%= businesses.length %> businesses</span>
         <span class="ticker-dot"></span>
         <span class="ticker-item">Support local</span>
         <span class="ticker-dot"></span>
-        <span class="ticker-item">Earn credits through surveys</span>
-        <span class="ticker-dot"></span>
-        <span class="ticker-item">Order with credits</span>
+        <span class="ticker-item">Pay with survey credits</span>
         <span class="ticker-dot"></span>
       </div>
     </div>
   </div>
 
-  <form action="/orders" method="GET" class="search-bar">
-    <div class="search-bar-inner">
-      <div class="search-input-group">
-        <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-        </svg>
-        <input
-          type="text"
-          name="q"
-          class="form-input search-input"
-          placeholder="Search businesses..."
-          value="<%= typeof query !== 'undefined' ? query : '' %>"
-        >
-      </div>
-
-      <div class="search-filter-group">
-        <select name="category" class="form-input form-select search-select">
-          <option value="" <%= (typeof category === 'undefined' || category === '') ? 'selected' : '' %>>All Categories</option>
-          <option value="restaurant" <%= category === 'restaurant' ? 'selected' : '' %>>Restaurant</option>
-          <option value="retail" <%= category === 'retail' ? 'selected' : '' %>>Retail</option>
-          <option value="service" <%= category === 'service' ? 'selected' : '' %>>Service</option>
-          <option value="other" <%= category === 'other' ? 'selected' : '' %>>Other</option>
-        </select>
-      </div>
-
-      <button type="submit" class="btn btn-primary search-btn">Search</button>
+  <!-- ═══ SEARCH ═══ -->
+  <form action="/orders" method="GET" class="o-toolbar">
+    <div class="o-search-wrap">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+      <input
+        type="text"
+        name="q"
+        class="o-search"
+        placeholder="Search businesses…"
+        value="<%= typeof query !== 'undefined' ? query : '' %>"
+      >
     </div>
+    <select name="category" class="o-select">
+      <option value="" <%= (typeof category === 'undefined' || category === '') ? 'selected' : '' %>>All categories</option>
+      <option value="restaurant" <%= category === 'restaurant' ? 'selected' : '' %>>Restaurant</option>
+      <option value="retail" <%= category === 'retail' ? 'selected' : '' %>>Retail</option>
+      <option value="service" <%= category === 'service' ? 'selected' : '' %>>Service</option>
+      <option value="other" <%= category === 'other' ? 'selected' : '' %>>Other</option>
+    </select>
+    <button type="submit" class="o-search-btn">Search</button>
   </form>
 
   <% if (businesses.length > 0) { %>
-    <div class="business-grid" data-reveal-stagger="80" data-reveal-max="14">
-      <% businesses.forEach(function(biz) { %>
-        <div class="business-card pop-reveal anim-glow anim-shine">
-          <div class="business-card-header">
-            <h2 class="business-card-name"><%= biz.business_name %></h2>
-            <span class="badge badge-category badge-<%= biz.category %>"><%= biz.category %></span>
+    <div class="o-grid" data-reveal-stagger="70" data-reveal-max="14">
+      <% businesses.forEach(function(biz) {
+        var initials = biz.business_name.split(/\s+/).map(function(w){return w[0];}).join('').toUpperCase().slice(0, 2);
+        var avgRating = biz.avg_rating || 0;
+        var reviewCount = biz.review_count || 0;
+      %>
+        <article class="o-card pop-reveal" data-category="<%= biz.category %>">
+          <div class="o-card-banner o-banner-<%= biz.category %>">
+            <span class="o-card-initials"><%= initials %></span>
+            <span class="o-card-cat"><%= biz.category %></span>
           </div>
-
-          <% if (biz.description) { %>
-            <p class="business-card-desc">
-              <%= biz.description.length > 120 ? biz.description.substring(0, 120) + '...' : biz.description %>
-            </p>
-          <% } %>
-
-          <div class="business-card-rating">
-            <div class="stars">
-              <% var avgRating = biz.avg_rating || 0; %>
-              <% for (var i = 1; i <= 5; i++) { %>
-                <% if (i <= Math.floor(avgRating)) { %>
-                  <svg class="star star-filled" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                  </svg>
-                <% } else if (i - 0.5 <= avgRating) { %>
-                  <svg class="star star-half" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" opacity="0.3"/>
-                    <path d="M12 2v15.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                  </svg>
-                <% } else { %>
-                  <svg class="star star-empty" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                  </svg>
-                <% } %>
+          <div class="o-card-body">
+            <h3 class="o-card-name"><%= biz.business_name %></h3>
+            <div class="o-card-meta">
+              <% if (reviewCount > 0) { %>
+                <span class="o-card-rating" title="Average rating">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                  <strong><%= avgRating.toFixed(1) %></strong>
+                  <span class="o-card-reviews">· <%= reviewCount %> review<%= reviewCount === 1 ? '' : 's' %></span>
+                </span>
+              <% } else { %>
+                <span class="o-card-rating o-card-rating-empty">New · no reviews yet</span>
               <% } %>
             </div>
-            <span class="review-count">(<%= biz.review_count || 0 %> review<%= (biz.review_count || 0) !== 1 ? 's' : '' %>)</span>
+            <% if (biz.address) { %>
+              <p class="o-card-addr">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                <%= biz.address %>
+              </p>
+            <% } %>
           </div>
-
-          <% if (biz.address) { %>
-            <div class="business-card-address">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/>
-                <circle cx="12" cy="10" r="3"/>
-              </svg>
-              <span><%= biz.address %></span>
-            </div>
-          <% } %>
-
-          <a href="/orders/create/<%= biz.id %>" class="btn btn-primary btn-block business-card-btn anim-shine">Order Now</a>
-        </div>
+          <a href="/orders/create/<%= biz.id %>" class="o-card-cta anim-shine">
+            Order with credits
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </article>
       <% }); %>
     </div>
   <% } else { %>
     <div class="empty-state">
-      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
         <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
       </svg>
       <h3>No businesses found</h3>
-      <p>Try adjusting your search or browse all categories.</p>
+      <p>Try a different search or category.</p>
     </div>
   <% } %>
 </section>

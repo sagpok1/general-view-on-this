@@ -1,351 +1,147 @@
-<%- include('../layout/header', { title: 'Surveys', extraCss: ['/css/pages/surveys.css', '/css/pages/dashboard.css'] }) %>
+<%- include('../layout/header', { title: 'Surveys', extraCss: ['/css/pages/surveys.css', '/css/pages/surveys-v2.css', '/css/pages/dashboard.css'] }) %>
 
 <section class="page-section">
 
-  <!-- ═══ ANIMATED GRADIENT HEADER ═══ -->
+  <!-- ═══ HEADER ═══ -->
   <div class="dash-header">
     <div class="dash-header-content">
       <h1 class="dash-header-title">Surveys</h1>
-      <p class="dash-header-sub">Complete surveys to earn credits</p>
+      <p class="dash-header-sub">One credit per survey · Share your view</p>
     </div>
     <div class="ticker-strip">
       <div class="ticker-track">
+        <span class="ticker-item"><%= availableSurveys ? availableSurveys.length : 0 %> surveys available</span>
+        <span class="ticker-dot"></span>
         <span class="ticker-item">Each survey = 1 credit</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">Spend credits at local businesses</span>
         <span class="ticker-dot"></span>
         <span class="ticker-item"><%= availableSurveys ? availableSurveys.length : 0 %> surveys available</span>
         <span class="ticker-dot"></span>
-        <span class="ticker-item">Share your opinions</span>
-        <span class="ticker-dot"></span>
-        <span class="ticker-item">Credits can be used to order from local businesses</span>
-        <span class="ticker-dot"></span>
-        <!-- Duplicate for seamless loop -->
         <span class="ticker-item">Each survey = 1 credit</span>
         <span class="ticker-dot"></span>
-        <span class="ticker-item"><%= availableSurveys ? availableSurveys.length : 0 %> surveys available</span>
-        <span class="ticker-dot"></span>
-        <span class="ticker-item">Share your opinions</span>
-        <span class="ticker-dot"></span>
-        <span class="ticker-item">Credits can be used to order from local businesses</span>
+        <span class="ticker-item">Spend credits at local businesses</span>
         <span class="ticker-dot"></span>
       </div>
     </div>
   </div>
 
-  <!-- ═══ CREDIT BALANCE COIN CARD ═══ -->
-  <div class="dashboard-stats" style="justify-content: center; margin-bottom: 1.5rem;">
-    <div class="coin-card">
-      <div class="coin-outer">
-        <div class="coin-inner">
-          <div class="coin-value"><%= currentUser.credits %></div>
-          <div class="coin-label">Credits</div>
-        </div>
+  <!-- ═══ AVAILABLE ═══ -->
+  <div class="s-section">
+    <div class="s-section-head">
+      <div>
+        <h2 class="s-section-title">Available</h2>
+        <p class="s-section-sub"><%= availableSurveys ? availableSurveys.length : 0 %> waiting for you</p>
       </div>
-    </div>
-  </div>
-
-  <div class="survey-section">
-    <div class="section-head-row">
-      <h2 class="section-title">Available Surveys</h2>
-
-      <% if (availableSurveys && availableSurveys.length > 0) { %>
-        <div class="batch-controls">
-          <label class="batch-select-all">
-            <input type="checkbox" id="selectAllSurveys">
-            <span>Select all</span>
-          </label>
-          <button type="button" class="btn btn-batch" id="takeBatchBtn" disabled>
-            <span class="btn-batch-icon">▶</span>
-            <span>Take <span id="batchCount">0</span> selected</span>
-          </button>
-        </div>
-      <% } %>
+      <div class="s-balance-chip" title="Your credit balance">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 7v10M8 11h8" stroke-linecap="round"/></svg>
+        <strong><%= currentUser.credits %></strong>
+        <span>credit<%= currentUser.credits === 1 ? '' : 's' %></span>
+      </div>
     </div>
 
     <% if (availableSurveys && availableSurveys.length > 0) { %>
-      <div class="survey-toolbar">
-        <input type="search" id="surveySearch" class="survey-search-input" placeholder="Search surveys…" aria-label="Search surveys">
-        <div class="survey-filter-chips" id="surveyFilterChips">
-          <button type="button" class="survey-filter-chip is-active" data-cat="all">All</button>
+      <div class="s-toolbar">
+        <div class="s-search-wrap">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <input type="search" id="surveySearch" class="s-search" placeholder="Search…" aria-label="Search surveys">
+        </div>
+        <div class="s-chips" id="surveyFilterChips">
+          <button type="button" class="s-chip is-active" data-cat="all">All</button>
           <%
             var cats = [];
             availableSurveys.forEach(function(s) { if (s.category && cats.indexOf(s.category) === -1) cats.push(s.category); });
             cats.forEach(function(c) {
           %>
-            <button type="button" class="survey-filter-chip" data-cat="<%= c %>"><%= c.charAt(0).toUpperCase() + c.slice(1) %></button>
+            <button type="button" class="s-chip" data-cat="<%= c %>"><%= c.charAt(0).toUpperCase() + c.slice(1) %></button>
           <% }); %>
         </div>
-        <p class="survey-empty-filter" id="surveyEmptyFilter" hidden>No surveys match your filter.</p>
+        <button type="button" class="s-batch-toggle" id="batchToggle" aria-pressed="false" title="Select multiple">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+          <span>Multi-select</span>
+        </button>
       </div>
+      <p class="s-empty-filter" id="surveyEmptyFilter" hidden>No surveys match that filter.</p>
 
-      <div class="survey-grid" id="surveyGrid" data-reveal-stagger="60" data-reveal-max="16">
+      <div class="s-grid" id="surveyGrid" data-reveal-stagger="50" data-reveal-max="16">
         <% availableSurveys.forEach(function(survey) { %>
-          <article class="survey-card pop-reveal" data-survey-id="<%= survey.id %>"
+          <article class="s-card pop-reveal" data-survey-id="<%= survey.id %>"
                    data-cat="<%= survey.category || '' %>"
                    data-search="<%= (survey.title + ' ' + (survey.description || '')).toLowerCase() %>">
-            <label class="survey-select-check">
+            <label class="s-card-check">
               <input type="checkbox" class="survey-check" value="<%= survey.id %>">
-              <span class="survey-select-mark"></span>
+              <span class="s-card-check-mark" aria-hidden="true"></span>
             </label>
-            <div class="survey-card-body">
-              <span class="badge badge-category"><%= survey.category %></span>
-              <h3 class="survey-card-title"><%= survey.title %></h3>
-              <p class="survey-card-description"><%= survey.description %></p>
-            </div>
-            <div class="survey-card-footer">
-              <a href="/surveys/<%= survey.id %>" class="btn btn-primary">Take Survey</a>
-            </div>
+
+            <a href="/surveys/<%= survey.id %>" class="s-card-link">
+              <div class="s-card-head">
+                <span class="s-card-cat">
+                  <span class="s-card-cat-dot"></span><%= survey.category %>
+                </span>
+                <span class="s-card-reward">+1</span>
+              </div>
+              <h3 class="s-card-title"><%= survey.title %></h3>
+              <span class="s-card-cta">
+                Take survey
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </span>
+            </a>
           </article>
         <% }); %>
       </div>
+
+      <!-- Floating batch action bar (visible when cards selected) -->
+      <div class="s-batch-bar" id="batchBar" hidden>
+        <button type="button" class="s-batch-link" id="selectAllLink">Select all visible</button>
+        <span class="s-batch-count"><span id="batchCount">0</span> selected</span>
+        <button type="button" class="btn btn-primary s-batch-go" id="takeBatchBtn" disabled>
+          Take selected
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+
     <% } else { %>
       <div class="empty-state">
-        <p class="empty-state-text">You've completed all available surveys!</p>
+        <p class="empty-state-text">You've completed all available surveys.</p>
       </div>
     <% } %>
   </div>
 
-  <div class="survey-section">
-    <h2 class="section-title">Completed Surveys</h2>
+  <!-- ═══ COMPLETED (collapsible) ═══ -->
+  <div class="s-section s-section-completed">
+    <button type="button" class="s-collapse-head" id="completedToggle" aria-expanded="false">
+      <div>
+        <h2 class="s-section-title">Completed</h2>
+        <p class="s-section-sub"><%= completedSurveys ? completedSurveys.length : 0 %> finished</p>
+      </div>
+      <svg class="s-collapse-chev" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+    </button>
 
-    <% if (completedSurveys && completedSurveys.length > 0) { %>
-      <div class="survey-grid">
-        <% completedSurveys.forEach(function(survey) { %>
-          <article class="survey-card survey-card-completed">
-            <div class="survey-completed-overlay">
-              <span class="badge badge-completed">Completed</span>
-            </div>
-            <div class="survey-card-body">
-              <span class="badge badge-category"><%= survey.category %></span>
-              <h3 class="survey-card-title"><%= survey.title %></h3>
-              <p class="survey-card-description"><%= survey.description %></p>
-            </div>
-            <div class="survey-card-footer">
-              <span class="survey-completed-date">Completed on <%= new Date(survey.completed_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) %></span>
-            </div>
-          </article>
-        <% }); %>
-      </div>
-    <% } else { %>
-      <div class="empty-state">
-        <p class="empty-state-text">You haven't completed any surveys yet.</p>
-      </div>
-    <% } %>
+    <div class="s-collapse-body" id="completedBody" hidden>
+      <% if (completedSurveys && completedSurveys.length > 0) { %>
+        <ul class="s-completed-list">
+          <% completedSurveys.forEach(function(survey) { %>
+            <li class="s-completed-row">
+              <span class="s-completed-check" aria-hidden="true">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              </span>
+              <span class="s-completed-cat"><%= survey.category %></span>
+              <span class="s-completed-title"><%= survey.title %></span>
+              <span class="s-completed-date"><%= new Date(survey.completed_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) %></span>
+            </li>
+          <% }); %>
+        </ul>
+      <% } else { %>
+        <div class="empty-state">
+          <p class="empty-state-text">You haven't completed any surveys yet.</p>
+        </div>
+      <% } %>
+    </div>
   </div>
 </section>
 
-<style>
-/* ═══ SURVEY LIST — BATCH MODE ═══ */
-
-.section-head-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  flex-wrap: wrap;
-  margin-bottom: 1rem;
-}
-
-.batch-controls {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.batch-select-all {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: var(--color-text-secondary);
-  cursor: pointer;
-  user-select: none;
-}
-
-.batch-select-all input {
-  width: 18px;
-  height: 18px;
-  accent-color: var(--color-accent);
-  cursor: pointer;
-}
-
-.btn-batch {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: linear-gradient(135deg, #2D7A4F, #10B981);
-  color: #fff;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 10px;
-  font-weight: 700;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: all 200ms ease;
-  box-shadow: 0 4px 14px rgba(45, 122, 79, 0.25);
-}
-
-.btn-batch:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(45, 122, 79, 0.35);
-}
-
-.btn-batch:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-  background: var(--color-text-muted);
-  box-shadow: none;
-}
-
-.btn-batch-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 20px;
-  height: 20px;
-  background: rgba(255, 255, 255, 0.25);
-  border-radius: 50%;
-  font-size: 0.7rem;
-}
-
-/* ── Survey Card Checkbox ── */
-.survey-card {
-  position: relative;
-}
-
-.survey-select-check {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  z-index: 3;
-  cursor: pointer;
-  user-select: none;
-}
-
-.survey-select-check input[type="checkbox"] {
-  position: absolute;
-  opacity: 0;
-  width: 0;
-  height: 0;
-  pointer-events: none;
-}
-
-.survey-select-mark {
-  display: block;
-  width: 26px;
-  height: 26px;
-  border-radius: 8px;
-  border: 2px solid var(--color-border);
-  background: rgba(255, 255, 255, 0.9);
-  transition: all 150ms ease;
-  position: relative;
-}
-
-.survey-select-check:hover .survey-select-mark {
-  border-color: var(--color-accent);
-  background: #fff;
-}
-
-.survey-select-check input:checked ~ .survey-select-mark {
-  background: var(--color-accent);
-  border-color: var(--color-accent);
-  box-shadow: 0 2px 8px rgba(232, 98, 42, 0.3);
-}
-
-.survey-select-check input:checked ~ .survey-select-mark::after {
-  content: '';
-  position: absolute;
-  top: 4px;
-  left: 8px;
-  width: 6px;
-  height: 12px;
-  border-right: 2.5px solid #fff;
-  border-bottom: 2.5px solid #fff;
-  transform: rotate(45deg);
-}
-
-.survey-card.is-selected {
-  border-color: var(--color-accent);
-  box-shadow: 0 6px 20px rgba(232, 98, 42, 0.15);
-}
-
-/* ── Toolbar: search + category chips ── */
-.survey-toolbar {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  margin-bottom: 1.25rem;
-}
-
-.survey-search-input {
-  width: 100%;
-  padding: 0.75rem 1rem;
-  border: 1.5px solid var(--color-border);
-  border-radius: var(--radius-md);
-  background: var(--color-surface);
-  font: inherit;
-  color: var(--color-text-primary);
-  transition: all var(--transition-fast);
-}
-
-.survey-search-input:focus {
-  outline: none;
-  border-color: var(--color-accent);
-  box-shadow: 0 0 0 3px rgba(232, 98, 42, 0.12);
-}
-
-.survey-filter-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-
-.survey-filter-chip {
-  padding: 0.4rem 0.9rem;
-  border: 1.5px solid var(--color-border);
-  border-radius: 999px;
-  background: var(--color-surface);
-  color: var(--color-text-secondary);
-  font-size: 0.85rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  text-transform: capitalize;
-}
-
-.survey-filter-chip:hover {
-  border-color: var(--color-accent);
-  color: var(--color-accent);
-}
-
-.survey-filter-chip.is-active {
-  background: var(--color-accent);
-  color: #fff;
-  border-color: var(--color-accent);
-}
-
-.survey-empty-filter {
-  margin-top: 0.25rem;
-  color: var(--color-text-muted);
-  font-style: italic;
-  font-size: 0.9rem;
-}
-
-/* Show/hide checkboxes responsively */
-@media (max-width: 640px) {
-  .section-head-row {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .batch-controls {
-    justify-content: space-between;
-  }
-}
-</style>
-
 <script>
-// Survey search + category filter
+// ─── Filter + search ─────────────────────────────────────────────
 (function() {
   var search = document.getElementById('surveySearch');
   var chipWrap = document.getElementById('surveyFilterChips');
@@ -353,8 +149,8 @@
   var emptyFilter = document.getElementById('surveyEmptyFilter');
   if (!search || !chipWrap || !grid) return;
 
-  var chips = chipWrap.querySelectorAll('.survey-filter-chip');
-  var cards = grid.querySelectorAll('.survey-card');
+  var chips = chipWrap.querySelectorAll('.s-chip');
+  var cards = grid.querySelectorAll('.s-card');
   var activeCat = 'all';
 
   function apply() {
@@ -380,85 +176,115 @@
   });
   search.addEventListener('input', apply);
 })();
-</script>
 
-<script>
-// Batch Selection + Take Multiple Surveys
+// ─── Multi-select mode + batch take ──────────────────────────────
 (function() {
   var KEY = 'gvot_survey_queue';
   var ACTIVE_KEY = 'gvot_survey_queue_active';
-  var selectAll = document.getElementById('selectAllSurveys');
-  var checks = document.querySelectorAll('.survey-check');
-  var batchBtn = document.getElementById('takeBatchBtn');
+  var toggle = document.getElementById('batchToggle');
+  var bar = document.getElementById('batchBar');
+  var goBtn = document.getElementById('takeBatchBtn');
   var countEl = document.getElementById('batchCount');
-  if (checks.length === 0 || !batchBtn) return;
+  var selectAllLink = document.getElementById('selectAllLink');
+  var grid = document.getElementById('surveyGrid');
+  if (!toggle || !bar || !goBtn || !grid) return;
+
+  var cards = grid.querySelectorAll('.s-card');
+  var checks = grid.querySelectorAll('.survey-check');
+  var enabled = false;
+
+  function setEnabled(v) {
+    enabled = v;
+    toggle.classList.toggle('is-on', v);
+    toggle.setAttribute('aria-pressed', v ? 'true' : 'false');
+    grid.classList.toggle('s-grid-selectmode', v);
+    bar.hidden = !v;
+    if (!v) {
+      checks.forEach(function(c) { c.checked = false; });
+      cards.forEach(function(card) { card.classList.remove('is-selected'); });
+      updateCount();
+    }
+  }
 
   function updateCount() {
     var selected = Array.from(checks).filter(function(c) { return c.checked; });
     countEl.textContent = selected.length;
-    batchBtn.disabled = selected.length === 0;
-
-    // Visual feedback on cards
+    goBtn.disabled = selected.length === 0;
     checks.forEach(function(c) {
-      var card = c.closest('.survey-card');
+      var card = c.closest('.s-card');
       if (card) card.classList.toggle('is-selected', c.checked);
     });
   }
 
-  checks.forEach(function(c) {
-    c.addEventListener('change', updateCount);
-  });
+  toggle.addEventListener('click', function() { setEnabled(!enabled); });
 
-  if (selectAll) {
-    selectAll.addEventListener('change', function() {
-      checks.forEach(function(c) { c.checked = selectAll.checked; });
+  // Clicking the card link while in select-mode toggles the checkbox
+  cards.forEach(function(card) {
+    var link = card.querySelector('.s-card-link');
+    var check = card.querySelector('.survey-check');
+    if (!link || !check) return;
+    link.addEventListener('click', function(e) {
+      if (!enabled) return;
+      e.preventDefault();
+      check.checked = !check.checked;
       updateCount();
     });
-  }
+  });
 
-  batchBtn.addEventListener('click', function() {
+  checks.forEach(function(c) { c.addEventListener('change', updateCount); });
+
+  selectAllLink.addEventListener('click', function() {
+    var visibleChecks = Array.from(checks).filter(function(c) {
+      var card = c.closest('.s-card');
+      return card && card.style.display !== 'none';
+    });
+    var allOn = visibleChecks.every(function(c) { return c.checked; });
+    visibleChecks.forEach(function(c) { c.checked = !allOn; });
+    updateCount();
+  });
+
+  goBtn.addEventListener('click', function() {
     var selected = Array.from(checks)
       .filter(function(c) { return c.checked; })
       .map(function(c) { return parseInt(c.value, 10); });
-
     if (selected.length === 0) return;
-
-    // Store remaining in session (minus the first which we'll open now)
     var first = selected[0];
     var rest = selected.slice(1);
     sessionStorage.setItem(KEY, JSON.stringify(rest));
-    // Reset session counter for a clean batch start
     sessionStorage.setItem('gvot_survey_session_completed', '0');
-
     window.location.href = '/surveys/' + first;
   });
 
-  // After a batch survey completion, redirect to the next one in queue
+  // Handle batch progress (carry over from previous page)
   var queue = [];
   try { queue = JSON.parse(sessionStorage.getItem(KEY) || '[]'); } catch (e) { queue = []; }
-
   var completed = parseInt(sessionStorage.getItem('gvot_survey_session_completed') || '0', 10);
-
   if (queue.length > 0 && sessionStorage.getItem(ACTIVE_KEY)) {
     sessionStorage.removeItem(ACTIVE_KEY);
     var nextId = queue[0];
-
     if (typeof window.showToast === 'function') {
-      window.showToast('Earned ' + completed + ' credit' + (completed !== 1 ? 's' : '') + ' — next survey...', 'success');
+      window.showToast('Earned ' + completed + ' credit' + (completed !== 1 ? 's' : '') + ' — next survey…', 'success');
     }
-
-    setTimeout(function() {
-      window.location.href = '/surveys/' + nextId;
-    }, 1000);
+    setTimeout(function() { window.location.href = '/surveys/' + nextId; }, 1000);
   } else if (completed > 0 && queue.length === 0) {
-    // Batch or session finished — show celebration toast
     sessionStorage.removeItem(ACTIVE_KEY);
     if (typeof window.showToast === 'function') {
-      window.showToast('Earned ' + completed + ' credit' + (completed !== 1 ? 's' : '') + ' this session 🎉', 'success');
+      window.showToast('Earned ' + completed + ' credit' + (completed !== 1 ? 's' : '') + ' this session', 'success');
     }
-    // Don't clear the session counter here — let the user see it persist
-    // until they start a new batch or close the tab
   }
+})();
+
+// ─── Completed section collapse ──────────────────────────────────
+(function() {
+  var btn = document.getElementById('completedToggle');
+  var body = document.getElementById('completedBody');
+  if (!btn || !body) return;
+  btn.addEventListener('click', function() {
+    var open = btn.getAttribute('aria-expanded') === 'true';
+    btn.setAttribute('aria-expanded', open ? 'false' : 'true');
+    btn.classList.toggle('is-open', !open);
+    body.hidden = open;
+  });
 })();
 </script>
 
