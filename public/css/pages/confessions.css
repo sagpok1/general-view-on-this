@@ -379,6 +379,27 @@
 .confess-react-count { font-variant-numeric: tabular-nums; font-weight: 600; }
 .confess-react-form { margin: 0; }
 
+.confess-delete-form { margin: 0; }
+.confess-delete-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  padding: 0.25rem 0.55rem;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all var(--transition-fast);
+  font: inherit;
+}
+.confess-delete-btn:hover {
+  background: var(--color-warm-light);
+  color: var(--color-red);
+  border-color: rgba(168, 89, 89, 0.3);
+}
+
 @keyframes heartPop {
   0%, 100% { transform: scale(1); }
   40% { transform: scale(1.4); }

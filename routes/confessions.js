@@ -223,6 +223,26 @@ router.post('/:id/comments', isLoggedIn, validateCsrf, [
   }
 });
 
+router.post('/:id/delete', isLoggedIn, validateCsrf, (req, res) => {
+  const id = parseInt(req.params.id, 10);
+  const isAdmin = !!(req.user && req.user.is_admin === 1);
+  const ok = Confession.deleteOwned(req.user.id, id, { isAdmin });
+
+  if (!ok) {
+    req.session.message = {
+      type: 'error',
+      text: "That post can't be deleted — it doesn't exist, or it isn't yours."
+    };
+    return res.redirect(backToFeed(req));
+  }
+
+  req.session.message = { type: 'success', text: 'Confession deleted.' };
+  // If the user was on the detail page of the deleted post, go back to the feed.
+  const referer = req.get('referer') || '';
+  if (referer.includes(`/confessions/${id}`)) return res.redirect('/confessions');
+  return res.redirect(backToFeed(req));
+});
+
 // Detail view of a single confession with its comments.
 router.get('/:id', isLoggedIn, (req, res) => {
   const id = parseInt(req.params.id, 10);

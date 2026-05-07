@@ -139,6 +139,25 @@ const Confession = {
     return db.prepare("UPDATE confessions SET status = 'hidden' WHERE id = ?").run(id);
   },
 
+  // Hard delete a confession and all its dependent rows (hearts + comments).
+  // Authorized for the post owner, or any admin. Returns true if a row
+  // was deleted, false if not found or not authorized.
+  deleteOwned(userId, confessionId, { isAdmin = false } = {}) {
+    const row = db.prepare(
+      'SELECT id, user_id FROM confessions WHERE id = ?'
+    ).get(confessionId);
+    if (!row) return false;
+    if (!isAdmin && row.user_id !== userId) return false;
+
+    const tx = db.transaction(() => {
+      db.prepare('DELETE FROM confession_hearts WHERE confession_id = ?').run(confessionId);
+      db.prepare('DELETE FROM confession_comments WHERE confession_id = ?').run(confessionId);
+      db.prepare('DELETE FROM confessions WHERE id = ?').run(confessionId);
+    });
+    tx();
+    return true;
+  },
+
   restore(id) {
     return db.prepare("UPDATE confessions SET status = 'visible' WHERE id = ?").run(id);
   },
