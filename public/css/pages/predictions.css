@@ -50,7 +50,7 @@
   font-weight: 700;
   color: var(--color-text-primary);
   line-height: 1;
-  background: linear-gradient(135deg, var(--color-accent) 0%, #F59E0B 100%);
+  background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-warm) 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -112,7 +112,7 @@
 .predict-search:focus {
   outline: none;
   border-color: var(--color-accent);
-  box-shadow: 0 0 0 3px rgba(232, 98, 42, 0.12);
+  box-shadow: 0 0 0 3px rgba(107, 142, 127, 0.18);
 }
 
 .predict-filters {

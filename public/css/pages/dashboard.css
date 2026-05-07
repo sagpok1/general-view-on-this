@@ -60,9 +60,10 @@
    ─────────────────────────────────────────────────────────────────── */
 .dash-header {
   position: relative;
-  background: linear-gradient(270deg, #1e3a5f, #2d7a4f, #5b3fa0, #1e5fa0, #2d7a4f, #4b2d8e);
-  background-size: 400% 400%;
-  animation: headerGradient 8s ease-in-out infinite;
+  /* Calm sage → soft sage → mist gradient. No more rainbow. */
+  background: linear-gradient(270deg, #4F6E61, #6B8E7F, #88AB9C, #6B8E7F);
+  background-size: 300% 300%;
+  animation: headerGradient 18s ease-in-out infinite;
   border-radius: 20px;
   padding: 2.5rem 2.5rem 0;
   margin-bottom: 2rem;

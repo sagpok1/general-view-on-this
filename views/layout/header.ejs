@@ -27,10 +27,16 @@
     <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
   <% } else { %>
     <header class="top-bar">
-      <a href="/" class="top-bar-brand">General View On This</a>
+      <a href="/" class="top-bar-brand">
+        <span class="top-bar-brand-full">General View On This</span>
+        <span class="top-bar-brand-short">GVOT</span>
+      </a>
       <nav class="top-bar-links">
         <a href="/auth/login" class="top-bar-link">Log in</a>
-        <a href="/auth/register" class="top-bar-link top-bar-cta">Create account</a>
+        <a href="/auth/register" class="top-bar-link top-bar-cta">
+          <span class="top-bar-cta-full">Create account</span>
+          <span class="top-bar-cta-short">Sign up</span>
+        </a>
       </nav>
     </header>
   <% } %>
