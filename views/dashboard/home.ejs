@@ -6,35 +6,35 @@
     <h1 style="margin:0 0 0.2rem; font-family:'Playfair Display', serif; font-size: 2rem;">
       Hey, @<%= currentUser.username %> 👋
     </h1>
-    <p style="margin:0; color:#666;">Quiet space. Take what you need.</p>
+    <p style="margin:0; color:var(--color-text-secondary);">Quiet space. Take what you need.</p>
   </header>
 
   <% var emojiMap = { happy:'😊', okay:'😐', sad:'😔', anxious:'😰', frustrated:'😤', numb:'😶', hopeful:'🌱' }; %>
 
   <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:1rem; margin-bottom:1.6rem;">
     <a href="/confessions/new" style="text-decoration:none; color:inherit;">
-      <div style="background:#fff; border:1px solid #ece6dc; border-radius:14px; padding:1.1rem 1.2rem; height:100%;">
+      <div style="background:var(--color-surface); border:1px solid var(--color-border); border-radius:14px; padding:1.1rem 1.2rem; height:100%;">
         <div style="font-size:1.7rem;">📝</div>
         <h3 style="margin:0.4rem 0 0.2rem; font-size:1.1rem;">Write a confession</h3>
-        <p style="margin:0; color:#666; font-size:0.9rem;">Posted under your username.</p>
+        <p style="margin:0; color:var(--color-text-secondary); font-size:0.9rem;">Posted under your username.</p>
       </div>
     </a>
 
     <a href="/companion" style="text-decoration:none; color:inherit;">
-      <div style="background:#fff; border:1px solid #ece6dc; border-radius:14px; padding:1.1rem 1.2rem; height:100%;">
+      <div style="background:var(--color-surface); border:1px solid var(--color-border); border-radius:14px; padding:1.1rem 1.2rem; height:100%;">
         <div style="font-size:1.7rem;">🌿</div>
         <h3 style="margin:0.4rem 0 0.2rem; font-size:1.1rem;">Talk to the companion</h3>
-        <p style="margin:0; color:#666; font-size:0.9rem;">A grounded listener. Not a therapist.</p>
+        <p style="margin:0; color:var(--color-text-secondary); font-size:0.9rem;">A grounded listener. Not a therapist.</p>
       </div>
     </a>
 
     <a href="/mood" style="text-decoration:none; color:inherit;">
-      <div style="background:#fff; border:1px solid #ece6dc; border-radius:14px; padding:1.1rem 1.2rem; height:100%;">
+      <div style="background:var(--color-surface); border:1px solid var(--color-border); border-radius:14px; padding:1.1rem 1.2rem; height:100%;">
         <div style="font-size:1.7rem;">
           <%= latestMood ? (emojiMap[latestMood.mood] || '·') : '🌤' %>
         </div>
         <h3 style="margin:0.4rem 0 0.2rem; font-size:1.1rem;">Log a mood</h3>
-        <p style="margin:0; color:#666; font-size:0.9rem;">
+        <p style="margin:0; color:var(--color-text-secondary); font-size:0.9rem;">
           <% if (latestMood) { %>Last: <%= latestMood.mood %><% } else { %>Tap to start tracking.<% } %>
         </p>
       </div>
@@ -42,17 +42,17 @@
   </div>
 
   <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1rem; margin-bottom:1.6rem;">
-    <div style="background:#fff; border:1px solid #ece6dc; border-radius:14px; padding:1.2rem;">
+    <div style="background:var(--color-surface); border:1px solid var(--color-border); border-radius:14px; padding:1.2rem;">
       <h2 style="margin:0 0 0.6rem; font-family:'Playfair Display', serif; font-size:1.2rem;">Confessions</h2>
-      <p style="margin:0 0 0.6rem; color:#666; font-size:0.9rem;">
+      <p style="margin:0 0 0.6rem; color:var(--color-text-secondary); font-size:0.9rem;">
         <strong><%= totals.total %></strong> shared · <strong><%= totals.hearts %></strong> hearts · <strong><%= myConfessionCount %></strong> from you
       </p>
-      <a href="/confessions" style="color:#3a59c7; font-weight:600;">Browse the feed →</a>
+      <a href="/confessions" style="color:var(--color-accent); font-weight:600;">Browse the feed →</a>
     </div>
 
-    <div style="background:#fff; border:1px solid #ece6dc; border-radius:14px; padding:1.2rem;">
+    <div style="background:var(--color-surface); border:1px solid var(--color-border); border-radius:14px; padding:1.2rem;">
       <h2 style="margin:0 0 0.6rem; font-family:'Playfair Display', serif; font-size:1.2rem;">Mood streak</h2>
-      <p style="margin:0 0 0.6rem; color:#666; font-size:0.9rem;">
+      <p style="margin:0 0 0.6rem; color:var(--color-text-secondary); font-size:0.9rem;">
         <strong><%= moodCount %></strong> entries logged
       </p>
       <% if (recentMoods.length) { %>
@@ -62,17 +62,17 @@
           <% }) %>
         </div>
       <% } else { %>
-        <a href="/mood" style="color:#3a59c7; font-weight:600;">Start tracking →</a>
+        <a href="/mood" style="color:var(--color-accent); font-weight:600;">Start tracking →</a>
       <% } %>
     </div>
   </div>
 
-  <div style="background:#fff; border:1px solid #ece6dc; border-radius:14px; padding:1.2rem;">
+  <div style="background:var(--color-surface); border:1px solid var(--color-border); border-radius:14px; padding:1.2rem;">
     <h2 style="margin:0 0 0.4rem; font-family:'Playfair Display', serif; font-size:1.2rem;">More to explore</h2>
     <ul style="list-style:none; padding:0; margin:0; display:flex; flex-wrap:wrap; gap:0.6rem;">
-      <li><a href="/surveys" style="display:inline-block; padding:0.4rem 0.9rem; background:#faf7f0; border-radius:999px; color:#444; text-decoration:none;">Surveys (<%= surveysAvailable %> open)</a></li>
-      <li><a href="/predictions" style="display:inline-block; padding:0.4rem 0.9rem; background:#faf7f0; border-radius:999px; color:#444; text-decoration:none;">Predictions</a></li>
-      <li><a href="/games" style="display:inline-block; padding:0.4rem 0.9rem; background:#faf7f0; border-radius:999px; color:#444; text-decoration:none;">Arcade</a></li>
+      <li><a href="/surveys" style="display:inline-block; padding:0.4rem 0.9rem; background:var(--color-surface-2); border-radius:999px; color:var(--color-text-primary); text-decoration:none;">Surveys (<%= surveysAvailable %> open)</a></li>
+      <li><a href="/predictions" style="display:inline-block; padding:0.4rem 0.9rem; background:var(--color-surface-2); border-radius:999px; color:var(--color-text-primary); text-decoration:none;">Predictions</a></li>
+      <li><a href="/games" style="display:inline-block; padding:0.4rem 0.9rem; background:var(--color-surface-2); border-radius:999px; color:var(--color-text-primary); text-decoration:none;">Arcade</a></li>
     </ul>
   </div>
 

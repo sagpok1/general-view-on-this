@@ -11,18 +11,18 @@
     <div style="background:#fff7d6; border:2px dashed #d6a800; border-radius:12px; padding:1.4rem 1.2rem; margin: 1.5rem 0;">
       <div id="phrase-words" style="display:flex; flex-wrap:wrap; gap:0.6rem; justify-content:center;">
         <% phrase.split(' ').forEach(function(word, i){ %>
-          <span style="background:#fff; border:1px solid #e3d99c; border-radius:8px; padding:0.5rem 0.85rem; font-family:'DM Sans',system-ui,sans-serif; font-weight:600; font-size:1rem;">
-            <small style="color:#999; font-weight:400; margin-right:6px;"><%= i+1 %>.</small><%= word %>
+          <span style="background:var(--color-surface); border:1px solid #e3d99c; border-radius:8px; padding:0.5rem 0.85rem; font-family:'DM Sans',system-ui,sans-serif; font-weight:600; font-size:1rem;">
+            <small style="color:var(--color-text-muted); font-weight:400; margin-right:6px;"><%= i+1 %>.</small><%= word %>
           </span>
         <% }) %>
       </div>
       <button type="button" id="copyPhraseBtn" class="btn btn-block" style="margin-top:1rem;">
         Copy phrase
       </button>
-      <p id="copyMsg" style="margin:0.5rem 0 0; text-align:center; font-size:0.85rem; color:#666; min-height:1.2em;"></p>
+      <p id="copyMsg" style="margin:0.5rem 0 0; text-align:center; font-size:0.85rem; color:var(--color-text-secondary); min-height:1.2em;"></p>
     </div>
 
-    <div style="font-size:0.9rem; color:#444; line-height:1.6; margin-bottom:1.4rem;">
+    <div style="font-size:0.9rem; color:var(--color-text-primary); line-height:1.6; margin-bottom:1.4rem;">
       <strong>Where to keep it:</strong> a password manager, an encrypted note, a piece of paper somewhere safe.
       Anyone with this phrase can log into your account.
     </div>

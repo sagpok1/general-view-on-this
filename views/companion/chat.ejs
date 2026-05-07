@@ -19,12 +19,12 @@
   <header style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem; gap:1rem; flex-wrap:wrap;">
     <div>
       <h1 style="margin:0; font-family:'Playfair Display', serif; font-size:1.9rem;">Companion</h1>
-      <p style="margin:0.2rem 0 0; color:#666; font-size:0.95rem;">A grounded listener. Remembers what you share — see below.</p>
+      <p style="margin:0.2rem 0 0; color:var(--color-text-secondary); font-size:0.95rem;">A grounded listener. Remembers what you share — see below.</p>
     </div>
     <% if (messages && messages.length) { %>
       <form method="POST" action="/companion/clear" onsubmit="return confirm('Clear this conversation?');">
         <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-        <button type="submit" style="background:transparent; border:1px solid #d6d6d6; border-radius:999px; padding:0.4rem 0.9rem; color:#666; cursor:pointer; font-size:0.85rem;">Clear chat</button>
+        <button type="submit" style="background:transparent; border:1px solid #d6d6d6; border-radius:999px; padding:0.4rem 0.9rem; color:var(--color-text-secondary); cursor:pointer; font-size:0.85rem;">Clear chat</button>
       </form>
     <% } %>
   </header>
@@ -45,15 +45,15 @@
     </div>
   <% } %>
 
-  <div style="background:#fff; border:1px solid #ece6dc; border-radius:14px; padding:1rem; min-height:280px; max-height:60vh; overflow-y:auto; display:flex; flex-direction:column; gap:0.6rem;" id="chatLog">
+  <div style="background:var(--color-surface); border:1px solid var(--color-border); border-radius:14px; padding:1rem; min-height:280px; max-height:60vh; overflow-y:auto; display:flex; flex-direction:column; gap:0.6rem;" id="chatLog">
     <% if (!messages.length) { %>
-      <p style="color:#999; text-align:center; margin:auto;">Say what's on your mind. I'm here.</p>
+      <p style="color:var(--color-text-muted); text-align:center; margin:auto;">Say what's on your mind. I'm here.</p>
     <% } %>
     <% messages.forEach(function(m){ %>
       <% if (m.role === 'user') { %>
-        <div style="align-self:flex-end; background:#3a59c7; color:#fff; border-radius:14px 14px 3px 14px; padding:0.6rem 0.9rem; max-width:80%; line-height:1.45; white-space:pre-wrap;"><%= m.content %></div>
+        <div style="align-self:flex-end; background:var(--color-accent); color:#fff; border-radius:14px 14px 3px 14px; padding:0.6rem 0.9rem; max-width:80%; line-height:1.45; white-space:pre-wrap;"><%= m.content %></div>
       <% } else { %>
-        <div style="align-self:flex-start; background:#f3efe6; color:#222; border-radius:14px 14px 14px 3px; padding:0.6rem 0.9rem; max-width:80%; line-height:1.45; white-space:pre-wrap;"><%= m.content %></div>
+        <div style="align-self:flex-start; background:var(--color-surface-2); color:var(--color-text-primary); border-radius:14px 14px 14px 3px; padding:0.6rem 0.9rem; max-width:80%; line-height:1.45; white-space:pre-wrap;"><%= m.content %></div>
       <% } %>
     <% }) %>
   </div>
@@ -63,13 +63,13 @@
       <input type="hidden" name="_csrf" value="<%= csrfToken %>">
       <input type="text" name="message" required maxlength="2000" autocomplete="off" autofocus
         placeholder="Type a message…"
-        style="flex:1; padding:0.75rem 1rem; border:1px solid #ddd; border-radius:999px; font-family:inherit; font-size:1rem;">
+        style="flex:1; padding:0.75rem 1rem; border:1px solid var(--color-border); border-radius:999px; font-family:inherit; font-size:1rem;">
       <button type="submit" class="btn btn-primary" style="border-radius:999px; padding:0.65rem 1.3rem;">Send</button>
     </form>
   <% } %>
 
   <!-- ─── What I remember ───────────────────────────────────────── -->
-  <section style="margin-top:2rem; background:#faf7f0; border:1px solid #e3d6b8; border-radius:14px; padding:1.2rem 1.3rem;">
+  <section style="margin-top:2rem; background:var(--color-surface-2); border:1px solid var(--color-border); border-radius:14px; padding:1.2rem 1.3rem;">
     <header style="display:flex; align-items:center; justify-content:space-between; gap:0.6rem; flex-wrap:wrap; margin-bottom:0.7rem;">
       <h2 style="margin:0; font-family:'Playfair Display', serif; font-size:1.2rem;">What I remember about you</h2>
       <% if (facts && facts.length) { %>
@@ -87,12 +87,12 @@
     <% } else { %>
       <ul style="list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:0.4rem;">
         <% facts.forEach(function(f){ %>
-          <li style="display:flex; align-items:center; justify-content:space-between; gap:0.6rem; background:#fff; border:1px solid #ede1bf; border-radius:10px; padding:0.55rem 0.85rem;">
+          <li style="display:flex; align-items:center; justify-content:space-between; gap:0.6rem; background:var(--color-surface); border:1px solid #ede1bf; border-radius:10px; padding:0.55rem 0.85rem;">
             <div style="display:flex; align-items:baseline; gap:0.6rem; flex-wrap:wrap;">
               <span style="font-size:0.74rem; font-weight:700; color:#7a5b00; text-transform:uppercase; letter-spacing:0.04em;">
                 <%= CATEGORY_LABELS[f.category] || f.category %>
               </span>
-              <span style="color:#222;"><%= f.value %></span>
+              <span style="color:var(--color-text-primary);"><%= f.value %></span>
             </div>
             <form method="POST" action="/companion/forget/<%= f.id %>" style="margin:0;">
               <input type="hidden" name="_csrf" value="<%= csrfToken %>">

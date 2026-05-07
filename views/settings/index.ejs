@@ -2,9 +2,9 @@
 
 <section class="container" style="max-width: 720px; margin: 2rem auto; padding: 0 1rem;">
   <h1 style="margin:0 0 0.4rem; font-family:'Playfair Display', serif; font-size:1.9rem;">Settings</h1>
-  <p style="margin:0 0 1.6rem; color:#666;">Logged in as <strong>@<%= user.username %></strong>.</p>
+  <p style="margin:0 0 1.6rem; color:var(--color-text-secondary);">Logged in as <strong>@<%= user.username %></strong>.</p>
 
-  <article style="background:#fff; border:1px solid #ece6dc; border-radius:14px; padding:1.4rem; margin-bottom:1.6rem;">
+  <article style="background:var(--color-surface); border:1px solid var(--color-border); border-radius:14px; padding:1.4rem; margin-bottom:1.6rem;">
     <header style="display:flex; align-items:center; justify-content:space-between; gap:1rem; margin-bottom:0.6rem;">
       <h2 style="margin:0; font-family:'Playfair Display', serif; font-size:1.25rem;">Urgent-delete password</h2>
       <span style="background:<%= udSet ? '#e8f5e9' : '#fdecea' %>; color:<%= udSet ? '#2e7031' : '#a32020' %>; font-size:0.78rem; font-weight:700; padding:3px 10px; border-radius:999px;">
@@ -12,38 +12,38 @@
       </span>
     </header>
 
-    <p style="margin:0 0 0.6rem; color:#444; line-height:1.55; font-size:0.95rem;">
+    <p style="margin:0 0 0.6rem; color:var(--color-text-primary); line-height:1.55; font-size:0.95rem;">
       A second password to use in a panic. If you ever type this on the login screen instead of your recovery phrase, your account and everything in it will be silently deleted. There is no undo.
     </p>
-    <ul style="margin:0 0 1rem 1.1rem; padding:0; color:#666; font-size:0.9rem; line-height:1.55;">
+    <ul style="margin:0 0 1rem 1.1rem; padding:0; color:var(--color-text-secondary); font-size:0.9rem; line-height:1.55;">
       <li>The login screen looks identical for both — no one can tell which one you typed.</li>
       <li>Pick something you'd only enter under duress, not something you'd mistype.</li>
       <li>To set or change it, confirm with your current recovery phrase.</li>
     </ul>
 
     <details style="margin-bottom:0.8rem;">
-      <summary style="cursor:pointer; font-weight:600; color:#3a59c7;"><%= udSet ? 'Change' : 'Set' %> urgent-delete password</summary>
+      <summary style="cursor:pointer; font-weight:600; color:var(--color-accent);"><%= udSet ? 'Change' : 'Set' %> urgent-delete password</summary>
       <form method="POST" action="/settings/ud-password" style="margin-top:0.8rem;" autocomplete="off">
         <input type="hidden" name="_csrf" value="<%= csrfToken %>">
 
         <div style="margin-bottom:0.8rem;">
           <label style="display:block; font-weight:600; margin-bottom:0.3rem;">Confirm with your recovery phrase</label>
           <textarea name="phrase" rows="2" required spellcheck="false" autocapitalize="off"
-            style="width:100%; padding:0.7rem; border:1px solid #ddd; border-radius:10px; font-family:inherit; font-size:0.95rem; resize:vertical;"
+            style="width:100%; padding:0.7rem; border:1px solid var(--color-border); border-radius:10px; font-family:inherit; font-size:0.95rem; resize:vertical;"
             placeholder="seven words"></textarea>
         </div>
 
         <div style="margin-bottom:0.8rem;">
           <label style="display:block; font-weight:600; margin-bottom:0.3rem;">New urgent-delete password</label>
           <input type="password" name="new_password" required minlength="4" maxlength="200" autocomplete="new-password"
-            style="width:100%; padding:0.7rem; border:1px solid #ddd; border-radius:10px; font-family:inherit; font-size:0.95rem;"
+            style="width:100%; padding:0.7rem; border:1px solid var(--color-border); border-radius:10px; font-family:inherit; font-size:0.95rem;"
             placeholder="something only you would type">
         </div>
 
         <div style="margin-bottom:1rem;">
           <label style="display:block; font-weight:600; margin-bottom:0.3rem;">Confirm new password</label>
           <input type="password" name="confirm_password" required minlength="4" maxlength="200" autocomplete="new-password"
-            style="width:100%; padding:0.7rem; border:1px solid #ddd; border-radius:10px; font-family:inherit; font-size:0.95rem;"
+            style="width:100%; padding:0.7rem; border:1px solid var(--color-border); border-radius:10px; font-family:inherit; font-size:0.95rem;"
             placeholder="type it again">
         </div>
 
@@ -58,7 +58,7 @@
           <input type="hidden" name="_csrf" value="<%= csrfToken %>">
           <label style="display:block; font-weight:600; margin-bottom:0.3rem;">Confirm with your recovery phrase</label>
           <textarea name="phrase" rows="2" required spellcheck="false" autocapitalize="off"
-            style="width:100%; padding:0.7rem; border:1px solid #ddd; border-radius:10px; font-family:inherit; font-size:0.95rem; resize:vertical; margin-bottom:1rem;"
+            style="width:100%; padding:0.7rem; border:1px solid var(--color-border); border-radius:10px; font-family:inherit; font-size:0.95rem; resize:vertical; margin-bottom:1rem;"
             placeholder="seven words"></textarea>
           <button type="submit" class="btn" style="background:#a32020; color:#fff; border:none; padding:0.7rem 1.2rem; border-radius:8px; font-weight:600; cursor:pointer;">Remove</button>
         </form>

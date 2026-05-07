@@ -6,33 +6,50 @@
 (function () {
   'use strict';
 
-  // ─── Mobile Nav Toggle ───────────────────────────────────────────────
-  const navToggle = document.querySelector('.nav-toggle');
-  const navLinks = document.querySelector('.nav-links');
-
-  if (navToggle && navLinks) {
-    navToggle.addEventListener('click', function (e) {
-      e.stopPropagation();
-      navLinks.classList.toggle('open');
-      navToggle.classList.toggle('active');
-    });
-
-    // Close nav when clicking a link inside it
-    navLinks.querySelectorAll('a').forEach(function (link) {
-      link.addEventListener('click', function () {
-        navLinks.classList.remove('open');
-        navToggle.classList.remove('active');
-      });
-    });
-
-    // Close nav when clicking outside
-    document.addEventListener('click', function (e) {
-      if (!navLinks.contains(e.target) && !navToggle.contains(e.target)) {
-        navLinks.classList.remove('open');
-        navToggle.classList.remove('active');
+  // ─── Sidebar: highlight active link based on current path ────────────
+  (function () {
+    var path = window.location.pathname;
+    var links = document.querySelectorAll('.sidebar-link');
+    var bestEl = null;
+    var bestLen = 0;
+    links.forEach(function (a) {
+      var href = a.getAttribute('href') || '';
+      if (!href || href.indexOf('/auth/logout') === 0) return;
+      if (href === '/' && path === '/') {
+        if (1 > bestLen) { bestEl = a; bestLen = 1; }
+      } else if (href !== '/' && path.indexOf(href) === 0) {
+        if (href.length > bestLen) { bestEl = a; bestLen = href.length; }
       }
     });
-  }
+    if (bestEl) bestEl.classList.add('active');
+  })();
+
+  // ─── Sidebar: mobile open/close toggle ───────────────────────────────
+  (function () {
+    var toggle = document.getElementById('mobileBarToggle');
+    var sidebar = document.getElementById('sidebar');
+    var backdrop = document.getElementById('sidebarBackdrop');
+    if (!toggle || !sidebar) return;
+
+    function setOpen(open) {
+      sidebar.classList.toggle('open', open);
+      if (backdrop) backdrop.classList.toggle('open', open);
+      toggle.setAttribute('aria-expanded', String(open));
+    }
+
+    toggle.addEventListener('click', function () {
+      setOpen(!sidebar.classList.contains('open'));
+    });
+    if (backdrop) {
+      backdrop.addEventListener('click', function () { setOpen(false); });
+    }
+    sidebar.querySelectorAll('a').forEach(function (a) {
+      a.addEventListener('click', function () { setOpen(false); });
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') setOpen(false);
+    });
+  })();
 
   // ─── Toast System ────────────────────────────────────────────────────
   window.showToast = function (message, type, duration) {

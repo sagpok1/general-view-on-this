@@ -1,16 +1,18 @@
-  </main>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-inner">
+        <p class="footer-copy">&copy; <%= new Date().getFullYear() %> General View On This. A quiet place on the internet.</p>
+        <nav class="footer-links">
+          <a href="/about">About</a>
+          <span class="footer-dot" aria-hidden="true">·</span>
+          <a href="/privacy">Privacy</a>
+        </nav>
+      </div>
+    </footer>
+  </div><!-- /.app-main -->
 
   <%- include('crisis-button') %>
-
-  <footer class="site-footer">
-    <div class="footer-inner">
-      <p>&copy; <%= new Date().getFullYear() %> General View On This. A quiet place on the internet.</p>
-      <nav class="footer-links">
-        <a href="/about">About</a>
-        <a href="/privacy">Privacy</a>
-      </nav>
-    </div>
-  </footer>
 
   <script src="/js/main.js"></script>
 

@@ -1,47 +1,66 @@
-<nav class="nav">
-  <div class="nav-inner">
-    <a href="/" class="nav-brand" title="General View On This">
-      <span class="nav-brand-full">General View On This</span>
-      <span class="nav-brand-short">GVOT</span>
+<aside class="sidebar" id="sidebar" aria-label="Main navigation">
+  <a href="/" class="sidebar-brand">
+    <span class="sidebar-brand-mark" aria-hidden="true">◐</span>
+    <span class="sidebar-brand-text">General View On This</span>
+  </a>
+
+  <nav class="sidebar-nav">
+    <span class="sidebar-section-label">Daily</span>
+    <a href="/dashboard" class="sidebar-link" data-icon="⌂">
+      <span class="sidebar-link-icon" aria-hidden="true">⌂</span>
+      <span>Dashboard</span>
+    </a>
+    <a href="/confessions" class="sidebar-link">
+      <span class="sidebar-link-icon" aria-hidden="true">✎</span>
+      <span>Confessions</span>
+    </a>
+    <a href="/companion" class="sidebar-link">
+      <span class="sidebar-link-icon" aria-hidden="true">✿</span>
+      <span>Companion</span>
+    </a>
+    <a href="/mood" class="sidebar-link">
+      <span class="sidebar-link-icon" aria-hidden="true">○</span>
+      <span>Mood</span>
     </a>
 
-    <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
-      <span></span>
-      <span></span>
-      <span></span>
-    </button>
+    <div class="sidebar-divider" role="separator"></div>
 
-    <div class="nav-links">
-      <% if (isAuthenticated && currentUser) { %>
+    <span class="sidebar-section-label">More</span>
+    <a href="/surveys" class="sidebar-link">
+      <span class="sidebar-link-icon" aria-hidden="true">▤</span>
+      <span>Surveys</span>
+    </a>
+    <a href="/predictions" class="sidebar-link">
+      <span class="sidebar-link-icon" aria-hidden="true">◇</span>
+      <span>Predictions</span>
+    </a>
+    <a href="/games" class="sidebar-link">
+      <span class="sidebar-link-icon" aria-hidden="true">▶</span>
+      <span>Arcade</span>
+    </a>
 
-        <a href="/dashboard" class="nav-link">Dashboard</a>
-        <a href="/confessions" class="nav-link">Confessions</a>
-        <a href="/companion" class="nav-link">Companion</a>
-        <a href="/mood" class="nav-link">Mood</a>
-        <a href="/surveys" class="nav-link">Surveys</a>
-        <a href="/predictions" class="nav-link">Predictions</a>
-        <a href="/games" class="nav-link">Arcade</a>
-        <a href="/settings" class="nav-link">Settings</a>
+    <div class="sidebar-divider" role="separator"></div>
 
-        <% if (currentUser.is_admin) { %>
-          <a href="/admin/confessions" class="nav-link">Admin</a>
-        <% } %>
+    <a href="/settings" class="sidebar-link">
+      <span class="sidebar-link-icon" aria-hidden="true">⚙</span>
+      <span>Settings</span>
+    </a>
+    <% if (currentUser && currentUser.is_admin) { %>
+      <a href="/admin/confessions" class="sidebar-link">
+        <span class="sidebar-link-icon" aria-hidden="true">⚐</span>
+        <span>Admin</span>
+      </a>
+    <% } %>
+  </nav>
 
-        <div class="nav-user">
-          <span class="nav-avatar nav-avatar-initials">
-            <%= currentUser.username.slice(0, 2).toUpperCase() %>
-          </span>
-          <span class="nav-user-name">@<%= currentUser.username %></span>
-        </div>
-
-        <a href="/auth/logout" class="nav-link nav-link-logout">Logout</a>
-
-      <% } else { %>
-
-        <a href="/auth/login" class="nav-link">Login</a>
-        <a href="/auth/register" class="nav-link btn btn-primary btn-sm">Join</a>
-
-      <% } %>
-    </div>
+  <div class="sidebar-foot">
+    <span class="sidebar-user">
+      <span class="sidebar-user-avatar" aria-hidden="true"><%= currentUser.username.slice(0,2).toUpperCase() %></span>
+      <span class="sidebar-user-name">@<%= currentUser.username %></span>
+    </span>
+    <a href="/auth/logout" class="sidebar-link sidebar-link-muted">
+      <span class="sidebar-link-icon" aria-hidden="true">↪</span>
+      <span>Log out</span>
+    </a>
   </div>
-</nav>
+</aside>

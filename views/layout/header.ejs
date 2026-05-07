@@ -20,14 +20,37 @@
     <% }); %>
   <% } %>
 </head>
-<body>
-  <%- include('nav') %>
+<body class="app-body <%= isAuthenticated ? 'is-auth' : 'is-public' %>">
 
-  <% if (typeof message !== 'undefined' && message) { %>
-    <div class="alert alert-<%= message.type %>" role="alert">
-      <span class="alert-text"><%= message.text %></span>
-      <button class="alert-close" aria-label="Close alert">&times;</button>
-    </div>
+  <% if (isAuthenticated && currentUser) { %>
+    <%- include('nav') %>
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+  <% } else { %>
+    <header class="top-bar">
+      <a href="/" class="top-bar-brand">General View On This</a>
+      <nav class="top-bar-links">
+        <a href="/auth/login" class="top-bar-link">Log in</a>
+        <a href="/auth/register" class="top-bar-link top-bar-cta">Create account</a>
+      </nav>
+    </header>
   <% } %>
 
-  <main class="main-content">
+  <div class="app-main <%= isAuthenticated ? 'with-sidebar' : 'no-sidebar' %>">
+    <% if (isAuthenticated && currentUser) { %>
+      <header class="mobile-bar">
+        <button class="mobile-bar-toggle" id="mobileBarToggle" aria-label="Open menu" aria-controls="sidebar" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+        <a href="/" class="mobile-bar-brand">General View On This</a>
+        <span class="mobile-bar-spacer"></span>
+      </header>
+    <% } %>
+
+    <% if (typeof message !== 'undefined' && message) { %>
+      <div class="alert alert-<%= message.type %>" role="alert">
+        <span class="alert-text"><%= message.text %></span>
+        <button class="alert-close" aria-label="Close alert">&times;</button>
+      </div>
+    <% } %>
+
+    <main class="main-content">
