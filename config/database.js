@@ -45,6 +45,18 @@ db.exec(`
     UNIQUE(user_id, confession_id)
   );
 
+  CREATE TABLE IF NOT EXISTS confession_comments (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    confession_id INTEGER NOT NULL REFERENCES confessions(id),
+    user_id INTEGER NOT NULL REFERENCES users(id),
+    body TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'visible',
+    abuse_score INTEGER NOT NULL DEFAULT 0,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
+  CREATE INDEX IF NOT EXISTS idx_comments_confession_created
+    ON confession_comments (confession_id, created_at DESC);
+
   CREATE TABLE IF NOT EXISTS mood_entries (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL REFERENCES users(id),
@@ -149,6 +161,18 @@ db.exec(`
 `);
 
 ensureUserColumn('ud_password_hash', 'TEXT');
+ensureUserColumn('consented_at', 'DATETIME');
+
+function ensureColumn(table, name, sql) {
+  const cols = db.prepare(`PRAGMA table_info(${table})`).all().map((c) => c.name);
+  if (!cols.includes(name)) {
+    db.exec(`ALTER TABLE ${table} ADD COLUMN ${name} ${sql}`);
+  }
+}
+ensureColumn('confessions', 'comment_count', 'INTEGER DEFAULT 0');
+ensureColumn('confessions', 'reactions_support', 'INTEGER DEFAULT 0');
+ensureColumn('confessions', 'reactions_hopeful', 'INTEGER DEFAULT 0');
+ensureColumn('confession_hearts', 'reaction_type', "TEXT NOT NULL DEFAULT 'heart'");
 
 function seedPredictions() {
   const row = db.prepare('SELECT COUNT(*) AS c FROM predictions').get();

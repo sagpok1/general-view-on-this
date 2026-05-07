@@ -103,6 +103,9 @@ app.get('/', (req, res) => {
   res.render('landing');
 });
 
+app.get('/about', (req, res) => res.render('static/about'));
+app.get('/privacy', (req, res) => res.render('static/privacy'));
+
 app.use('/auth', authRoutes);
 app.use('/dashboard', dashboardRoutes);
 app.use('/confessions', confessionRoutes);

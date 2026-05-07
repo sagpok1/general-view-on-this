@@ -5,8 +5,11 @@
     if (text.length <= max) return text;
     return text.slice(0, max).trimEnd() + '…';
   }
+  // myReactions: optional Map(confession_id -> reaction_type)
+  var myReactions = (typeof reactionsMap !== 'undefined') ? reactionsMap : new Map();
 %>
 <% confessions.forEach(function(c){ %>
+  <% var myReact = myReactions.get(c.id); %>
   <article class="confess-card" data-mood="<%= (c.mood_tag || '').toLowerCase() %>" data-id="<%= c.id %>">
     <% var isLong = (c.body || '').length > 280; %>
     <% if (c.mood_tag || c.user_id === currentUser.id) { %>
@@ -35,13 +38,37 @@
         <span class="confess-handle">@<%= c.username %></span>
         <span class="confess-time" data-time="<%= new Date(c.created_at).toISOString() %>"><%= new Date(c.created_at).toLocaleString('en-US', { month:'short', day:'numeric' }) %></span>
       </span>
-      <form method="POST" action="/confessions/<%= c.id %>/heart" class="confess-react-form">
-        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-        <button type="submit" class="confess-react <%= heartedIds.has(c.id) ? 'is-on' : '' %>" aria-label="Heart this confession">
-          <span class="confess-react-glyph" aria-hidden="true"><%= heartedIds.has(c.id) ? '♥' : '♡' %></span>
-          <span class="confess-react-count"><%= c.hearts %></span>
-        </button>
-      </form>
+
+      <div class="confess-actions">
+        <form method="POST" action="/confessions/<%= c.id %>/react" class="confess-react-form" data-type="heart">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <input type="hidden" name="type" value="heart">
+          <button type="submit" class="confess-react <%= myReact === 'heart' ? 'is-on' : '' %>" aria-label="Heart" title="Heart">
+            <span class="confess-react-glyph" aria-hidden="true">♥</span>
+            <span class="confess-react-count"><%= c.hearts || 0 %></span>
+          </button>
+        </form>
+        <form method="POST" action="/confessions/<%= c.id %>/react" class="confess-react-form" data-type="support">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <input type="hidden" name="type" value="support">
+          <button type="submit" class="confess-react react-support <%= myReact === 'support' ? 'is-on' : '' %>" aria-label="Send support" title="Send support">
+            <span class="confess-react-glyph" aria-hidden="true">🫂</span>
+            <span class="confess-react-count"><%= c.reactions_support || 0 %></span>
+          </button>
+        </form>
+        <form method="POST" action="/confessions/<%= c.id %>/react" class="confess-react-form" data-type="hopeful">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <input type="hidden" name="type" value="hopeful">
+          <button type="submit" class="confess-react react-hopeful <%= myReact === 'hopeful' ? 'is-on' : '' %>" aria-label="Hopeful" title="Hopeful">
+            <span class="confess-react-glyph" aria-hidden="true">🌱</span>
+            <span class="confess-react-count"><%= c.reactions_hopeful || 0 %></span>
+          </button>
+        </form>
+        <a href="/confessions/<%= c.id %>#comments" class="confess-comments-link" aria-label="Comments">
+          <span aria-hidden="true">💬</span>
+          <span class="confess-react-count"><%= c.comment_count || 0 %></span>
+        </a>
+      </div>
     </footer>
   </article>
 <% }); %>

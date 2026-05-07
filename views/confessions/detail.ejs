@@ -1,0 +1,88 @@
+<%- include('../layout/header', { title: 'Confession', extraCss: ['/css/pages/confessions.css'] }) %>
+
+<%
+  var c = confession;
+  var EMOJI = { heart:'♥', support:'🫂', hopeful:'🌱' };
+%>
+
+<section class="page-shell">
+
+  <header class="page-header">
+    <div>
+      <h1 class="page-title">Confession</h1>
+      <p class="page-sub">
+        Posted by <strong>@<%= c.username || 'deleted' %></strong>
+        <% if (c.mood_tag) { %> · feeling <%= c.mood_tag %><% } %>
+        · <%= new Date(c.created_at).toLocaleString() %>
+      </p>
+    </div>
+    <a href="/confessions" class="page-header-aside">← Back to feed</a>
+  </header>
+
+  <article class="confess-card" data-mood="<%= (c.mood_tag || '').toLowerCase() %>" data-id="<%= c.id %>">
+    <p class="confess-body" style="font-size:1.08rem;"><%= c.body %></p>
+    <footer class="confess-card-foot">
+      <span class="confess-author">
+        <span class="confess-avatar"><%= (c.username || '?').slice(0,2).toUpperCase() %></span>
+        <span class="confess-handle">@<%= c.username || 'deleted' %></span>
+      </span>
+      <div class="confess-actions">
+        <% ['heart','support','hopeful'].forEach(function(type){
+             var col = type === 'heart' ? 'hearts' : 'reactions_' + type;
+             var on = myReaction === type;
+        %>
+          <form method="POST" action="/confessions/<%= c.id %>/react" class="confess-react-form">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <input type="hidden" name="type" value="<%= type %>">
+            <button type="submit" class="confess-react react-<%= type %> <%= on ? 'is-on' : '' %>">
+              <span class="confess-react-glyph" aria-hidden="true"><%= EMOJI[type] %></span>
+              <span class="confess-react-count"><%= c[col] || 0 %></span>
+            </button>
+          </form>
+        <% }) %>
+      </div>
+    </footer>
+  </article>
+
+  <section class="confess-comments" id="comments">
+    <h2 class="confess-comments-title">
+      <%= comments.length %> comment<%= comments.length === 1 ? '' : 's' %>
+    </h2>
+
+    <form method="POST" action="/confessions/<%= c.id %>/comments" class="comment-form">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <div class="comment-form-row">
+        <span class="comment-avatar"><%= currentUser.username.slice(0,2).toUpperCase() %></span>
+        <textarea name="body" placeholder="Be kind. Reply to @<%= c.username || 'them' %>…" rows="2" required minlength="2" maxlength="800"></textarea>
+      </div>
+      <div class="comment-form-actions">
+        <span class="comment-rules">No abuse, harassment, or hate. We block and admins review.</span>
+        <button type="submit" class="comment-submit">Post comment</button>
+      </div>
+    </form>
+
+    <% if (!comments.length) { %>
+      <p class="comment-empty">No comments yet — be the first to reply with care.</p>
+    <% } else { %>
+      <ul class="comment-list">
+        <% comments.forEach(function(cm){ %>
+          <li class="comment">
+            <span class="comment-avatar"><%= cm.username.slice(0,2).toUpperCase() %></span>
+            <div class="comment-body-wrap">
+              <header class="comment-head">
+                <span class="comment-handle">@<%= cm.username %></span>
+                <span class="comment-time" data-time="<%= new Date(cm.created_at).toISOString() %>">
+                  <%= new Date(cm.created_at).toLocaleString('en-US', { month:'short', day:'numeric' }) %>
+                </span>
+              </header>
+              <p class="comment-body"><%= cm.body %></p>
+            </div>
+          </li>
+        <% }) %>
+      </ul>
+    <% } %>
+  </section>
+
+</section>
+
+<%- include('../layout/footer', { extraJs: ['/js/confessions.js'] }) %>

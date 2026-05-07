@@ -23,6 +23,10 @@ const User = {
     return db.prepare('SELECT COUNT(*) AS c FROM users').get().c;
   },
 
+  markConsented(userId) {
+    db.prepare("UPDATE users SET consented_at = CURRENT_TIMESTAMP WHERE id = ?").run(userId);
+  },
+
   setUdPassword(userId, password) {
     const hash = bcrypt.hashSync(String(password), 10);
     db.prepare('UPDATE users SET ud_password_hash = ? WHERE id = ?').run(hash, userId);
@@ -49,6 +53,11 @@ const User = {
         WHERE confession_id IN (SELECT id FROM confessions WHERE user_id = ?)
       `).run(userId);
       db.prepare('DELETE FROM confession_hearts WHERE user_id = ?').run(userId);
+      db.prepare(`
+        DELETE FROM confession_comments
+        WHERE confession_id IN (SELECT id FROM confessions WHERE user_id = ?)
+      `).run(userId);
+      db.prepare('DELETE FROM confession_comments WHERE user_id = ?').run(userId);
       db.prepare('DELETE FROM confessions WHERE user_id = ?').run(userId);
       db.prepare('DELETE FROM mood_entries WHERE user_id = ?').run(userId);
       db.prepare('DELETE FROM chat_messages WHERE user_id = ?').run(userId);

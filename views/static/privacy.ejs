@@ -1,0 +1,76 @@
+<%- include('../layout/header', { title: 'Privacy' }) %>
+
+<section class="page-shell">
+  <header class="page-header">
+    <div>
+      <h1 class="page-title">Privacy</h1>
+      <p class="page-sub">Plain-English summary of what we collect, what we don't, and what you control.</p>
+    </div>
+  </header>
+
+  <article class="static-prose">
+    <h2>What we collect</h2>
+    <ul>
+      <li>The <strong>username</strong> you choose. We don't ask for your real name.</li>
+      <li>A <strong>bcrypt hash</strong> of your 7-word recovery phrase. We never store the phrase itself; even we can't recover it.</li>
+      <li>If you set one, a <strong>bcrypt hash</strong> of your urgent-delete password.</li>
+      <li>The content you create on the app: <strong>confessions, comments, reactions, mood entries, companion chat messages, survey responses, prediction votes, game scores</strong>.</li>
+      <li>The <strong>facts the companion learns</strong> about you (name, age, pets, etc.) — visible to you on the Companion page, with a per-fact "forget" button.</li>
+      <li>An anonymous <strong>session cookie</strong> so we know you're logged in (httpOnly, expires after 7 days).</li>
+    </ul>
+
+    <h2>What we don't collect</h2>
+    <ul>
+      <li><strong>No email address.</strong></li>
+      <li><strong>No phone number.</strong></li>
+      <li><strong>No real-name, address, or government ID.</strong></li>
+      <li><strong>No analytics, no third-party trackers, no advertising pixels.</strong> The app loads only Google Fonts (for typography). Nothing else makes outbound requests with your data.</li>
+      <li><strong>No location tracking.</strong> Server logs do record the IP address that made each request (standard for any web server) but we don't tie those to your account, profile you with them, or share them.</li>
+    </ul>
+
+    <h2>Where things go</h2>
+    <p>
+      Everything is stored in a single SQLite database on the server we host the app on. Nothing is sent to a third-party AI, analytics, marketing, or backup service. The companion chat is rule-based — your messages never leave this server.
+    </p>
+
+    <h2>Who can see your content</h2>
+    <ul>
+      <li><strong>Confessions and comments</strong> are visible to anyone signed into the app, with your username attached.</li>
+      <li><strong>Mood entries and companion chat</strong> are private to your account. Other users can't see them.</li>
+      <li><strong>Admins</strong> (whoever runs the server) can technically read anything in the database, including private content. We only do this to moderate flagged content. We do not read private chats casually.</li>
+    </ul>
+
+    <h2>What you control</h2>
+    <ul>
+      <li><strong>Forget facts</strong> — every fact the companion learns has a "forget" button. Click it and the row is deleted.</li>
+      <li><strong>Clear chat</strong> — wipes your companion conversation history.</li>
+      <li><strong>Delete your account</strong> — set an urgent-delete password in Settings and type it on the login screen. Your account, posts, comments, hearts, moods, chat, survey records, prediction votes, and game scores are all atomically deleted.</li>
+    </ul>
+
+    <h2>Risk-detection scanning</h2>
+    <p>
+      Every confession, comment, and companion message runs through a keyword-based risk detector before being saved. If it scores high enough, the message is held back and crisis resources are shown instead. The detector runs on the server, doesn't call any external service, and the score is stored alongside the row only so admins can review escalated patterns.
+    </p>
+
+    <h2>Cookies</h2>
+    <p>
+      One first-party cookie: <code>gvot.sid</code>, the session cookie. httpOnly, expires after 7 days of inactivity. No tracking cookies, no advertising cookies, no third-party cookies.
+    </p>
+
+    <h2>Children</h2>
+    <p>
+      The service is for adults 18 and over. Accounts created by minors will be deleted on report. We do not knowingly collect data from anyone under 18.
+    </p>
+
+    <h2>If we change this</h2>
+    <p>
+      Material changes will be announced on the dashboard before they take effect. You can always close your account by typing your urgent-delete password on the login screen.
+    </p>
+
+    <p class="static-foot-link">
+      <a href="/about">Read about what this is →</a>
+    </p>
+  </article>
+</section>
+
+<%- include('../layout/footer') %>

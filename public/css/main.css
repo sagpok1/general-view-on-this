@@ -529,6 +529,49 @@ select:focus-visible {
   .page-title { font-size: 1.65rem; }
 }
 
+/* Static prose pages (about, privacy, consent) */
+.static-prose {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  padding: 1.6rem 1.8rem;
+  font-size: 0.97rem;
+  line-height: 1.65;
+  color: var(--color-text-primary);
+}
+.static-prose h2 {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 1.5rem 0 0.5rem;
+  color: var(--color-text-primary);
+}
+.static-prose h2:first-of-type { margin-top: 0; }
+.static-prose p { margin: 0 0 0.85rem; }
+.static-prose ul {
+  margin: 0 0 1rem 0;
+  padding-left: 1.4rem;
+  list-style: disc;
+}
+.static-prose li { margin-bottom: 0.4rem; }
+.static-prose code {
+  background: var(--color-surface-2);
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+.static-prose a {
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.static-prose a:hover { color: var(--color-accent-hover); }
+.static-foot-link {
+  margin-top: 1.5rem !important;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-border);
+}
+
 /* ====================================================================
    Sidebar shell — calming layout
    ==================================================================== */

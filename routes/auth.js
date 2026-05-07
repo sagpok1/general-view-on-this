@@ -59,6 +59,8 @@ router.get('/register', (req, res) => {
   res.render('auth/register', { title: 'Create account', errors: [], formData: {} });
 });
 
+const REQUIRED_CONSENTS = ['c_age', 'c_not_therapy', 'c_safety', 'c_conduct', 'c_terms'];
+
 router.post('/register', [
   body('username')
     .trim()
@@ -66,6 +68,14 @@ router.post('/register', [
     .withMessage('Username must be 3–24 characters: letters, numbers, underscore or hyphen.')
 ], (req, res) => {
   const errors = validationResult(req);
+
+  // All five consent boxes must be ticked. Server-side check; the
+  // client-side disabled-button is a UX nicety, not security.
+  const missingConsent = REQUIRED_CONSENTS.some((k) => !req.body[k]);
+  if (missingConsent) {
+    errors.errors.push({ msg: 'Please read and accept all five terms before continuing.' });
+  }
+
   if (!errors.isEmpty()) {
     return res.render('auth/register', {
       title: 'Create account',
@@ -86,6 +96,7 @@ router.post('/register', [
   const phrase = generatePhrase();
   try {
     const user = User.create({ username, phrase });
+    User.markConsented(user.id);
     req.login(user, (err) => {
       if (err) {
         req.session.message = { type: 'error', text: 'Account created. Please log in.' };

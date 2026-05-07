@@ -100,25 +100,36 @@
     } catch (err) { /* noop */ }
   });
 
-  // ─── Heart toggle: optimistic update ──────────────────────────────────
+  // ─── Reactions: optimistic UI (form still submits + redirects) ──────
   document.addEventListener('submit', function (e) {
     var form = e.target.closest('.confess-react-form');
     if (!form) return;
     var btn = form.querySelector('.confess-react');
-    var glyph = form.querySelector('.confess-react-glyph');
     var count = form.querySelector('.confess-react-count');
-    if (!btn || !glyph || !count) return;
-    var n = parseInt(count.textContent, 10) || 0;
-    if (btn.classList.contains('is-on')) {
+    if (!btn || !count) return;
+    var card = form.closest('.confess-card');
+    if (!card) return;
+
+    var wasOn = btn.classList.contains('is-on');
+    // Find any other reaction button on the same card that's currently on
+    var prevOn = card.querySelector('.confess-react.is-on');
+
+    if (wasOn) {
+      // Toggling off
       btn.classList.remove('is-on');
-      glyph.textContent = '♡';
+      var n = parseInt(count.textContent, 10) || 0;
       count.textContent = String(Math.max(0, n - 1));
     } else {
+      // Switching to a new reaction or adding the first
+      if (prevOn && prevOn !== btn) {
+        prevOn.classList.remove('is-on');
+        var pc = prevOn.querySelector('.confess-react-count');
+        if (pc) pc.textContent = String(Math.max(0, (parseInt(pc.textContent, 10) || 0) - 1));
+      }
       btn.classList.add('is-on');
-      glyph.textContent = '♥';
-      count.textContent = String(n + 1);
+      count.textContent = String((parseInt(count.textContent, 10) || 0) + 1);
     }
-    // Form still submits as POST → redirect, this just animates faster.
+    // Form still submits as POST → redirect normalizes state.
   });
 
   // ─── Sticky toolbar shadow ───────────────────────────────────────────

@@ -1,9 +1,9 @@
 <%- include('../layout/header', { title: 'Create account', extraCss: ['/css/pages/auth.css'] }) %>
 
 <section class="auth-container">
-  <div class="auth-card">
+  <div class="auth-card" style="max-width: 600px;">
     <h1 class="auth-title">Create your account</h1>
-    <p class="auth-subtitle">No email. No password. Just a username — and a 7-word phrase you'll save to log back in.</p>
+    <p class="auth-subtitle">No email. No password. Just a username and a 7-word phrase you'll save to log back in.</p>
 
     <% if (errors && errors.length) { %>
       <div class="auth-error">
@@ -13,7 +13,7 @@
       </div>
     <% } %>
 
-    <form action="/auth/register" method="POST" class="auth-form">
+    <form action="/auth/register" method="POST" class="auth-form" id="registerForm" autocomplete="off">
       <input type="hidden" name="_csrf" value="<%= csrfToken %>">
 
       <div class="form-group">
@@ -29,12 +29,63 @@
           pattern="[A-Za-z0-9_-]{3,24}"
           value="<%= (formData && formData.username) || '' %>"
         >
-        <small style="color:var(--color-text-secondary, #666); display:block; margin-top:0.4rem;">
-          This is what others see when you post. Anonymous confessions stay anonymous regardless.
+        <small style="color:var(--color-text-secondary); display:block; margin-top:0.4rem;">
+          This is what others see when you post.
         </small>
       </div>
 
-      <button type="submit" class="btn btn-primary btn-block">Generate my recovery phrase</button>
+      <fieldset class="consent-block">
+        <legend class="consent-title">Before you continue</legend>
+        <p class="consent-lead">Read each line and tick the box if it's true. All five are required.</p>
+
+        <label class="consent-row">
+          <input type="checkbox" name="c_age" required>
+          <span>
+            <strong>I am 18 years of age or older.</strong>
+            This service is for adults only.
+          </span>
+        </label>
+
+        <label class="consent-row">
+          <input type="checkbox" name="c_not_therapy" required>
+          <span>
+            <strong>I understand this is a peer-support and wellness tool, not a substitute for professional care.</strong>
+            The companion is not a clinician, therapist, or doctor. Nothing on this site is medical, psychiatric, legal, or financial advice. If I am in crisis, I will use the <em>Get help now</em> button or call my local emergency services.
+          </span>
+        </label>
+
+        <label class="consent-row">
+          <input type="checkbox" name="c_safety" required>
+          <span>
+            <strong>If I express thoughts of self-harm, the app may pause my reply and show crisis resources.</strong>
+            I'm okay with that. I understand this is a software keyword check, not a human safety net.
+          </span>
+        </label>
+
+        <label class="consent-row">
+          <input type="checkbox" name="c_conduct" required>
+          <span>
+            <strong>I will not post abuse, harassment, hate speech, threats, doxing, sexual content, or anything illegal.</strong>
+            Posts and comments that target people or break the law will be removed and the account may be deleted. I will not impersonate anyone.
+          </span>
+        </label>
+
+        <label class="consent-row">
+          <input type="checkbox" name="c_terms" required>
+          <span>
+            <strong>I have read and accept the <a href="/about" target="_blank" rel="noopener">About</a> and <a href="/privacy" target="_blank" rel="noopener">Privacy</a> notes,</strong>
+            including: my recovery phrase is the only way back into my account; the service is provided "as is" with no warranty; the operator is not liable for indirect, incidental, or consequential damages to the extent allowed by my local law; the operator may suspend the service or my account if these terms are broken.
+          </span>
+        </label>
+
+        <p class="consent-foot">
+          You can wipe everything you've created here at any time by setting an <em>urgent-delete password</em> in Settings and typing it on the login screen.
+        </p>
+      </fieldset>
+
+      <button type="submit" id="registerSubmit" class="btn btn-primary btn-block" disabled>
+        Generate my recovery phrase
+      </button>
     </form>
 
     <div class="auth-footer">
@@ -42,5 +93,79 @@
     </div>
   </div>
 </section>
+
+<style>
+  .consent-block {
+    margin: 1.4rem 0 1rem;
+    padding: 1.1rem 1.2rem 0.8rem;
+    border: 1px solid var(--color-border);
+    border-radius: 14px;
+    background: var(--color-surface-2);
+  }
+  .consent-title {
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    font-weight: 700;
+    padding: 0 0.4rem;
+    color: var(--color-text-primary);
+  }
+  .consent-lead {
+    margin: 0 0 0.9rem;
+    color: var(--color-text-secondary);
+    font-size: 0.9rem;
+  }
+  .consent-row {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.7rem;
+    align-items: start;
+    padding: 0.55rem 0;
+    border-top: 1px solid var(--color-border);
+    font-size: 0.9rem;
+    line-height: 1.5;
+    cursor: pointer;
+  }
+  .consent-row:first-of-type { border-top: none; padding-top: 0.3rem; }
+  .consent-row input[type="checkbox"] {
+    margin-top: 0.18rem;
+    width: 18px;
+    height: 18px;
+    accent-color: var(--color-accent);
+    cursor: pointer;
+  }
+  .consent-row strong {
+    display: block;
+    margin-bottom: 0.15rem;
+    color: var(--color-text-primary);
+    font-weight: 600;
+  }
+  .consent-row span { color: var(--color-text-secondary); }
+  .consent-row a { color: var(--color-accent); text-decoration: underline; }
+  .consent-foot {
+    margin: 0.9rem 0 0;
+    padding-top: 0.7rem;
+    border-top: 1px solid var(--color-border);
+    color: var(--color-text-muted);
+    font-size: 0.82rem;
+  }
+</style>
+
+<script>
+  (function() {
+    var form = document.getElementById('registerForm');
+    var btn = document.getElementById('registerSubmit');
+    if (!form || !btn) return;
+    var boxes = form.querySelectorAll('input[type=checkbox][required]');
+    var username = document.getElementById('username');
+    function refresh() {
+      var allChecked = Array.from(boxes).every(function (b) { return b.checked; });
+      var hasName = username.value.trim().length >= 3;
+      btn.disabled = !(allChecked && hasName);
+    }
+    boxes.forEach(function (b) { b.addEventListener('change', refresh); });
+    if (username) username.addEventListener('input', refresh);
+    refresh();
+  })();
+</script>
 
 <%- include('../layout/footer') %>

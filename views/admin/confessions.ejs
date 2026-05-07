@@ -1,8 +1,17 @@
-<%- include('../layout/header', { title: 'Admin · Confessions' }) %>
+<%- include('../layout/header', { title: 'Admin · Flagged' }) %>
 
-<section class="container" style="max-width: 900px; margin: 2rem auto; padding: 0 1rem;">
-  <h1 style="margin:0 0 0.4rem; font-family:'Playfair Display', serif; font-size:1.9rem;">Flagged confessions</h1>
-  <p style="margin:0 0 1.4rem; color:var(--color-text-secondary);">Items with risk score ≥ 2 or hidden. Hide if it crosses a line; restore if you cleared it.</p>
+<section class="page-shell page-shell--wide">
+  <header class="page-header">
+    <div>
+      <h1 class="page-title">Flagged content</h1>
+      <p class="page-sub">Confessions and comments with risk or abuse scores ≥ 2, plus anything currently hidden. Hide if it crosses a line; restore if you cleared it.</p>
+    </div>
+  </header>
+
+  <h2 style="font-family:var(--font-display); font-size:1.15rem; margin:1.5rem 0 0.6rem;">
+    Confessions
+    <% if (confessions.length) { %><span style="font-size:0.85rem; color:var(--color-text-muted); font-weight:400;">(<%= confessions.length %>)</span><% } %>
+  </h2>
 
   <% if (!confessions.length) { %>
     <p style="color:var(--color-text-muted);">Nothing to moderate. ✓</p>
@@ -28,6 +37,34 @@
       </li>
     <% }) %>
   </ul>
+
+  <h2 style="font-family:var(--font-display); font-size:1.15rem; margin:2rem 0 0.6rem;">
+    Comments
+    <% if (flaggedComments && flaggedComments.length) { %><span style="font-size:0.85rem; color:var(--color-text-muted); font-weight:400;">(<%= flaggedComments.length %>)</span><% } %>
+  </h2>
+  <% if (!flaggedComments || !flaggedComments.length) { %>
+    <p style="color:var(--color-text-muted);">No flagged comments. ✓</p>
+  <% } else { %>
+    <ul style="list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:0.7rem;">
+      <% flaggedComments.forEach(function(cm){ %>
+        <li style="background:var(--color-surface); border:1px solid var(--color-border); border-radius:14px; padding:0.9rem 1.05rem;">
+          <div style="display:flex; gap:0.5rem; flex-wrap:wrap; align-items:center; margin-bottom:0.4rem; font-size:0.78rem;">
+            <span style="background:var(--color-warm-light); color:var(--color-warm); font-weight:700; padding:2px 9px; border-radius:999px;">abuse <%= cm.abuse_score %></span>
+            <span style="background:<%= cm.status === 'hidden' ? 'var(--color-warm-light)' : 'var(--color-accent-light)' %>; color:<%= cm.status === 'hidden' ? 'var(--color-red)' : 'var(--color-accent)' %>; font-weight:700; padding:2px 9px; border-radius:999px;"><%= cm.status %></span>
+            <span style="color:var(--color-text-muted);">@<%= cm.username || 'deleted' %></span>
+            <a href="/confessions/<%= cm.confession_id %>" style="color:var(--color-blue); margin-left:auto;">→ context</a>
+          </div>
+          <p style="margin:0 0 0.6rem; white-space:pre-wrap; line-height:1.5; font-size:0.95rem;"><%= cm.body %></p>
+          <% if (cm.status === 'visible') { %>
+            <form method="POST" action="/admin/comments/<%= cm.id %>/hide" style="margin:0;">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <button type="submit" style="background:var(--color-red); color:#fff; border:none; padding:0.4rem 0.95rem; border-radius:8px; font-weight:600; font-size:0.85rem; cursor:pointer;">Hide</button>
+            </form>
+          <% } %>
+        </li>
+      <% }) %>
+    </ul>
+  <% } %>
 </section>
 
 <%- include('../layout/footer') %>

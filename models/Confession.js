@@ -16,11 +16,15 @@ const Confession = {
     }
 
     const orderBy = sort === 'hearts'
-      ? 'c.hearts DESC, c.created_at DESC'
+      ? '(c.hearts + c.reactions_support + c.reactions_hopeful) DESC, c.created_at DESC'
       : 'c.created_at DESC';
 
     const sql = `
-      SELECT c.id, c.body, c.mood_tag, c.hearts, c.created_at, c.user_id, u.username
+      SELECT c.id, c.body, c.mood_tag, c.hearts,
+             COALESCE(c.reactions_support, 0)  AS reactions_support,
+             COALESCE(c.reactions_hopeful, 0)  AS reactions_hopeful,
+             COALESCE(c.comment_count, 0)      AS comment_count,
+             c.created_at, c.user_id, u.username
       FROM confessions c
       JOIN users u ON u.id = c.user_id
       WHERE ${filters.join(' AND ')}
@@ -31,13 +35,22 @@ const Confession = {
     return db.prepare(sql).all(...params, limit, offset);
   },
 
-  // Returns a Set of confession IDs the given user has hearted.
-  // Avoids the N+1 hasHearted() query in feed rendering.
+  // Returns a Set of confession IDs the given user has hearted (any reaction).
   heartedIdsFor(userId) {
     const rows = db.prepare(
       'SELECT confession_id FROM confession_hearts WHERE user_id = ?'
     ).all(userId);
     return new Set(rows.map((r) => r.confession_id));
+  },
+
+  // Returns a Map of confession_id → reaction_type for the given user.
+  reactionsFor(userId) {
+    const rows = db.prepare(
+      'SELECT confession_id, reaction_type FROM confession_hearts WHERE user_id = ?'
+    ).all(userId);
+    const m = new Map();
+    rows.forEach((r) => m.set(r.confession_id, r.reaction_type || 'heart'));
+    return m;
   },
 
   findById(id) {
@@ -69,25 +82,57 @@ const Confession = {
     ).get(user_id, confession_id));
   },
 
-  toggleHeart(user_id, confession_id) {
-    const existing = db.prepare(
-      'SELECT id FROM confession_hearts WHERE user_id = ? AND confession_id = ?'
-    ).get(user_id, confession_id);
+  // Reaction columns mirror reaction_type values for fast aggregate display.
+  REACTION_COLUMN: {
+    heart:   'hearts',
+    support: 'reactions_support',
+    hopeful: 'reactions_hopeful'
+  },
+  VALID_REACTIONS: ['heart', 'support', 'hopeful'],
+
+  // Toggle a reaction. One reaction per (user, confession). Picking a new
+  // type replaces the old one (decrements old, increments new). Picking
+  // the same type again removes it.
+  setReaction(user_id, confession_id, type) {
+    if (!Confession.VALID_REACTIONS.includes(type)) {
+      throw new Error('invalid reaction');
+    }
+    const newColumn = Confession.REACTION_COLUMN[type];
 
     const tx = db.transaction(() => {
-      if (existing) {
+      const existing = db.prepare(
+        'SELECT id, reaction_type FROM confession_hearts WHERE user_id = ? AND confession_id = ?'
+      ).get(user_id, confession_id);
+
+      if (existing && existing.reaction_type === type) {
+        // Same reaction → toggle off
         db.prepare('DELETE FROM confession_hearts WHERE id = ?').run(existing.id);
-        db.prepare('UPDATE confessions SET hearts = MAX(hearts - 1, 0) WHERE id = ?').run(confession_id);
-        return false;
-      } else {
-        db.prepare(
-          'INSERT INTO confession_hearts (user_id, confession_id) VALUES (?, ?)'
-        ).run(user_id, confession_id);
-        db.prepare('UPDATE confessions SET hearts = hearts + 1 WHERE id = ?').run(confession_id);
-        return true;
+        db.prepare(`UPDATE confessions SET ${newColumn} = MAX(${newColumn} - 1, 0) WHERE id = ?`).run(confession_id);
+        return null;
       }
+
+      if (existing) {
+        // Different reaction → swap
+        const oldColumn = Confession.REACTION_COLUMN[existing.reaction_type] || 'hearts';
+        db.prepare(`UPDATE confessions SET ${oldColumn} = MAX(${oldColumn} - 1, 0) WHERE id = ?`).run(confession_id);
+        db.prepare('UPDATE confession_hearts SET reaction_type = ? WHERE id = ?').run(type, existing.id);
+        db.prepare(`UPDATE confessions SET ${newColumn} = ${newColumn} + 1 WHERE id = ?`).run(confession_id);
+        return type;
+      }
+
+      // No prior reaction → insert
+      db.prepare(
+        'INSERT INTO confession_hearts (user_id, confession_id, reaction_type) VALUES (?, ?, ?)'
+      ).run(user_id, confession_id, type);
+      db.prepare(`UPDATE confessions SET ${newColumn} = ${newColumn} + 1 WHERE id = ?`).run(confession_id);
+      return type;
     });
     return tx();
+  },
+
+  // Backwards-compat: heart toggle keeps working as 'heart' reaction.
+  toggleHeart(user_id, confession_id) {
+    return Confession.setReaction(user_id, confession_id, 'heart');
   },
 
   hide(id) {

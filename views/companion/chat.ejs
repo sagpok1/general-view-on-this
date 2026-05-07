@@ -24,10 +24,18 @@
     <% if (messages && messages.length) { %>
       <form method="POST" action="/companion/clear" onsubmit="return confirm('Clear this conversation?');">
         <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-        <button type="submit" style="background:transparent; border:1px solid #d6d6d6; border-radius:999px; padding:0.4rem 0.9rem; color:var(--color-text-secondary); cursor:pointer; font-size:0.85rem;">Clear chat</button>
+        <button type="submit" style="background:transparent; border:1px solid var(--color-border); border-radius:999px; padding:0.4rem 0.9rem; color:var(--color-text-secondary); cursor:pointer; font-size:0.85rem;">Clear chat</button>
       </form>
     <% } %>
   </header>
+
+  <aside style="background:var(--color-accent-light); border:1px solid var(--color-accent); border-radius:12px; padding:0.8rem 1rem; margin-bottom:1rem; display:flex; gap:0.7rem; align-items:flex-start;">
+    <span aria-hidden="true" style="font-size:1.15rem; line-height:1;">🔒</span>
+    <p style="margin:0; font-size:0.88rem; color:var(--color-text-primary); line-height:1.55;">
+      <strong>This conversation is private.</strong>
+      Everything you share with the companion stays on this server — nothing is sent to a third-party AI, analytics, or marketing service. The companion runs locally and is rule-based; no provider sees your messages. You can clear the chat or delete any remembered fact at any time.
+    </p>
+  </aside>
 
   <% if (crisisMode) { %>
     <div style="background:#fff8e1; border:2px solid #f5c46a; border-radius:14px; padding:1.2rem; margin-bottom:1rem;">
