@@ -1,0 +1,41 @@
+<%- include('../layout/header', { title: 'New confession' }) %>
+
+<section class="container" style="max-width: 640px; margin: 2rem auto; padding: 0 1rem;">
+  <h1 style="margin:0 0 0.4rem; font-family:'Playfair Display', serif; font-size: 1.9rem;">Share something</h1>
+  <p style="margin:0 0 1.4rem; color:#666;">
+    Posted under <strong>@<%= currentUser.username %></strong>. Be honest with yourself, kind to others.
+  </p>
+
+  <% if (errors && errors.length) { %>
+    <div style="background:#fdecea; border:1px solid #f5c6cb; border-radius:10px; padding:0.7rem 1rem; margin-bottom:1rem;">
+      <ul style="margin:0; padding-left:1.2rem; color:#a32020;">
+        <% errors.forEach(function(e){ %><li><%= e.msg %></li><% }) %>
+      </ul>
+    </div>
+  <% } %>
+
+  <form method="POST" action="/confessions" style="background:#fff; border:1px solid #ece6dc; border-radius:14px; padding:1.2rem;">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+    <label for="body" style="display:block; font-weight:600; margin-bottom:0.4rem;">What's on your mind?</label>
+    <textarea id="body" name="body" rows="7" required minlength="4" maxlength="2000"
+      style="width:100%; padding:0.8rem; border:1px solid #ddd; border-radius:10px; font-family:inherit; font-size:1rem; line-height:1.55; resize:vertical;"
+      placeholder="What's on your mind?"><%= (formData && formData.body) || '' %></textarea>
+
+    <label for="mood_tag" style="display:block; font-weight:600; margin:1rem 0 0.4rem;">Mood (optional)</label>
+    <select id="mood_tag" name="mood_tag"
+      style="width:100%; padding:0.7rem; border:1px solid #ddd; border-radius:10px; font-family:inherit; font-size:1rem; background:#fff;">
+      <option value="">— pick one —</option>
+      <% moods.forEach(function(m){ %>
+        <option value="<%= m %>" <%= (formData && formData.mood_tag === m) ? 'selected' : '' %>><%= m %></option>
+      <% }) %>
+    </select>
+
+    <div style="display:flex; gap:0.6rem; margin-top:1.2rem; align-items:center;">
+      <button type="submit" class="btn btn-primary">Post</button>
+      <a href="/confessions" style="color:#666;">Cancel</a>
+    </div>
+  </form>
+</section>
+
+<%- include('../layout/footer') %>

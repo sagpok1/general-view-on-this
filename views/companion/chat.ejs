@@ -1,0 +1,70 @@
+<%- include('../layout/header', { title: 'Companion' }) %>
+
+<section class="container" style="max-width: 720px; margin: 2rem auto; padding: 0 1rem;">
+  <header style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem; gap:1rem; flex-wrap:wrap;">
+    <div>
+      <h1 style="margin:0; font-family:'Playfair Display', serif; font-size:1.9rem;">Companion</h1>
+      <p style="margin:0.2rem 0 0; color:#666; font-size:0.95rem;">A grounded listener. Not a therapist.</p>
+    </div>
+    <% if (messages && messages.length) { %>
+      <form method="POST" action="/companion/clear" onsubmit="return confirm('Clear this conversation?');">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <button type="submit" style="background:transparent; border:1px solid #d6d6d6; border-radius:999px; padding:0.4rem 0.9rem; color:#666; cursor:pointer; font-size:0.85rem;">Clear chat</button>
+      </form>
+    <% } %>
+  </header>
+
+  <% if (!apiKeyConfigured) { %>
+    <div style="background:#fff7d6; border:1px solid #e3c66c; border-radius:10px; padding:0.8rem 1rem; margin-bottom:1rem; color:#5d4500; font-size:0.9rem;">
+      Companion chat is in offline mode. Set <code>ANTHROPIC_API_KEY</code> in <code>.env</code> and restart to enable AI replies.
+    </div>
+  <% } %>
+
+  <% if (crisisMode) { %>
+    <div style="background:#fff8e1; border:2px solid #f5c46a; border-radius:14px; padding:1.2rem; margin-bottom:1rem;">
+      <h2 style="margin:0 0 0.5rem; font-size:1.2rem; color:#8a4a00;">Pausing here for a moment.</h2>
+      <p style="margin:0 0 0.7rem; color:#5b3a00;">Some of what you wrote sounds heavy. Please reach out:</p>
+      <ul style="margin:0 0 0.8rem; padding-left:1.1rem; color:#5b3a00; line-height:1.6;">
+        <li><strong>USA</strong> — call or text <a href="tel:988">988</a></li>
+        <li><strong>UK</strong> — Samaritans <a href="tel:116123">116 123</a></li>
+        <li><strong>Find a line near you</strong> — <a href="https://findahelpline.com" target="_blank" rel="noopener">findahelpline.com</a></li>
+      </ul>
+      <form method="POST" action="/companion/dismiss-crisis" style="margin:0;">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <button type="submit" class="btn btn-primary">I'm safe — return to chat</button>
+      </form>
+    </div>
+  <% } %>
+
+  <div style="background:#fff; border:1px solid #ece6dc; border-radius:14px; padding:1rem; min-height:280px; max-height:60vh; overflow-y:auto; display:flex; flex-direction:column; gap:0.6rem;" id="chatLog">
+    <% if (!messages.length) { %>
+      <p style="color:#999; text-align:center; margin:auto;">Say what's on your mind. I'm here.</p>
+    <% } %>
+    <% messages.forEach(function(m){ %>
+      <% if (m.role === 'user') { %>
+        <div style="align-self:flex-end; background:#3a59c7; color:#fff; border-radius:14px 14px 3px 14px; padding:0.6rem 0.9rem; max-width:80%; line-height:1.45; white-space:pre-wrap;"><%= m.content %></div>
+      <% } else { %>
+        <div style="align-self:flex-start; background:#f3efe6; color:#222; border-radius:14px 14px 14px 3px; padding:0.6rem 0.9rem; max-width:80%; line-height:1.45; white-space:pre-wrap;"><%= m.content %></div>
+      <% } %>
+    <% }) %>
+  </div>
+
+  <% if (!crisisMode) { %>
+    <form method="POST" action="/companion/send" style="display:flex; gap:0.5rem; margin-top:1rem;">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <input type="text" name="message" required maxlength="2000" autocomplete="off" autofocus
+        placeholder="Type a message…"
+        style="flex:1; padding:0.75rem 1rem; border:1px solid #ddd; border-radius:999px; font-family:inherit; font-size:1rem;">
+      <button type="submit" class="btn btn-primary" style="border-radius:999px; padding:0.65rem 1.3rem;">Send</button>
+    </form>
+  <% } %>
+</section>
+
+<script>
+  (function() {
+    var log = document.getElementById('chatLog');
+    if (log) log.scrollTop = log.scrollHeight;
+  })();
+</script>
+
+<%- include('../layout/footer') %>

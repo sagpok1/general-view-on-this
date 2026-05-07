@@ -15,46 +15,31 @@
       <% if (isAuthenticated && currentUser) { %>
 
         <a href="/dashboard" class="nav-link">Dashboard</a>
-        <a href="/orders" class="nav-link">Orders</a>
+        <a href="/confessions" class="nav-link">Confessions</a>
+        <a href="/companion" class="nav-link">Companion</a>
+        <a href="/mood" class="nav-link">Mood</a>
         <a href="/surveys" class="nav-link">Surveys</a>
         <a href="/predictions" class="nav-link">Predictions</a>
-        <a href="/reviews" class="nav-link">Reviews</a>
         <a href="/games" class="nav-link">Arcade</a>
-
-        <% if (currentUser.account_type === 'business') { %>
-          <a href="/business/dashboard" class="nav-link">My Business</a>
-        <% } %>
+        <a href="/settings" class="nav-link">Settings</a>
 
         <% if (currentUser.is_admin) { %>
-          <a href="/admin/reviews" class="nav-link">Admin</a>
+          <a href="/admin/confessions" class="nav-link">Admin</a>
         <% } %>
 
-        <span class="nav-credit-chip" title="Your credit balance">
-          <svg class="icon icon-coin" width="16" height="16" viewBox="0 0 16 16" fill="none">
-            <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/>
-            <text x="8" y="11" text-anchor="middle" font-size="9" font-weight="bold" fill="currentColor">C</text>
-          </svg>
-          <span><%= currentUser.credits %></span>
-        </span>
-
         <div class="nav-user">
-          <% if (currentUser.avatar) { %>
-            <img src="<%= currentUser.avatar %>" alt="<%= currentUser.name %>" class="nav-avatar">
-          <% } else { %>
-            <span class="nav-avatar nav-avatar-initials">
-              <%= currentUser.name.split(' ').map(function(n){ return n[0]; }).join('').toUpperCase().slice(0, 2) %>
-            </span>
-          <% } %>
-          <span class="nav-user-name"><%= currentUser.name %></span>
+          <span class="nav-avatar nav-avatar-initials">
+            <%= currentUser.username.slice(0, 2).toUpperCase() %>
+          </span>
+          <span class="nav-user-name">@<%= currentUser.username %></span>
         </div>
 
         <a href="/auth/logout" class="nav-link nav-link-logout">Logout</a>
 
       <% } else { %>
 
-        <a href="/reviews" class="nav-link">Browse Businesses</a>
         <a href="/auth/login" class="nav-link">Login</a>
-        <a href="/auth/register" class="nav-link btn btn-primary btn-sm">Join Free</a>
+        <a href="/auth/register" class="nav-link btn btn-primary btn-sm">Join</a>
 
       <% } %>
     </div>

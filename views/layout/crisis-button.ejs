@@ -1,0 +1,56 @@
+<div class="gvot-crisis-wrap">
+  <button type="button" class="gvot-crisis-btn" id="gvotCrisisBtn" aria-expanded="false" aria-controls="gvotCrisisPanel">
+    <span aria-hidden="true">🆘</span>
+    <span>Get help now</span>
+  </button>
+  <div class="gvot-crisis-panel" id="gvotCrisisPanel" hidden>
+    <div class="gvot-crisis-inner">
+      <p class="gvot-crisis-lead">If you're in crisis, you don't have to face it alone. These lines are free and 24/7.</p>
+      <ul class="gvot-crisis-list">
+        <li><strong>USA · 988 Suicide &amp; Crisis Lifeline</strong> — call or text <a href="tel:988">988</a></li>
+        <li><strong>UK · Samaritans</strong> — call <a href="tel:116123">116 123</a></li>
+        <li><strong>Australia · Lifeline</strong> — call <a href="tel:131114">13 11 14</a></li>
+        <li><strong>Canada · Talk Suicide</strong> — call <a href="tel:1-833-456-4566">1-833-456-4566</a></li>
+        <li><strong>Find a line near you</strong> — <a href="https://findahelpline.com" target="_blank" rel="noopener">findahelpline.com</a></li>
+      </ul>
+      <p class="gvot-crisis-foot">In immediate danger? Call emergency services: 911 (US), 999 (UK), 112 (EU).</p>
+    </div>
+  </div>
+</div>
+
+<style>
+  .gvot-crisis-wrap { position: fixed; right: 1rem; bottom: 1rem; z-index: 9999; font-family: 'DM Sans', system-ui, sans-serif; }
+  .gvot-crisis-btn { background: #c62828; color: #fff; border: none; border-radius: 999px; padding: 0.7rem 1.1rem; font-weight: 700; font-size: 0.95rem; box-shadow: 0 6px 18px rgba(198,40,40,0.35); cursor: pointer; display: inline-flex; align-items: center; gap: 0.4rem; }
+  .gvot-crisis-btn:hover { background: #a51d1d; }
+  .gvot-crisis-btn:focus-visible { outline: 3px solid #ffd54f; outline-offset: 2px; }
+  .gvot-crisis-panel { position: absolute; right: 0; bottom: calc(100% + 0.6rem); width: min(360px, 92vw); background: #fff; color: #2a2a2a; border: 1px solid #e3d6d6; border-radius: 14px; box-shadow: 0 12px 40px rgba(0,0,0,0.18); padding: 1rem 1.1rem 0.9rem; }
+  .gvot-crisis-panel[hidden] { display: none; }
+  .gvot-crisis-lead { margin: 0 0 0.6rem; font-weight: 600; font-size: 0.95rem; line-height: 1.4; }
+  .gvot-crisis-list { list-style: none; margin: 0 0 0.6rem; padding: 0; font-size: 0.92rem; line-height: 1.55; }
+  .gvot-crisis-list li { padding: 0.25rem 0; border-bottom: 1px dashed #f0e8e8; }
+  .gvot-crisis-list li:last-child { border-bottom: none; }
+  .gvot-crisis-list a { color: #c62828; font-weight: 700; }
+  .gvot-crisis-foot { margin: 0; font-size: 0.78rem; color: #6b6b6b; }
+</style>
+
+<script>
+  (function() {
+    var btn = document.getElementById('gvotCrisisBtn');
+    var panel = document.getElementById('gvotCrisisPanel');
+    if (!btn || !panel) return;
+    function setOpen(open) {
+      panel.hidden = !open;
+      btn.setAttribute('aria-expanded', String(open));
+    }
+    btn.addEventListener('click', function() { setOpen(panel.hidden); });
+    document.addEventListener('click', function(e) {
+      if (panel.hidden) return;
+      if (e.target === btn || btn.contains(e.target)) return;
+      if (panel.contains(e.target)) return;
+      setOpen(false);
+    });
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') setOpen(false);
+    });
+  })();
+</script>

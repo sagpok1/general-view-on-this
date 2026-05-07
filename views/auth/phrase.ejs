@@ -1,0 +1,62 @@
+<%- include('../layout/header', { title: 'Save your recovery phrase', extraCss: ['/css/pages/auth.css'] }) %>
+
+<section class="auth-container">
+  <div class="auth-card" style="max-width: 560px;">
+    <h1 class="auth-title">Save these <%= phraseLength %> words</h1>
+    <p class="auth-subtitle">
+      This is your only way back into <strong>@<%= username %></strong>. There's no email, no password reset.
+      Write it down or screenshot it — once you leave this screen we can't show it again.
+    </p>
+
+    <div style="background:#fff7d6; border:2px dashed #d6a800; border-radius:12px; padding:1.4rem 1.2rem; margin: 1.5rem 0;">
+      <div id="phrase-words" style="display:flex; flex-wrap:wrap; gap:0.6rem; justify-content:center;">
+        <% phrase.split(' ').forEach(function(word, i){ %>
+          <span style="background:#fff; border:1px solid #e3d99c; border-radius:8px; padding:0.5rem 0.85rem; font-family:'DM Sans',system-ui,sans-serif; font-weight:600; font-size:1rem;">
+            <small style="color:#999; font-weight:400; margin-right:6px;"><%= i+1 %>.</small><%= word %>
+          </span>
+        <% }) %>
+      </div>
+      <button type="button" id="copyPhraseBtn" class="btn btn-block" style="margin-top:1rem;">
+        Copy phrase
+      </button>
+      <p id="copyMsg" style="margin:0.5rem 0 0; text-align:center; font-size:0.85rem; color:#666; min-height:1.2em;"></p>
+    </div>
+
+    <div style="font-size:0.9rem; color:#444; line-height:1.6; margin-bottom:1.4rem;">
+      <strong>Where to keep it:</strong> a password manager, an encrypted note, a piece of paper somewhere safe.
+      Anyone with this phrase can log into your account.
+    </div>
+
+    <form method="GET" action="/dashboard">
+      <label style="display:flex; gap:0.6rem; align-items:flex-start; margin-bottom:1rem; cursor:pointer;">
+        <input type="checkbox" id="ackBox" required style="margin-top:0.25rem;">
+        <span style="font-size:0.95rem;">I've saved my phrase. I understand it can't be recovered.</span>
+      </label>
+      <button type="submit" id="continueBtn" class="btn btn-primary btn-block" disabled>
+        Continue to dashboard
+      </button>
+    </form>
+  </div>
+</section>
+
+<script>
+  (function() {
+    var ack = document.getElementById('ackBox');
+    var btn = document.getElementById('continueBtn');
+    ack.addEventListener('change', function(){ btn.disabled = !ack.checked; });
+
+    var copyBtn = document.getElementById('copyPhraseBtn');
+    var msg = document.getElementById('copyMsg');
+    copyBtn.addEventListener('click', function() {
+      var phrase = <%- JSON.stringify(phrase) %>;
+      navigator.clipboard.writeText(phrase).then(function() {
+        msg.textContent = 'Copied to clipboard.';
+        setTimeout(function(){ msg.textContent = ''; }, 2500);
+      }, function() {
+        msg.textContent = 'Copy failed — please write it down.';
+      });
+    });
+  })();
+</script>
+
+<%- include('../layout/footer') %>

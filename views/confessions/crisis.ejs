@@ -1,0 +1,36 @@
+<%- include('../layout/header', { title: 'Are you safe right now?' }) %>
+
+<section class="container" style="max-width: 620px; margin: 2rem auto; padding: 0 1rem;">
+  <div style="background:#fff8e1; border:2px solid #f5c46a; border-radius:14px; padding:1.5rem 1.4rem;">
+    <h1 style="margin:0 0 0.6rem; font-family:'Playfair Display', serif; font-size: 1.8rem; color:#8a4a00;">Are you safe right now?</h1>
+    <p style="margin:0 0 1rem; color:#5b3a00; line-height:1.55;">
+      I caught a phrase that worries me. Before anything else — please reach out to someone right now.
+      You matter, and help is one call or text away.
+    </p>
+
+    <ul style="list-style:none; padding:0; margin:0 0 1.2rem; line-height:1.7;">
+      <li><strong>USA · 988 Suicide &amp; Crisis Lifeline</strong> — call or text <a href="tel:988">988</a></li>
+      <li><strong>UK · Samaritans</strong> — call <a href="tel:116123">116 123</a></li>
+      <li><strong>Australia · Lifeline</strong> — call <a href="tel:131114">13 11 14</a></li>
+      <li><strong>Canada · Talk Suicide</strong> — call <a href="tel:1-833-456-4566">1-833-456-4566</a></li>
+      <li><strong>Find a line near you</strong> — <a href="https://findahelpline.com" target="_blank" rel="noopener">findahelpline.com</a></li>
+    </ul>
+
+    <p style="margin:0 0 1rem; color:#5b3a00; font-size:0.92rem;">
+      In immediate danger? Call emergency services: 911 (US), 999 (UK), 112 (EU).
+    </p>
+
+    <div style="display:flex; gap:0.6rem; flex-wrap:wrap;">
+      <a href="/dashboard" class="btn btn-primary">I'm safe — back to dashboard</a>
+      <a href="/companion" style="color:#8a4a00; align-self:center;">Talk to the companion instead</a>
+    </div>
+  </div>
+
+  <details style="margin-top:1.5rem; color:#666;">
+    <summary style="cursor:pointer;">What I was about to post</summary>
+    <pre style="background:#f7f4ee; border-radius:10px; padding:0.9rem; margin-top:0.5rem; white-space:pre-wrap; font-family:inherit; font-size:0.9rem;"><%= attemptedBody %></pre>
+    <p style="font-size:0.8rem;">Your draft was not saved. Once you've reached out and feel ready, you can write it again.</p>
+  </details>
+</section>
+
+<%- include('../layout/footer') %>

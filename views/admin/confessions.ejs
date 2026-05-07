@@ -1,0 +1,33 @@
+<%- include('../layout/header', { title: 'Admin · Confessions' }) %>
+
+<section class="container" style="max-width: 900px; margin: 2rem auto; padding: 0 1rem;">
+  <h1 style="margin:0 0 0.4rem; font-family:'Playfair Display', serif; font-size:1.9rem;">Flagged confessions</h1>
+  <p style="margin:0 0 1.4rem; color:#666;">Items with risk score ≥ 2 or hidden. Hide if it crosses a line; restore if you cleared it.</p>
+
+  <% if (!confessions.length) { %>
+    <p style="color:#888;">Nothing to moderate. ✓</p>
+  <% } %>
+
+  <ul style="list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:0.8rem;">
+    <% confessions.forEach(function(c){ %>
+      <li style="background:#fff; border:1px solid #ece6dc; border-radius:14px; padding:1rem 1.1rem;">
+        <div style="display:flex; gap:0.6rem; flex-wrap:wrap; align-items:center; margin-bottom:0.5rem;">
+          <span style="background:#fff7d6; color:#7a5b00; font-size:0.78rem; font-weight:600; padding:2px 10px; border-radius:999px;">risk <%= c.risk_score %></span>
+          <span style="background:<%= c.status === 'hidden' ? '#fdecea' : '#e8f5e9' %>; color:<%= c.status === 'hidden' ? '#a32020' : '#2e7031' %>; font-size:0.78rem; font-weight:600; padding:2px 10px; border-radius:999px;"><%= c.status %></span>
+          <% if (c.mood_tag) { %><span style="font-size:0.78rem; color:#888;">mood: <%= c.mood_tag %></span><% } %>
+          <span style="font-size:0.78rem; color:#888;">@<%= c.username || 'deleted' %></span>
+          <span style="font-size:0.78rem; color:#999; margin-left:auto;"><%= new Date(c.created_at).toLocaleString() %></span>
+        </div>
+        <p style="margin:0 0 0.7rem; white-space:pre-wrap; line-height:1.5;"><%= c.body %></p>
+        <form method="POST" action="/admin/confessions/<%= c.id %>/<%= c.status === 'hidden' ? 'restore' : 'hide' %>" style="margin:0;">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <button type="submit" class="btn btn-primary" style="background:<%= c.status === 'hidden' ? '#2e7031' : '#a32020' %>;">
+            <%= c.status === 'hidden' ? 'Restore' : 'Hide' %>
+          </button>
+        </form>
+      </li>
+    <% }) %>
+  </ul>
+</section>
+
+<%- include('../layout/footer') %>

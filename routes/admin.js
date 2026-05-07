@@ -1,56 +1,30 @@
 const express = require('express');
 const router = express.Router();
 const { isLoggedIn, isAdmin, validateCsrf } = require('../middleware/auth');
-const Review = require('../models/Review');
+const Confession = require('../models/Confession');
 
-// GET /admin/reviews — list all pending reviews
-router.get('/reviews', isLoggedIn, isAdmin, (req, res) => {
-  const pendingReviews = Review.findPending();
+router.get('/', isLoggedIn, isAdmin, (req, res) => {
+  res.redirect('/admin/confessions');
+});
 
-  res.render('admin/pending-reviews', {
-    title: 'Pending Reviews',
-    reviews: pendingReviews
+router.get('/confessions', isLoggedIn, isAdmin, (req, res) => {
+  const flagged = Confession.listFlagged({ limit: 200 });
+  res.render('admin/confessions', {
+    title: 'Admin · Flagged confessions',
+    confessions: flagged
   });
 });
 
-// POST /admin/reviews/:id/approve — approve a pending review
-router.post('/reviews/:id/approve', isLoggedIn, isAdmin, validateCsrf, (req, res) => {
-  const reviewId = parseInt(req.params.id, 10);
-
-  try {
-    const review = Review.approve(reviewId, req.user.id);
-
-    if (!review) {
-      req.session.message = { type: 'error', text: 'Review not found.' };
-      return res.redirect('/admin/reviews');
-    }
-
-    req.session.message = { type: 'success', text: 'Review approved and published.' };
-    return res.redirect('/admin/reviews');
-  } catch (err) {
-    req.session.message = { type: 'error', text: 'Failed to approve review.' };
-    return res.redirect('/admin/reviews');
-  }
+router.post('/confessions/:id/hide', isLoggedIn, isAdmin, validateCsrf, (req, res) => {
+  Confession.hide(parseInt(req.params.id, 10));
+  req.session.message = { type: 'success', text: 'Confession hidden.' };
+  return res.redirect('/admin/confessions');
 });
 
-// POST /admin/reviews/:id/reject — reject a pending review
-router.post('/reviews/:id/reject', isLoggedIn, isAdmin, validateCsrf, (req, res) => {
-  const reviewId = parseInt(req.params.id, 10);
-
-  try {
-    const review = Review.reject(reviewId, req.user.id);
-
-    if (!review) {
-      req.session.message = { type: 'error', text: 'Review not found.' };
-      return res.redirect('/admin/reviews');
-    }
-
-    req.session.message = { type: 'success', text: 'Review rejected.' };
-    return res.redirect('/admin/reviews');
-  } catch (err) {
-    req.session.message = { type: 'error', text: 'Failed to reject review.' };
-    return res.redirect('/admin/reviews');
-  }
+router.post('/confessions/:id/restore', isLoggedIn, isAdmin, validateCsrf, (req, res) => {
+  Confession.restore(parseInt(req.params.id, 10));
+  req.session.message = { type: 'success', text: 'Confession restored.' };
+  return res.redirect('/admin/confessions');
 });
 
 module.exports = router;

@@ -12,34 +12,17 @@
       <div class="ticker-track">
         <span class="ticker-item"><%= questions.length %> question<%= questions.length !== 1 ? 's' : '' %> in this survey</span>
         <span class="ticker-dot"></span>
-        <span class="ticker-item">Earn 1 credit on completion</span>
-        <span class="ticker-dot"></span>
-        <span class="ticker-item">Your answers help local businesses</span>
-        <span class="ticker-dot"></span>
         <span class="ticker-item">All responses are anonymous</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">Take what helps · skip what doesn't</span>
         <span class="ticker-dot"></span>
         <span class="ticker-item"><%= questions.length %> question<%= questions.length !== 1 ? 's' : '' %> in this survey</span>
         <span class="ticker-dot"></span>
-        <span class="ticker-item">Earn 1 credit on completion</span>
-        <span class="ticker-dot"></span>
-        <span class="ticker-item">Your answers help local businesses</span>
-        <span class="ticker-dot"></span>
         <span class="ticker-item">All responses are anonymous</span>
         <span class="ticker-dot"></span>
+        <span class="ticker-item">Take what helps · skip what doesn't</span>
+        <span class="ticker-dot"></span>
       </div>
-    </div>
-  </div>
-
-  <!-- ═══ REWARD BANNER ═══ -->
-  <div class="take-reward-banner">
-    <div class="take-reward-coin">
-      <div class="take-coin-outer">
-        <div class="take-coin-inner">1</div>
-      </div>
-    </div>
-    <div class="take-reward-text">
-      <h3>Complete this survey to earn <strong>1 Credit</strong></h3>
-      <p>Credits unlock orders from local businesses. Your voice matters.</p>
     </div>
   </div>
 
@@ -100,13 +83,11 @@
       <button type="button" class="btn take-btn-prev btn-prev" id="prevBtn" style="display: none;">← Previous</button>
       <div class="take-nav-right">
         <button type="submit" class="btn take-btn-submit-early" id="submitEarlyBtn">
-          <span>Submit Now</span>
-          <span class="take-btn-coin">+1 ¢</span>
+          <span>Submit now</span>
         </button>
         <button type="button" class="btn take-btn-next btn-next" id="nextBtn">Next →</button>
         <button type="submit" class="btn take-btn-submit btn-submit-survey" id="submitBtn" style="display: none;">
-          <span>Complete &amp; Earn</span>
-          <span class="take-btn-coin">1 ¢</span>
+          <span>Complete</span>
         </button>
       </div>
     </div>
@@ -860,14 +841,13 @@
     }
 
     // All answered — confirm and submit
-    if (confirm('Submit your responses and earn 1 credit?')) {
+    if (confirm('Submit your responses?')) {
       form.submit();
     }
   });
 })();
 
-// Session counter — tracks every survey completed during this browser session
-// and shows cumulative credits on the Submit button
+// Session counter — tracks queued batch surveys
 (function() {
   var QUEUE_KEY = 'gvot_survey_queue';
   var COMPLETED_KEY = 'gvot_survey_session_completed';
@@ -879,44 +859,17 @@
   var queue = [];
   try { queue = JSON.parse(sessionStorage.getItem(QUEUE_KEY) || '[]'); } catch (e) { queue = []; }
 
-  // Completed count for THIS session (increments on every survey submission)
   var completed = parseInt(sessionStorage.getItem(COMPLETED_KEY) || '0', 10);
   if (isNaN(completed)) completed = 0;
 
-  // Current survey ID from URL
   var match = window.location.pathname.match(/\/surveys\/(\d+)/);
   var currentId = match ? parseInt(match[1], 10) : null;
 
-  // Remove current ID from queue (if it's there) so it doesn't retrigger
   if (currentId !== null && queue.length > 0) {
     queue = queue.filter(function(id) { return id !== currentId; });
     sessionStorage.setItem(QUEUE_KEY, JSON.stringify(queue));
   }
 
-  // Submit button will earn 1 credit for THIS survey +
-  // cumulative credits already earned in session
-  var creditsAfterThis = completed + 1;
-  var coinLabels = document.querySelectorAll('.take-btn-coin');
-  var earlyBtn = document.getElementById('submitEarlyBtn');
-  var submitBtn = document.getElementById('submitBtn');
-
-  coinLabels.forEach(function(el) {
-    el.textContent = '+' + creditsAfterThis + ' ¢';
-  });
-
-  // Update full text on main submit button too
-  if (submitBtn) {
-    var submitText = submitBtn.querySelector('span:first-child');
-    if (submitText) {
-      if (creditsAfterThis > 1) {
-        submitText.textContent = 'Complete & Earn (' + creditsAfterThis + ' total)';
-      } else {
-        submitText.textContent = 'Complete & Earn';
-      }
-    }
-  }
-
-  // Batch queue banner
   if (banner && queue.length > 0) {
     banner.style.display = 'block';
     if (remainingEl) remainingEl.textContent = queue.length;
@@ -929,7 +882,6 @@
     });
   }
 
-  // Increment completed counter on EVERY survey submission (batch or individual)
   var form = document.getElementById('surveyForm');
   if (form) {
     form.addEventListener('submit', function() {

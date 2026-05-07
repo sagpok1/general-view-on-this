@@ -87,10 +87,7 @@ router.post('/:id/complete', isLoggedIn, validateCsrf, (req, res) => {
 
   try {
     Survey.complete(userId, surveyId, responses);
-    req.session.message = {
-      type: 'success',
-      text: 'Survey completed! You earned 1 credit.'
-    };
+    req.session.message = { type: 'success', text: 'Survey saved.' };
     return res.redirect('/surveys');
   } catch (err) {
     req.session.message = { type: 'error', text: 'Failed to submit survey. Please try again.' };

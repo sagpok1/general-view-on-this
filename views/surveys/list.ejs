@@ -6,21 +6,21 @@
   <div class="dash-header">
     <div class="dash-header-content">
       <h1 class="dash-header-title">Surveys</h1>
-      <p class="dash-header-sub">One credit per survey · Share your view</p>
+      <p class="dash-header-sub">A few honest questions. Take what helps.</p>
     </div>
     <div class="ticker-strip">
       <div class="ticker-track">
         <span class="ticker-item"><%= availableSurveys ? availableSurveys.length : 0 %> surveys available</span>
         <span class="ticker-dot"></span>
-        <span class="ticker-item">Each survey = 1 credit</span>
+        <span class="ticker-item">Quiet check-ins, not quizzes</span>
         <span class="ticker-dot"></span>
-        <span class="ticker-item">Spend credits at local businesses</span>
+        <span class="ticker-item">Your answers stay yours</span>
         <span class="ticker-dot"></span>
         <span class="ticker-item"><%= availableSurveys ? availableSurveys.length : 0 %> surveys available</span>
         <span class="ticker-dot"></span>
-        <span class="ticker-item">Each survey = 1 credit</span>
+        <span class="ticker-item">Quiet check-ins, not quizzes</span>
         <span class="ticker-dot"></span>
-        <span class="ticker-item">Spend credits at local businesses</span>
+        <span class="ticker-item">Your answers stay yours</span>
         <span class="ticker-dot"></span>
       </div>
     </div>
@@ -33,10 +33,10 @@
         <h2 class="s-section-title">Available</h2>
         <p class="s-section-sub"><%= availableSurveys ? availableSurveys.length : 0 %> waiting for you</p>
       </div>
-      <div class="s-balance-chip" title="Your credit balance">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 7v10M8 11h8" stroke-linecap="round"/></svg>
-        <strong><%= currentUser.credits %></strong>
-        <span>credit<%= currentUser.credits === 1 ? '' : 's' %></span>
+      <div class="s-balance-chip" title="Surveys you've completed">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+        <strong><%= completedSurveys ? completedSurveys.length : 0 %></strong>
+        <span>completed</span>
       </div>
     </div>
 
@@ -263,13 +263,13 @@
     sessionStorage.removeItem(ACTIVE_KEY);
     var nextId = queue[0];
     if (typeof window.showToast === 'function') {
-      window.showToast('Earned ' + completed + ' credit' + (completed !== 1 ? 's' : '') + ' — next survey…', 'success');
+      window.showToast(completed + ' done · next survey…', 'success');
     }
     setTimeout(function() { window.location.href = '/surveys/' + nextId; }, 1000);
   } else if (completed > 0 && queue.length === 0) {
     sessionStorage.removeItem(ACTIVE_KEY);
     if (typeof window.showToast === 'function') {
-      window.showToast('Earned ' + completed + ' credit' + (completed !== 1 ? 's' : '') + ' this session', 'success');
+      window.showToast(completed + ' surveys done this session', 'success');
     }
   }
 })();

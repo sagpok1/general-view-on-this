@@ -1,53 +1,40 @@
 const express = require('express');
 const router = express.Router();
 const { isLoggedIn } = require('../middleware/auth');
-const User = require('../models/User');
-const Order = require('../models/Order');
-const Survey = require('../models/Survey');
-const Credit = require('../models/Credit');
-const Business = require('../models/Business');
+const { db } = require('../config/database');
+const Confession = require('../models/Confession');
+const Mood = require('../models/Mood');
 
-// GET /dashboard
 router.get('/', isLoggedIn, (req, res) => {
   const userId = req.user.id;
 
-  // Fetch credit balance
-  const creditBalance = Credit.getBalance(userId);
+  const myConfessionCount = Confession.countByUser(userId);
+  const totals = Confession.totals();
+  const latestMood = Mood.latest(userId);
+  const moodCount = Mood.countByUser(userId);
+  const recentMoods = Mood.recent(userId, 7);
 
-  // Fetch recent orders (limit 5)
-  const recentOrders = Order.findByUserId(userId).slice(0, 5);
+  const surveysAvailable = db.prepare(`
+    SELECT COUNT(*) AS c FROM surveys s
+    WHERE is_active = 1
+      AND NOT EXISTS (SELECT 1 FROM survey_completions sc WHERE sc.user_id = ? AND sc.survey_id = s.id)
+  `).get(userId).c;
 
-  // Fetch survey counts
-  const availableSurveys = Survey.getAvailableForUser(userId);
-  const completedSurveys = Survey.getCompletedByUser(userId);
+  const surveysCompleted = db.prepare(
+    'SELECT COUNT(*) AS c FROM survey_completions WHERE user_id = ?'
+  ).get(userId).c;
 
-  // Fetch credit history
-  const creditHistory = Credit.getHistory(userId);
-
-  // Build template data — match variable names expected by the EJS template
-  const templateData = {
+  res.render('dashboard/home', {
     title: 'Dashboard',
-    credits: creditBalance,
-    recentOrders,
-    surveysCompleted: completedSurveys.length,
-    surveysAvailable: availableSurveys.length,
-    creditHistory
-  };
-
-  // If business account, fetch incoming orders count
-  if (req.user.account_type === 'business') {
-    const business = Business.findByUserId(userId);
-    if (business) {
-      const incomingOrders = Order.findByBusinessId(business.id);
-      templateData.incomingOrdersCount = incomingOrders.length;
-      templateData.business = business;
-    } else {
-      templateData.incomingOrdersCount = 0;
-      templateData.business = null;
-    }
-  }
-
-  res.render('dashboard/home', templateData);
+    myConfessionCount,
+    totals,
+    latestMood,
+    moodCount,
+    recentMoods,
+    surveysAvailable,
+    surveysCompleted,
+    moods: Mood.VALID_MOODS
+  });
 });
 
 module.exports = router;

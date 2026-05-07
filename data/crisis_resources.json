@@ -1,0 +1,45 @@
+{
+  "crisis_lines": [
+    {
+      "country": "USA",
+      "name": "988 Suicide & Crisis Lifeline",
+      "number": "988",
+      "method": "Call or text",
+      "available": "24/7, free",
+      "url": "https://988lifeline.org"
+    },
+    {
+      "country": "UK",
+      "name": "Samaritans",
+      "number": "116 123",
+      "method": "Call",
+      "available": "24/7, free",
+      "url": "https://www.samaritans.org"
+    },
+    {
+      "country": "Australia",
+      "name": "Lifeline Australia",
+      "number": "13 11 14",
+      "method": "Call",
+      "available": "24/7",
+      "url": "https://www.lifeline.org.au"
+    },
+    {
+      "country": "Canada",
+      "name": "Talk Suicide Canada",
+      "number": "1-833-456-4566",
+      "method": "Call",
+      "available": "24/7",
+      "url": "https://talksuicide.ca"
+    },
+    {
+      "country": "International",
+      "name": "Find a Crisis Centre Near You",
+      "number": null,
+      "method": "Online directory",
+      "available": "Always",
+      "url": "https://www.iasp.info/resources/Crisis_Centres/"
+    }
+  ],
+  "universal_note": "No matter where you are in the world, you do not have to face this alone. If you are in immediate danger, call emergency services (911 / 999 / 112)."
+}

@@ -1,0 +1,54 @@
+<%- include('../layout/header', { title: 'Mood log' }) %>
+
+<section class="container" style="max-width: 720px; margin: 2rem auto; padding: 0 1rem;">
+  <h1 style="margin:0 0 0.4rem; font-family:'Playfair Display', serif; font-size: 1.9rem;">Mood log</h1>
+  <p style="margin:0 0 1.4rem; color:#666;">A quiet daily check-in. Just for you.</p>
+
+  <form method="POST" action="/mood" style="background:#fff; border:1px solid #ece6dc; border-radius:14px; padding:1.2rem; margin-bottom:1.6rem;">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <label style="display:block; font-weight:600; margin-bottom:0.6rem;">How are you right now?</label>
+    <div style="display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:1rem;">
+      <% var emoji = { happy:'😊', okay:'😐', sad:'😔', anxious:'😰', frustrated:'😤', numb:'😶', hopeful:'🌱' }; %>
+      <% moods.forEach(function(m, i){ %>
+        <label style="display:inline-flex; align-items:center; gap:0.35rem; background:#faf7f0; border:1px solid #e3d6b8; border-radius:999px; padding:0.45rem 0.9rem; cursor:pointer;">
+          <input type="radio" name="mood" value="<%= m %>" <%= i === 0 ? 'required' : '' %> style="accent-color:#c79100;">
+          <span style="font-size:1.1rem;"><%= emoji[m] || '·' %></span>
+          <span><%= m %></span>
+        </label>
+      <% }) %>
+    </div>
+
+    <label for="note" style="display:block; font-weight:600; margin-bottom:0.4rem;">A line about why (optional)</label>
+    <input type="text" id="note" name="note" maxlength="500"
+      style="width:100%; padding:0.7rem; border:1px solid #ddd; border-radius:10px; font-family:inherit; font-size:0.95rem;"
+      placeholder="One short sentence is plenty.">
+
+    <div style="margin-top:1rem;">
+      <button type="submit" class="btn btn-primary">Log mood</button>
+    </div>
+  </form>
+
+  <h2 style="font-family:'Playfair Display', serif; font-size:1.3rem; margin:0 0 0.8rem;">Recent</h2>
+
+  <% if (!entries.length) { %>
+    <p style="color:#888;">No entries yet. Log how you're feeling above.</p>
+  <% } else { %>
+    <% var emoji = { happy:'😊', okay:'😐', sad:'😔', anxious:'😰', frustrated:'😤', numb:'😶', hopeful:'🌱' }; %>
+    <ul style="list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:0.5rem;">
+      <% entries.forEach(function(e){ %>
+        <li style="background:#fff; border:1px solid #ece6dc; border-radius:10px; padding:0.8rem 1rem; display:flex; align-items:flex-start; gap:0.8rem;">
+          <span style="font-size:1.4rem; line-height:1;"><%= emoji[e.mood] || '·' %></span>
+          <div style="flex:1;">
+            <div style="font-weight:600; text-transform:capitalize;"><%= e.mood %></div>
+            <% if (e.note) { %><div style="color:#555; font-size:0.93rem; margin-top:0.15rem;"><%= e.note %></div><% } %>
+          </div>
+          <span style="color:#999; font-size:0.82rem;">
+            <%= new Date(e.created_at).toLocaleString('en-US', { month:'short', day:'numeric', hour:'numeric', minute:'2-digit' }) %>
+          </span>
+        </li>
+      <% }) %>
+    </ul>
+  <% } %>
+</section>
+
+<%- include('../layout/footer') %>
