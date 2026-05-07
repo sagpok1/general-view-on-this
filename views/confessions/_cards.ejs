@@ -1,0 +1,47 @@
+<%
+  // Reusable card list. Used by full page render and infinite-scroll fragment.
+  function truncBody(text, max) {
+    if (!text) return '';
+    if (text.length <= max) return text;
+    return text.slice(0, max).trimEnd() + '…';
+  }
+%>
+<% confessions.forEach(function(c){ %>
+  <article class="confess-card" data-mood="<%= (c.mood_tag || '').toLowerCase() %>" data-id="<%= c.id %>">
+    <% var isLong = (c.body || '').length > 280; %>
+    <% if (c.mood_tag || c.user_id === currentUser.id) { %>
+      <header class="confess-card-meta">
+        <% if (c.mood_tag) { %>
+          <span class="confess-mood-pill">feeling <%= c.mood_tag %></span>
+        <% } %>
+        <% if (c.user_id === currentUser.id) { %>
+          <span class="confess-mine-pill">you</span>
+        <% } %>
+      </header>
+    <% } %>
+
+    <% if (isLong) { %>
+      <p class="confess-body confess-body-collapsed" data-full="<%= encodeURIComponent(c.body) %>">
+        <span class="confess-body-text"><%= truncBody(c.body, 280) %></span>
+        <button type="button" class="confess-readmore">Read more</button>
+      </p>
+    <% } else { %>
+      <p class="confess-body"><%= c.body %></p>
+    <% } %>
+
+    <footer class="confess-card-foot">
+      <span class="confess-author">
+        <span class="confess-avatar"><%= c.username.slice(0,2).toUpperCase() %></span>
+        <span class="confess-handle">@<%= c.username %></span>
+        <span class="confess-time" data-time="<%= new Date(c.created_at).toISOString() %>"><%= new Date(c.created_at).toLocaleString('en-US', { month:'short', day:'numeric' }) %></span>
+      </span>
+      <form method="POST" action="/confessions/<%= c.id %>/heart" class="confess-react-form">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <button type="submit" class="confess-react <%= heartedIds.has(c.id) ? 'is-on' : '' %>" aria-label="Heart this confession">
+          <span class="confess-react-glyph" aria-hidden="true"><%= heartedIds.has(c.id) ? '♥' : '♡' %></span>
+          <span class="confess-react-count"><%= c.hearts %></span>
+        </button>
+      </form>
+    </footer>
+  </article>
+<% }); %>

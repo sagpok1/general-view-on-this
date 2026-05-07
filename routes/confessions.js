@@ -6,20 +6,57 @@ const Confession = require('../models/Confession');
 const Mood = require('../models/Mood');
 const { checkRisk } = require('../lib/riskDetector');
 
+const PAGE_SIZE = 20;
+
+function parseFeedParams(query) {
+  const validSorts = ['newest', 'hearts', 'mine'];
+  return {
+    mood: query.mood ? String(query.mood).toLowerCase().trim() : null,
+    sort: validSorts.includes(query.sort) ? query.sort : 'newest',
+    offset: Math.max(0, parseInt(query.offset, 10) || 0)
+  };
+}
+
 router.get('/', isLoggedIn, (req, res) => {
-  const confessions = Confession.list({ limit: 100 });
+  const { mood, sort, offset } = parseFeedParams(req.query);
+  const confessions = Confession.list({
+    limit: PAGE_SIZE,
+    offset,
+    mood,
+    sort,
+    userId: req.user.id
+  });
   const totals = Confession.totals();
-  const heartedIds = new Set(
-    confessions
-      .filter((c) => Confession.hasHearted(req.user.id, c.id))
-      .map((c) => c.id)
-  );
+  const heartedIds = Confession.heartedIdsFor(req.user.id);
   res.render('confessions/list', {
     title: 'Confessions',
     confessions,
     totals,
     heartedIds,
-    moods: Mood.VALID_MOODS
+    moods: Mood.VALID_MOODS,
+    activeMood: mood,
+    activeSort: sort,
+    pageSize: PAGE_SIZE,
+    offset
+  });
+});
+
+// HTML fragment endpoint for infinite scroll. Returns just the card list HTML.
+router.get('/page', isLoggedIn, (req, res) => {
+  const { mood, sort, offset } = parseFeedParams(req.query);
+  const confessions = Confession.list({
+    limit: PAGE_SIZE,
+    offset,
+    mood,
+    sort,
+    userId: req.user.id
+  });
+  const heartedIds = Confession.heartedIdsFor(req.user.id);
+  res.render('confessions/_cards', {
+    confessions,
+    heartedIds,
+    csrfToken: res.locals.csrfToken,
+    currentUser: req.user
   });
 });
 
@@ -91,12 +128,24 @@ router.post('/', isLoggedIn, validateCsrf, [
 router.post('/:id/heart', isLoggedIn, validateCsrf, (req, res) => {
   const id = parseInt(req.params.id, 10);
   const confession = Confession.findById(id);
+
+  // Preserve filter/sort from where the user came from so the redirect
+  // doesn't kick them back to the top of the unfiltered feed.
+  let backTo = '/confessions';
+  const referer = req.get('referer');
+  if (referer) {
+    try {
+      const url = new URL(referer);
+      if (url.pathname === '/confessions') backTo = url.pathname + url.search;
+    } catch (err) { /* ignore malformed referer */ }
+  }
+
   if (!confession || confession.status !== 'visible') {
     req.session.message = { type: 'error', text: 'Confession not found.' };
-    return res.redirect('/confessions');
+    return res.redirect(backTo);
   }
   Confession.toggleHeart(req.user.id, id);
-  return res.redirect('/confessions');
+  return res.redirect(backTo);
 });
 
 module.exports = router;

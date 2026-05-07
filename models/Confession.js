@@ -1,15 +1,43 @@
 const { db } = require('../config/database');
 
 const Confession = {
-  list({ limit = 50, offset = 0 } = {}) {
-    return db.prepare(`
+  list({ limit = 20, offset = 0, mood = null, sort = 'newest', userId = null } = {}) {
+    const filters = ["c.status = 'visible'"];
+    const params = [];
+
+    if (mood && typeof mood === 'string' && mood.trim()) {
+      filters.push('LOWER(c.mood_tag) = ?');
+      params.push(mood.toLowerCase().trim());
+    }
+
+    if (sort === 'mine' && userId) {
+      filters.push('c.user_id = ?');
+      params.push(userId);
+    }
+
+    const orderBy = sort === 'hearts'
+      ? 'c.hearts DESC, c.created_at DESC'
+      : 'c.created_at DESC';
+
+    const sql = `
       SELECT c.id, c.body, c.mood_tag, c.hearts, c.created_at, c.user_id, u.username
       FROM confessions c
       JOIN users u ON u.id = c.user_id
-      WHERE c.status = 'visible'
-      ORDER BY c.created_at DESC
+      WHERE ${filters.join(' AND ')}
+      ORDER BY ${orderBy}
       LIMIT ? OFFSET ?
-    `).all(limit, offset);
+    `;
+
+    return db.prepare(sql).all(...params, limit, offset);
+  },
+
+  // Returns a Set of confession IDs the given user has hearted.
+  // Avoids the N+1 hasHearted() query in feed rendering.
+  heartedIdsFor(userId) {
+    const rows = db.prepare(
+      'SELECT confession_id FROM confession_hearts WHERE user_id = ?'
+    ).all(userId);
+    return new Set(rows.map((r) => r.confession_id));
   },
 
   findById(id) {

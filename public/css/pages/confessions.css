@@ -1,0 +1,428 @@
+/* Confessions feed — a quiet, dynamic space. */
+
+.confess-page {
+  max-width: 720px;
+  margin: 1.5rem auto;
+  padding: 0 1rem 4rem;
+}
+
+/* ─── Header ─── */
+.confess-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.2rem;
+}
+.confess-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.confess-sub {
+  margin: 0.2rem 0 0;
+  color: var(--color-text-secondary);
+  font-size: 0.9rem;
+}
+.confess-new-link {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+  align-self: center;
+}
+.confess-new-link:hover { color: var(--color-accent); }
+
+/* ─── Composer ─── */
+.confess-composer {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 18px;
+  padding: 0.9rem 1rem;
+  margin-bottom: 1rem;
+  transition: box-shadow var(--transition-base), border-color var(--transition-base);
+}
+.confess-composer:focus-within {
+  border-color: var(--color-accent);
+  box-shadow: 0 4px 20px rgba(107, 142, 127, 0.12);
+}
+.composer-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.7rem;
+}
+.composer-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.78rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  letter-spacing: 0.02em;
+}
+.composer-row textarea {
+  flex: 1;
+  border: none;
+  background: transparent;
+  resize: none;
+  font: inherit;
+  font-size: 1rem;
+  line-height: 1.55;
+  color: var(--color-text-primary);
+  padding: 0.5rem 0;
+  min-height: 1.6rem;
+  max-height: 280px;
+  outline: none;
+}
+.composer-row textarea::placeholder { color: var(--color-text-muted); }
+.composer-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 0.7rem;
+  padding-top: 0.7rem;
+  border-top: 1px solid var(--color-border);
+  flex-wrap: wrap;
+}
+.composer-actions select {
+  padding: 0.4rem 0.7rem;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: var(--color-bg);
+  font: inherit;
+  font-size: 0.85rem;
+  color: var(--color-text-primary);
+  cursor: pointer;
+}
+.composer-counter {
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  margin-left: auto;
+  font-variant-numeric: tabular-nums;
+}
+.composer-counter.is-warn { color: var(--color-warm); }
+.composer-counter.is-error { color: var(--color-red); }
+.composer-share {
+  background: var(--color-accent);
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 0.5rem 1.1rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+.composer-share:hover { background: var(--color-accent-hover); }
+.composer-share:disabled {
+  background: var(--color-border);
+  cursor: not-allowed;
+}
+
+/* ─── Toolbar (filters + sort) ─── */
+.confess-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  position: sticky;
+  top: 0;
+  background: var(--color-bg);
+  padding: 0.5rem 0;
+  z-index: 10;
+  border-bottom: 1px solid transparent;
+  transition: border-color var(--transition-fast), background var(--transition-fast);
+}
+.confess-toolbar.is-stuck {
+  background: var(--color-bg);
+  border-bottom-color: var(--color-border);
+}
+
+.confess-filters {
+  display: flex;
+  gap: 0.4rem;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  flex: 1;
+  min-width: 0;
+  padding-bottom: 2px;
+}
+.confess-filters::-webkit-scrollbar { display: none; }
+.confess-filters { -ms-overflow-style: none; scrollbar-width: none; }
+
+.confess-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.4rem 0.85rem;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  font-size: 0.85rem;
+  font-weight: 500;
+  white-space: nowrap;
+  flex-shrink: 0;
+  scroll-snap-align: start;
+  text-transform: capitalize;
+  transition: all var(--transition-fast);
+}
+.confess-chip:hover {
+  border-color: var(--color-accent);
+  color: var(--color-text-primary);
+}
+.confess-chip.is-active {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: #fff;
+}
+.chip-emoji { font-size: 0.95rem; }
+
+.confess-sort {
+  display: flex;
+  gap: 0.1rem;
+  background: var(--color-surface-2);
+  border-radius: 999px;
+  padding: 3px;
+  flex-shrink: 0;
+}
+.sort-tab {
+  padding: 0.35rem 0.85rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  border-radius: 999px;
+  white-space: nowrap;
+  transition: all var(--transition-fast);
+}
+.sort-tab:hover { color: var(--color-text-primary); }
+.sort-tab.is-active {
+  background: var(--color-surface);
+  color: var(--color-accent);
+  box-shadow: var(--shadow-xs);
+}
+
+/* ─── Feed ─── */
+.confess-feed {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.confess-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  padding: 1rem 1.15rem 0.9rem;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
+  animation: confessCardIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.confess-card:hover {
+  border-color: var(--color-accent-light);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
+}
+
+/* Mood tints — subtle pastel top-left fade per mood */
+.confess-card[data-mood="hopeful"]    { background: linear-gradient(135deg, #DFE8E1 0%, var(--color-surface) 60%); }
+.confess-card[data-mood="happy"]      { background: linear-gradient(135deg, #F2E2D8 0%, var(--color-surface) 60%); }
+.confess-card[data-mood="anxious"]    { background: linear-gradient(135deg, #E2EAEE 0%, var(--color-surface) 60%); }
+.confess-card[data-mood="sad"]        { background: linear-gradient(135deg, #E5DFE8 0%, var(--color-surface) 60%); }
+.confess-card[data-mood="frustrated"] { background: linear-gradient(135deg, #F0E2DA 0%, var(--color-surface) 60%); }
+.confess-card[data-mood="numb"]       { background: linear-gradient(135deg, #E5E5E2 0%, var(--color-surface) 60%); }
+.confess-card[data-mood="okay"]       { background: linear-gradient(135deg, #ECECE3 0%, var(--color-surface) 60%); }
+
+@keyframes confessCardIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+/* Stagger up to 12 cards */
+.confess-card:nth-child(2)  { animation-delay: 30ms; }
+.confess-card:nth-child(3)  { animation-delay: 60ms; }
+.confess-card:nth-child(4)  { animation-delay: 90ms; }
+.confess-card:nth-child(5)  { animation-delay: 120ms; }
+.confess-card:nth-child(6)  { animation-delay: 150ms; }
+.confess-card:nth-child(7)  { animation-delay: 180ms; }
+.confess-card:nth-child(8)  { animation-delay: 210ms; }
+.confess-card:nth-child(9)  { animation-delay: 240ms; }
+.confess-card:nth-child(10) { animation-delay: 270ms; }
+.confess-card:nth-child(11) { animation-delay: 300ms; }
+.confess-card:nth-child(12) { animation-delay: 330ms; }
+
+.confess-card-meta {
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+.confess-mood-pill {
+  background: var(--color-accent-light);
+  color: var(--color-accent);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  padding: 2px 9px;
+  border-radius: 999px;
+  text-transform: lowercase;
+}
+.confess-mine-pill {
+  background: var(--color-warm-light);
+  color: var(--color-warm);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 2px 9px;
+  border-radius: 999px;
+  text-transform: uppercase;
+}
+
+.confess-body {
+  margin: 0 0 0.7rem;
+  white-space: pre-wrap;
+  line-height: 1.55;
+  font-size: 1.02rem;
+  color: var(--color-text-primary);
+  word-break: break-word;
+}
+.confess-body-collapsed .confess-body-text { display: inline; }
+.confess-readmore {
+  background: none;
+  border: none;
+  padding: 0;
+  margin-left: 0.3rem;
+  color: var(--color-accent);
+  font: inherit;
+  font-size: 0.92rem;
+  cursor: pointer;
+  font-weight: 600;
+}
+.confess-readmore:hover { text-decoration: underline; }
+
+.confess-card-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+  gap: 0.6rem;
+}
+.confess-author {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-width: 0;
+}
+.confess-avatar {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--color-surface-2);
+  color: var(--color-text-secondary);
+  font-weight: 700;
+  font-size: 0.65rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  letter-spacing: 0.02em;
+}
+.confess-handle {
+  color: var(--color-text-secondary);
+  font-weight: 600;
+}
+.confess-time {
+  color: var(--color-text-muted);
+}
+.confess-time::before { content: '· '; }
+
+.confess-react {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  padding: 0.25rem 0.7rem;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  font-size: 0.88rem;
+  transition: all var(--transition-fast);
+}
+.confess-react:hover {
+  background: var(--color-warm-light);
+  color: var(--color-warm);
+}
+.confess-react.is-on {
+  color: var(--color-warm);
+}
+.confess-react.is-on .confess-react-glyph {
+  animation: heartPop 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.confess-react-glyph { font-size: 1.05rem; line-height: 1; }
+.confess-react-count { font-variant-numeric: tabular-nums; font-weight: 600; }
+
+@keyframes heartPop {
+  0%, 100% { transform: scale(1); }
+  40% { transform: scale(1.4); }
+  70% { transform: scale(0.9); }
+}
+
+/* ─── Empty + sentinel ─── */
+.confess-empty {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--color-text-muted);
+  background: var(--color-surface);
+  border: 1px dashed var(--color-border);
+  border-radius: 16px;
+}
+.confess-empty p { margin: 0; font-size: 1.05rem; color: var(--color-text-primary); }
+.confess-empty-sub { margin: 0.4rem 0 0 !important; color: var(--color-text-muted) !important; font-size: 0.92rem !important; }
+
+.confess-sentinel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 2rem 1rem;
+  color: var(--color-text-muted);
+  font-size: 0.88rem;
+  min-height: 60px;
+}
+.confess-sentinel-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--color-border);
+  border-top-color: var(--color-accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+.confess-pause-nudge {
+  text-align: center;
+  padding: 1.4rem 1.2rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-accent-light);
+  border-radius: 16px;
+  color: var(--color-text-secondary);
+  font-size: 0.95rem;
+  margin: 1rem 0;
+}
+.confess-pause-nudge strong { color: var(--color-accent); display: block; margin-bottom: 0.3rem; font-size: 1rem; }
+
+/* ─── Mobile tweaks ─── */
+@media (max-width: 640px) {
+  .confess-page { padding: 0 0.7rem 4rem; }
+  .confess-header { flex-wrap: wrap; }
+  .confess-title { font-size: 1.65rem; }
+  .confess-toolbar { flex-direction: column; align-items: stretch; gap: 0.5rem; }
+  .confess-sort { align-self: stretch; justify-content: space-between; }
+  .sort-tab { flex: 1; text-align: center; }
+}

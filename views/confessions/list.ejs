@@ -1,45 +1,81 @@
-<%- include('../layout/header', { title: 'Confessions' }) %>
+<%- include('../layout/header', { title: 'Confessions', extraCss: ['/css/pages/confessions.css'] }) %>
 
-<section class="container" style="max-width: 760px; margin: 2rem auto; padding: 0 1rem;">
-  <header style="display:flex; align-items:center; justify-content:space-between; margin-bottom: 1.4rem; gap: 1rem; flex-wrap: wrap;">
+<%
+  var EMOJI = { happy:'😊', okay:'😐', sad:'😔', anxious:'😰', frustrated:'😤', numb:'😶', hopeful:'🌱' };
+%>
+
+<section class="confess-page" data-page-size="<%= pageSize %>" data-mood="<%= activeMood || '' %>" data-sort="<%= activeSort %>">
+
+  <header class="confess-header">
     <div>
-      <h1 style="margin: 0 0 0.25rem; font-family:'Playfair Display', serif; font-size: 2rem;">Confessions</h1>
-      <p style="margin:0; color:var(--color-text-secondary); font-size:0.95rem;">
-        <%= totals.total %> shared · <%= totals.hearts %> hearts. Posted under your username.
-      </p>
+      <h1 class="confess-title">Confessions</h1>
+      <p class="confess-sub"><%= totals.total %> shared · <%= totals.hearts %> hearts. Posted under your username.</p>
     </div>
-    <a href="/confessions/new" class="btn btn-primary">+ New confession</a>
+    <a href="/confessions/new" class="confess-new-link">+ Long-form</a>
   </header>
 
-  <% if (!confessions.length) { %>
-    <div style="background:var(--color-surface-2); border:1px dashed var(--color-border); border-radius:14px; padding:2rem; text-align:center; color:var(--color-text-secondary);">
-      <p style="margin:0 0 0.6rem; font-size:1.05rem;">It's quiet here. Be the first to share something.</p>
-      <a href="/confessions/new" class="btn btn-primary">Start a confession</a>
+  <!-- ─── Quick composer ─── -->
+  <form class="confess-composer" id="confessComposer" method="POST" action="/confessions">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <div class="composer-row">
+      <span class="composer-avatar"><%= currentUser.username.slice(0,2).toUpperCase() %></span>
+      <textarea name="body" id="composerBody" placeholder="What's on your mind, @<%= currentUser.username %>?" rows="1" minlength="4" maxlength="2000" required></textarea>
     </div>
-  <% } %>
+    <div class="composer-actions" id="composerActions" hidden>
+      <select name="mood_tag" id="composerMood">
+        <option value="">— mood (optional) —</option>
+        <% moods.forEach(function(m){ %>
+          <option value="<%= m %>"><%= EMOJI[m] || '·' %> <%= m %></option>
+        <% }) %>
+      </select>
+      <span class="composer-counter" id="composerCounter">0 / 2000</span>
+      <button type="submit" class="composer-share">Share</button>
+    </div>
+  </form>
 
-  <ul style="list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:1rem;">
-    <% confessions.forEach(function(c){ %>
-      <li style="background:var(--color-surface); border:1px solid var(--color-border); border-radius:14px; padding:1.1rem 1.2rem; box-shadow:0 1px 3px rgba(0,0,0,0.03);">
-        <% if (c.mood_tag) { %>
-          <span style="display:inline-block; background:#fff7d6; color:#7a5b00; font-size:0.78rem; font-weight:600; padding:2px 10px; border-radius:999px; margin-bottom:0.55rem;">
-            feeling <%= c.mood_tag %>
-          </span>
-        <% } %>
-        <p style="margin:0 0 0.7rem; white-space:pre-wrap; line-height:1.55; font-size:1.02rem; color:var(--color-text-primary);"><%= c.body %></p>
-        <div style="display:flex; align-items:center; justify-content:space-between; font-size:0.82rem; color:var(--color-text-muted);">
-          <span>@<%= c.username || 'deleted' %> · <%= new Date(c.created_at).toLocaleString('en-US', { month:'short', day:'numeric', hour:'numeric', minute:'2-digit' }) %></span>
-          <form method="POST" action="/confessions/<%= c.id %>/heart" style="margin:0;">
-            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-            <button type="submit" style="border:none; background:transparent; cursor:pointer; font-size:0.95rem; color:<%= heartedIds.has(c.id) ? '#c62828' : '#888' %>; display:inline-flex; align-items:center; gap:0.3rem;">
-              <span><%= heartedIds.has(c.id) ? '♥' : '♡' %></span>
-              <span><%= c.hearts %></span>
-            </button>
-          </form>
-        </div>
-      </li>
-    <% }) %>
-  </ul>
+  <!-- ─── Filters & sort ─── -->
+  <div class="confess-toolbar">
+    <div class="confess-filters" role="group" aria-label="Filter by mood">
+      <a href="/confessions<%= activeSort && activeSort !== 'newest' ? '?sort=' + activeSort : '' %>" class="confess-chip <%= !activeMood ? 'is-active' : '' %>">All</a>
+      <% moods.forEach(function(m){ %>
+        <a href="/confessions?mood=<%= m %><%= activeSort && activeSort !== 'newest' ? '&sort=' + activeSort : '' %>" class="confess-chip <%= activeMood === m ? 'is-active' : '' %>" data-mood="<%= m %>">
+          <span class="chip-emoji" aria-hidden="true"><%= EMOJI[m] || '·' %></span>
+          <%= m %>
+        </a>
+      <% }) %>
+    </div>
+
+    <div class="confess-sort" role="group" aria-label="Sort">
+      <% var sortLink = function(s) { return '/confessions?sort=' + s + (activeMood ? '&mood=' + activeMood : ''); }; %>
+      <a href="<%= sortLink('newest') %>" class="sort-tab <%= activeSort === 'newest' ? 'is-active' : '' %>">Newest</a>
+      <a href="<%= sortLink('hearts') %>" class="sort-tab <%= activeSort === 'hearts' ? 'is-active' : '' %>">Most loved</a>
+      <a href="<%= sortLink('mine') %>" class="sort-tab <%= activeSort === 'mine' ? 'is-active' : '' %>">Mine</a>
+    </div>
+  </div>
+
+  <!-- ─── Feed ─── -->
+  <div class="confess-feed" id="confessFeed">
+    <% if (!confessions.length) { %>
+      <div class="confess-empty">
+        <p>It's quiet here.</p>
+        <p class="confess-empty-sub">
+          <% if (activeMood) { %>No one's posted with mood "<%= activeMood %>" yet.<% } else if (activeSort === 'mine') { %>You haven't posted yet.<% } else { %>Be the first to share something.<% } %>
+        </p>
+      </div>
+    <% } %>
+    <%- include('_cards', { confessions: confessions, heartedIds: heartedIds, csrfToken: csrfToken, currentUser: currentUser }) %>
+  </div>
+
+  <!-- Sentinel for infinite scroll -->
+  <div class="confess-sentinel" id="confessSentinel" data-offset="<%= offset + confessions.length %>" data-done="<%= confessions.length < pageSize ? 'true' : 'false' %>">
+    <% if (confessions.length >= pageSize) { %>
+      <span class="confess-sentinel-spinner" aria-hidden="true"></span>
+      <span class="confess-sentinel-text">Loading more…</span>
+    <% } else if (confessions.length > 0) { %>
+      <span class="confess-sentinel-text">You've reached the end.</span>
+    <% } %>
+  </div>
+
 </section>
 
-<%- include('../layout/footer') %>
+<%- include('../layout/footer', { extraJs: ['/js/confessions.js'] }) %>
