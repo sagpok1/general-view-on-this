@@ -1,30 +1,17 @@
-<%- include('../layout/header', { title: 'Surveys', extraCss: ['/css/pages/surveys.css', '/css/pages/surveys-v2.css', '/css/pages/dashboard.css'] }) %>
+<%- include('../layout/header', { title: 'Surveys', extraCss: ['/css/pages/surveys.css', '/css/pages/surveys-v2.css'] }) %>
 
-<section class="page-section">
+<section class="page-shell page-shell--wide">
 
-  <!-- ═══ HEADER ═══ -->
-  <div class="dash-header">
-    <div class="dash-header-content">
-      <h1 class="dash-header-title">Surveys</h1>
-      <p class="dash-header-sub">A few honest questions. Take what helps.</p>
+  <header class="page-header">
+    <div>
+      <h1 class="page-title">Surveys</h1>
+      <p class="page-sub">
+        A few honest questions. Quiet check-ins, not quizzes.
+        <%= availableSurveys ? availableSurveys.length : 0 %> open ·
+        <%= completedSurveys ? completedSurveys.length : 0 %> completed.
+      </p>
     </div>
-    <div class="ticker-strip">
-      <div class="ticker-track">
-        <span class="ticker-item"><%= availableSurveys ? availableSurveys.length : 0 %> surveys available</span>
-        <span class="ticker-dot"></span>
-        <span class="ticker-item">Quiet check-ins, not quizzes</span>
-        <span class="ticker-dot"></span>
-        <span class="ticker-item">Your answers stay yours</span>
-        <span class="ticker-dot"></span>
-        <span class="ticker-item"><%= availableSurveys ? availableSurveys.length : 0 %> surveys available</span>
-        <span class="ticker-dot"></span>
-        <span class="ticker-item">Quiet check-ins, not quizzes</span>
-        <span class="ticker-dot"></span>
-        <span class="ticker-item">Your answers stay yours</span>
-        <span class="ticker-dot"></span>
-      </div>
-    </div>
-  </div>
+  </header>
 
   <!-- ═══ AVAILABLE ═══ -->
   <div class="s-section">

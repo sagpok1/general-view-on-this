@@ -1,30 +1,18 @@
-<%- include('../layout/header', { title: survey.title, extraCss: ['/css/pages/surveys.css', '/css/pages/dashboard.css'] }) %>
+<%- include('../layout/header', { title: survey.title, extraCss: ['/css/pages/surveys.css'] }) %>
 
-<section class="page-section">
+<section class="page-shell">
 
-  <!-- ═══ ANIMATED GRADIENT HEADER ═══ -->
-  <div class="dash-header">
-    <div class="dash-header-content">
-      <h1 class="dash-header-title"><%= survey.title %></h1>
-      <p class="dash-header-sub"><%= survey.description %></p>
+  <header class="page-header">
+    <div>
+      <h1 class="page-title"><%= survey.title %></h1>
+      <p class="page-sub">
+        <%= survey.description %>
+        <% if (survey.description) { %><br><% } %>
+        <%= questions.length %> question<%= questions.length !== 1 ? 's' : '' %>. Anonymous. Take what helps.
+      </p>
     </div>
-    <div class="ticker-strip">
-      <div class="ticker-track">
-        <span class="ticker-item"><%= questions.length %> question<%= questions.length !== 1 ? 's' : '' %> in this survey</span>
-        <span class="ticker-dot"></span>
-        <span class="ticker-item">All responses are anonymous</span>
-        <span class="ticker-dot"></span>
-        <span class="ticker-item">Take what helps · skip what doesn't</span>
-        <span class="ticker-dot"></span>
-        <span class="ticker-item"><%= questions.length %> question<%= questions.length !== 1 ? 's' : '' %> in this survey</span>
-        <span class="ticker-dot"></span>
-        <span class="ticker-item">All responses are anonymous</span>
-        <span class="ticker-dot"></span>
-        <span class="ticker-item">Take what helps · skip what doesn't</span>
-        <span class="ticker-dot"></span>
-      </div>
-    </div>
-  </div>
+    <a href="/surveys" class="page-header-aside">← Back to surveys</a>
+  </header>
 
   <!-- ═══ PROGRESS ═══ -->
   <div class="take-progress-wrapper">

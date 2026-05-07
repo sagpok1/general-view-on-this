@@ -1,50 +1,18 @@
-<%- include('../layout/header', { title: 'Predictions', extraCss: ['/css/pages/predictions.css', '/css/pages/dashboard.css'] }) %>
+<%- include('../layout/header', { title: 'Predictions', extraCss: ['/css/pages/predictions.css'] }) %>
 
-<section class="page-section">
-  <div class="dash-header">
-    <div class="dash-header-content">
-      <h1 class="dash-header-title">Predictions</h1>
-      <p class="dash-header-sub">Forecast outcomes. No money — just community wisdom.</p>
-    </div>
-    <div class="ticker-strip">
-      <div class="ticker-track">
-        <span class="ticker-item"><%= stats.totalPredictions %> markets</span>
-        <span class="ticker-dot"></span>
-        <span class="ticker-item"><%= stats.totalVotes %> predictions cast</span>
-        <span class="ticker-dot"></span>
-        <span class="ticker-item"><%= stats.uniqueVoters %> forecasters</span>
-        <span class="ticker-dot"></span>
-        <span class="ticker-item">No bets, no stakes</span>
-        <span class="ticker-dot"></span>
-        <span class="ticker-item"><%= stats.totalPredictions %> markets</span>
-        <span class="ticker-dot"></span>
-        <span class="ticker-item"><%= stats.totalVotes %> predictions cast</span>
-        <span class="ticker-dot"></span>
-        <span class="ticker-item"><%= stats.uniqueVoters %> forecasters</span>
-        <span class="ticker-dot"></span>
-        <span class="ticker-item">No bets, no stakes</span>
-        <span class="ticker-dot"></span>
-      </div>
-    </div>
-  </div>
+<section class="page-shell page-shell--wide">
 
-  <!-- ═══ STATS STRIP ═══ -->
-  <div class="predict-stats-strip" data-reveal>
-    <div class="predict-stat">
-      <div class="predict-stat-value" data-counter="<%= stats.totalPredictions %>"><%= stats.totalPredictions %></div>
-      <div class="predict-stat-label">Open markets</div>
+  <header class="page-header">
+    <div>
+      <h1 class="page-title">Predictions</h1>
+      <p class="page-sub">
+        <%= stats.totalPredictions %> open market<%= stats.totalPredictions === 1 ? '' : 's' %> ·
+        <%= stats.totalVotes %> prediction<%= stats.totalVotes === 1 ? '' : 's' %> cast ·
+        <%= stats.uniqueVoters %> forecaster<%= stats.uniqueVoters === 1 ? '' : 's' %>.
+        No money — just community wisdom.
+      </p>
     </div>
-    <div class="predict-stat-divider"></div>
-    <div class="predict-stat">
-      <div class="predict-stat-value" data-counter="<%= stats.totalVotes %>"><%= stats.totalVotes %></div>
-      <div class="predict-stat-label">Predictions cast</div>
-    </div>
-    <div class="predict-stat-divider"></div>
-    <div class="predict-stat">
-      <div class="predict-stat-value" data-counter="<%= stats.uniqueVoters %>"><%= stats.uniqueVoters %></div>
-      <div class="predict-stat-label">Forecasters</div>
-    </div>
-  </div>
+  </header>
 
   <div class="predict-toolbar">
     <div class="predict-search-wrap">
