@@ -17,7 +17,7 @@ No email. No password. Sign up by picking a username and saving a 7-word recover
 ## What's in the app
 
 - **Confessions** — anonymous to the public feed; risk-scanned before posting; admin can hide if needed
-- **Companion** — Anthropic-backed chat with safety rules; crisis-mode if a high-risk message comes in
+- **Companion** — local rule-based listener (no LLM, no API costs). Extracts durable facts from each message (name, age, location, pet, relationships, job, likes/dislikes, fears, milestones), stores them, and weaves them back into future replies. Users can see and delete every remembered fact at `/companion`. Risk-scanned every turn — high risk routes to crisis resources without composing a reply.
 - **Mood log** — small daily check-in (happy, okay, sad, anxious, frustrated, numb, hopeful)
 - **Surveys / Predictions / Arcade** — kept from v1, decoupled from credits
 - **Crisis button** — pinned to every page (988, Samaritans, Lifeline, etc.)
@@ -43,7 +43,6 @@ On first launch, the seeder creates an `admin` account and prints its 7-word rec
 | `PORT`              | No       | `3000`                        |                                                    |
 | `SESSION_SECRET`    | Yes (prod) | dev fallback provided      | Cookie-signing secret                              |
 | `DB_PATH`           | No       | `./generalviewonthis.db`     | SQLite file path                                   |
-| `ANTHROPIC_API_KEY` | No       | _(empty)_                    | Enables AI replies in `/companion`. Without it, the page works but says it's offline. |
 
 ## Auth model
 
@@ -79,9 +78,9 @@ localloop/
 
 ## Safety notes
 
-- Risk scanning runs before AI replies and on every new confession. Score ≥ 4 routes the user to crisis resources without calling the model.
+- Risk scanning runs before companion replies and on every new confession. Score ≥ 4 (high-risk phrase, e.g. "i want to die") routes the user to crisis resources without composing a reply.
 - The crisis button is rendered on every authenticated page via `views/layout/crisis-button.ejs`.
-- The companion's system prompt forbids diagnosis, romantic content, persona swaps, and minimisation. See [routes/companion.js](routes/companion.js).
+- The companion engine is rule-based ([lib/companionEngine.js](lib/companionEngine.js)). It extracts facts conservatively (false negatives over false positives), classifies emotion by keyword count with priority tie-breaking, and composes a short reply from emotion-matched templates plus an occasional memory weave (~25%). No diagnosis, no medication advice, no roleplay — those rules are encoded in the template space, not in a system prompt.
 - Reviews of users/businesses are removed entirely. Confessions are owned internally by the posting user (for moderation) but the public feed shows no usernames.
 
 ## Deploying

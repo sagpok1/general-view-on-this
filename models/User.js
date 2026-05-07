@@ -52,6 +52,7 @@ const User = {
       db.prepare('DELETE FROM confessions WHERE user_id = ?').run(userId);
       db.prepare('DELETE FROM mood_entries WHERE user_id = ?').run(userId);
       db.prepare('DELETE FROM chat_messages WHERE user_id = ?').run(userId);
+      db.prepare('DELETE FROM companion_facts WHERE user_id = ?').run(userId);
       db.prepare(`
         DELETE FROM survey_responses
         WHERE completion_id IN (SELECT id FROM survey_completions WHERE user_id = ?)

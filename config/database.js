@@ -66,6 +66,20 @@ db.exec(`
   CREATE INDEX IF NOT EXISTS idx_chat_messages_user_created
     ON chat_messages (user_id, created_at);
 
+  CREATE TABLE IF NOT EXISTS companion_facts (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL REFERENCES users(id),
+    category TEXT NOT NULL,
+    key TEXT NOT NULL,
+    value TEXT NOT NULL,
+    mention_count INTEGER NOT NULL DEFAULT 1,
+    first_seen DATETIME DEFAULT CURRENT_TIMESTAMP,
+    last_seen DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(user_id, key)
+  );
+  CREATE INDEX IF NOT EXISTS idx_facts_user_seen
+    ON companion_facts (user_id, last_seen DESC);
+
   CREATE TABLE IF NOT EXISTS surveys (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,

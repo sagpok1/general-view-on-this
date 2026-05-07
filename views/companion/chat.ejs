@@ -1,10 +1,25 @@
 <%- include('../layout/header', { title: 'Companion' }) %>
 
-<section class="container" style="max-width: 720px; margin: 2rem auto; padding: 0 1rem;">
+<%
+  var CATEGORY_LABELS = {
+    name: 'Name',
+    age: 'Age',
+    location: 'Location',
+    pet: 'Pet',
+    rel: 'Person in your life',
+    job: 'Work',
+    like: 'You love',
+    dislike: 'You don\'t enjoy',
+    fear: 'You\'re scared of',
+    milestone: 'Recent'
+  };
+%>
+
+<section class="container" style="max-width: 760px; margin: 2rem auto; padding: 0 1rem;">
   <header style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem; gap:1rem; flex-wrap:wrap;">
     <div>
       <h1 style="margin:0; font-family:'Playfair Display', serif; font-size:1.9rem;">Companion</h1>
-      <p style="margin:0.2rem 0 0; color:#666; font-size:0.95rem;">A grounded listener. Not a therapist.</p>
+      <p style="margin:0.2rem 0 0; color:#666; font-size:0.95rem;">A grounded listener. Remembers what you share — see below.</p>
     </div>
     <% if (messages && messages.length) { %>
       <form method="POST" action="/companion/clear" onsubmit="return confirm('Clear this conversation?');">
@@ -13,12 +28,6 @@
       </form>
     <% } %>
   </header>
-
-  <% if (!apiKeyConfigured) { %>
-    <div style="background:#fff7d6; border:1px solid #e3c66c; border-radius:10px; padding:0.8rem 1rem; margin-bottom:1rem; color:#5d4500; font-size:0.9rem;">
-      Companion chat is in offline mode. Set <code>ANTHROPIC_API_KEY</code> in <code>.env</code> and restart to enable AI replies.
-    </div>
-  <% } %>
 
   <% if (crisisMode) { %>
     <div style="background:#fff8e1; border:2px solid #f5c46a; border-radius:14px; padding:1.2rem; margin-bottom:1rem;">
@@ -58,6 +67,45 @@
       <button type="submit" class="btn btn-primary" style="border-radius:999px; padding:0.65rem 1.3rem;">Send</button>
     </form>
   <% } %>
+
+  <!-- ─── What I remember ───────────────────────────────────────── -->
+  <section style="margin-top:2rem; background:#faf7f0; border:1px solid #e3d6b8; border-radius:14px; padding:1.2rem 1.3rem;">
+    <header style="display:flex; align-items:center; justify-content:space-between; gap:0.6rem; flex-wrap:wrap; margin-bottom:0.7rem;">
+      <h2 style="margin:0; font-family:'Playfair Display', serif; font-size:1.2rem;">What I remember about you</h2>
+      <% if (facts && facts.length) { %>
+        <form method="POST" action="/companion/forget-all" onsubmit="return confirm('Forget everything I have learned about you?');" style="margin:0;">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <button type="submit" style="background:transparent; border:1px solid #b9892a; border-radius:999px; padding:0.3rem 0.8rem; color:#7a5b00; cursor:pointer; font-size:0.82rem; font-weight:600;">Forget everything</button>
+        </form>
+      <% } %>
+    </header>
+
+    <% if (!facts || !facts.length) { %>
+      <p style="margin:0; color:#7a5b00; font-size:0.92rem;">
+        Nothing yet. As you talk, I'll quietly note things you share — your name, where you live, who matters to you, what you love. You can delete anything below at any time.
+      </p>
+    <% } else { %>
+      <ul style="list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:0.4rem;">
+        <% facts.forEach(function(f){ %>
+          <li style="display:flex; align-items:center; justify-content:space-between; gap:0.6rem; background:#fff; border:1px solid #ede1bf; border-radius:10px; padding:0.55rem 0.85rem;">
+            <div style="display:flex; align-items:baseline; gap:0.6rem; flex-wrap:wrap;">
+              <span style="font-size:0.74rem; font-weight:700; color:#7a5b00; text-transform:uppercase; letter-spacing:0.04em;">
+                <%= CATEGORY_LABELS[f.category] || f.category %>
+              </span>
+              <span style="color:#222;"><%= f.value %></span>
+            </div>
+            <form method="POST" action="/companion/forget/<%= f.id %>" style="margin:0;">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <button type="submit" style="background:transparent; border:none; color:#a32020; cursor:pointer; font-size:0.82rem;" title="Forget this">forget</button>
+            </form>
+          </li>
+        <% }) %>
+      </ul>
+      <p style="margin:0.7rem 0 0; color:#7a5b00; font-size:0.82rem;">
+        I'll mention these back to you when it feels relevant. Anything stored here is local to this app — never sent to a third party.
+      </p>
+    <% } %>
+  </section>
 </section>
 
 <script>
