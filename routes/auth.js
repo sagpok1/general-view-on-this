@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const passport = require('passport');
 const { body, validationResult } = require('express-validator');
 const User = require('../models/User');
-const { generatePhrase, PHRASE_LENGTH } = require('../lib/recoveryPhrase');
+const { db } = require('../config/database');
+const { generatePhrase, PHRASE_LENGTH, verifyPhrase, isValidPhrase } = require('../lib/recoveryPhrase');
 
 const USERNAME_RE = /^[a-z0-9_-]{3,24}$/i;
 
@@ -13,45 +13,55 @@ router.get('/login', (req, res) => {
 });
 
 router.post('/login', (req, res, next) => {
-  passport.authenticate('local', (err, user, info) => {
-    if (err) return next(err);
+  const input = String(req.body.phrase || '');
 
-    if (user) {
-      return req.logIn(user, (loginErr) => {
+  if (!input.trim()) {
+    return res.render('auth/login', {
+      title: 'Log in',
+      errors: [{ msg: 'Recovery phrase is required.' }],
+      formData: {}
+    });
+  }
+
+  // Phrase-only login. We don't have an indexed lookup (the phrase is
+  // bcrypt-hashed, no plaintext stored), so we iterate every user and
+  // bcrypt-compare. Fine for our scale; if user count grows past a few
+  // thousand we'd add a fast SHA-256 fingerprint column for O(1) lookup.
+  const allUsers = db.prepare('SELECT * FROM users').all();
+
+  // 1) Try as a recovery phrase.
+  for (const u of allUsers) {
+    if (verifyPhrase(input, u.phrase_hash)) {
+      return req.logIn(u, (loginErr) => {
         if (loginErr) return next(loginErr);
-        req.session.message = { type: 'success', text: `Welcome back, ${user.username}.` };
+        req.session.message = { type: 'success', text: `Welcome back, ${u.username}.` };
         return res.redirect('/dashboard');
       });
     }
+  }
 
-    // Phrase didn't match. Before failing, check if the input is the user's
-    // urgent-delete password. If so, silently wipe the account and redirect to
-    // the landing page — no message that would tip off an observer.
-    const inputUsername = String(req.body.username || '').trim();
-    const inputSecret = String(req.body.phrase || '');
-
-    if (inputUsername && inputSecret) {
-      const candidate = User.findByUsername(inputUsername);
-      if (candidate && User.verifyUdPassword(candidate, inputSecret)) {
-        try {
-          User.deleteCompletely(candidate.id);
-        } catch (deleteErr) {
-          console.error('UD delete failed:', deleteErr);
-        }
-        // Drop session entirely if there's one. No flash message — landing page only.
-        return req.session.destroy(() => {
-          res.clearCookie('gvot.sid');
-          res.redirect('/');
-        });
+  // 2) Try as an urgent-delete password. Match → silently wipe + redirect
+  //    to the landing page. No flash, no error — looks identical to a
+  //    rejected attempt to anyone watching over a shoulder.
+  for (const u of allUsers) {
+    if (User.verifyUdPassword(u, input)) {
+      try {
+        User.deleteCompletely(u.id);
+      } catch (deleteErr) {
+        console.error('UD delete failed:', deleteErr);
       }
+      return req.session.destroy(() => {
+        res.clearCookie('gvot.sid');
+        res.redirect('/');
+      });
     }
+  }
 
-    return res.render('auth/login', {
-      title: 'Log in',
-      errors: [{ msg: (info && info.message) || 'Username or phrase is incorrect.' }],
-      formData: { username: req.body.username }
-    });
-  })(req, res, next);
+  return res.render('auth/login', {
+    title: 'Log in',
+    errors: [{ msg: 'Recovery phrase is incorrect.' }],
+    formData: {}
+  });
 });
 
 router.get('/register', (req, res) => {

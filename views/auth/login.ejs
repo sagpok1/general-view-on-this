@@ -3,7 +3,7 @@
 <section class="auth-container">
   <div class="auth-card">
     <h1 class="auth-title">Welcome back</h1>
-    <p class="auth-subtitle">Sign in with your username and 7-word recovery phrase.</p>
+    <p class="auth-subtitle">Sign in with your 7-word recovery phrase. No username needed — your phrase finds your account.</p>
 
     <% if (message && message.type === 'error') { %>
       <div class="auth-error"><span><%= message.text %></span></div>
@@ -20,21 +20,7 @@
       <input type="hidden" name="_csrf" value="<%= csrfToken %>">
 
       <div class="form-group">
-        <label for="username" class="form-label">Username</label>
-        <input
-          type="text"
-          id="username"
-          name="username"
-          class="form-input"
-          placeholder="yourname"
-          required
-          autocomplete="username"
-          value="<%= (formData && formData.username) || '' %>"
-        >
-      </div>
-
-      <div class="form-group">
-        <label for="phrase" class="form-label">Recovery phrase (7 words)</label>
+        <label for="phrase" class="form-label">Recovery phrase</label>
         <textarea
           id="phrase"
           name="phrase"
@@ -43,6 +29,7 @@
           placeholder="seven words separated by spaces"
           required
           autocomplete="off"
+          autofocus
           spellcheck="false"
           autocapitalize="off"
           style="font-family: 'DM Sans', system-ui, sans-serif; resize: vertical;"
