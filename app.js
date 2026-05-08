@@ -92,8 +92,10 @@ const dashboardRoutes = require('./routes/dashboard');
 const confessionRoutes = require('./routes/confessions');
 const moodRoutes = require('./routes/mood');
 const companionRoutes = require('./routes/companion');
-const surveyRoutes = require('./routes/surveys');
-const predictionRoutes = require('./routes/predictions');
+// Surveys + predictions are deactivated for now — re-enable by uncommenting
+// these lines, the app.use mounts below, and the nav links in views/layout/nav.ejs.
+// const surveyRoutes = require('./routes/surveys');
+// const predictionRoutes = require('./routes/predictions');
 const gameRoutes = require('./routes/games');
 const settingsRoutes = require('./routes/settings');
 const adminRoutes = require('./routes/admin');
@@ -111,8 +113,8 @@ app.use('/dashboard', dashboardRoutes);
 app.use('/confessions', confessionRoutes);
 app.use('/mood', moodRoutes);
 app.use('/companion', companionRoutes);
-app.use('/surveys', surveyRoutes);
-app.use('/predictions', predictionRoutes);
+// app.use('/surveys', surveyRoutes);     // deactivated — see imports above
+// app.use('/predictions', predictionRoutes);
 app.use('/games', gameRoutes);
 app.use('/settings', settingsRoutes);
 app.use('/admin', adminRoutes);
