@@ -20,7 +20,7 @@
   </header>
 
   <article class="confess-card" data-mood="<%= (c.mood_tag || '').toLowerCase() %>" data-id="<%= c.id %>">
-    <p class="confess-body" style="font-size:1.08rem;"><%= c.body %></p>
+    <p class="confess-body" style="font-size:1.08rem;"><%= censor(c.body) %></p>
     <footer class="confess-card-foot">
       <span class="confess-author">
         <span class="confess-avatar"><%= (c.username || '?').slice(0,2).toUpperCase() %></span>
@@ -84,7 +84,7 @@
                   <%= new Date(cm.created_at).toLocaleString('en-US', { month:'short', day:'numeric' }) %>
                 </span>
               </header>
-              <p class="comment-body"><%= cm.body %></p>
+              <p class="comment-body"><%= censor(cm.body) %></p>
             </div>
           </li>
         <% }) %>

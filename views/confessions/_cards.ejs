@@ -5,6 +5,9 @@
     if (text.length <= max) return text;
     return text.slice(0, max).trimEnd() + '…';
   }
+  // censor() comes from app.locals (lib/profanityFilter.js).
+  // Body and data-full (read-more cache) both run through it so the censored
+  // version is the only thing the client ever sees.
   // myReactions: optional Map(confession_id -> reaction_type)
   var myReactions = (typeof reactionsMap !== 'undefined') ? reactionsMap : new Map();
 %>
@@ -23,13 +26,14 @@
       </header>
     <% } %>
 
+    <% var safeBody = censor(c.body); %>
     <% if (isLong) { %>
-      <p class="confess-body confess-body-collapsed" data-full="<%= encodeURIComponent(c.body) %>">
-        <span class="confess-body-text"><%= truncBody(c.body, 280) %></span>
+      <p class="confess-body confess-body-collapsed" data-full="<%= encodeURIComponent(safeBody) %>">
+        <span class="confess-body-text"><%= truncBody(safeBody, 280) %></span>
         <button type="button" class="confess-readmore">Read more</button>
       </p>
     <% } else { %>
-      <p class="confess-body"><%= c.body %></p>
+      <p class="confess-body"><%= safeBody %></p>
     <% } %>
 
     <footer class="confess-card-foot">

@@ -52,6 +52,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
+// View helpers — available on every render.
+const { censor } = require('./lib/profanityFilter');
+app.locals.censor = censor;
+
 const sessionConfig = {
   store: new SQLiteStore({
     db: 'sessions.db',
